@@ -1,7 +1,7 @@
-unit UApplication;
+unit UAppClientes;
 
 interface
- uses System.Generics.Collections,UClasseModelo, System.SysUtils, Data.DB, Vcl.Dialogs;
+ uses System.Generics.Collections,UDomainClientes, System.SysUtils, Data.DB, Vcl.Dialogs;
 
  //ABSTRAÇÃO REPOSITÓRIO
   type IRepository<T: class, constructor> = interface

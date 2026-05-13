@@ -1,12 +1,12 @@
-unit URepository;
+unit URepositoryClientes;
 
 interface
 
-uses UClasseModelo,Vcl.Dialogs,Firedac.comp.Client, FireDAC.Stan.Param,
+uses Vcl.Dialogs,Firedac.comp.Client, FireDAC.Stan.Param,
   System.SysUtils,Data.DB, FireDAC.Stan.Option, FireDAC.Comp.DataSet,
   DateUtils, System.Classes,System.Generics.Collections,
 
-  UApplication,
+  UAppClientes,
 
 
   dbebr.factory.interfaces,
@@ -48,7 +48,7 @@ type TRepository<T: class, constructor> = class(TInterFacedObject,IRepository<T>
     FConn: IDBConnection;
 
     //CONTROLE DE DATASET
-    FContainerDataSet: IContainerDataSet<TComp>;
+    FContainerDataSet: IContainerDataSet<T>;
 
     //CONTAINER CRUD
     FObjectContainer: IContainerObjectSet<T>;
@@ -102,9 +102,6 @@ implementation
       //LIBERAR APENAS A CLASSE ATUAL, CLASSE NOVA, CHAMADOR DA FUNÇÃO LIBERA.
       LCurrentClass.Free;
     end;
-
-    FConn.ExecuteDirect('');
-
   end;
 
   //DELETAR
@@ -126,7 +123,7 @@ implementation
   //PASSAR CONTROLE DO DATA-SET PARA ORM REPOSITORY
   procedure TRepository<T>.ReceberDataSet(ADataSet: TDataSet);
   begin
-    Self.FContainerDataSet := TContainerFDMemTable<TComp>.Create(FConn,ADataSet);
+    Self.FContainerDataSet := TContainerFDMemTable<T>.Create(FConn,ADataSet);
   end;
 
   //ATUALIZAR DATASET

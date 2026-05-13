@@ -3,12 +3,12 @@ program ModelTest;
 uses
   Vcl.Forms,
   FormModelTest in 'FormModelTest.pas' {FormPrincipal},
-  UClasseModelo in 'UClasseModelo.pas',
-  URepository in 'URepository.pas',
-  UDM in 'UDM.pas',
-  UApplication in 'UApplication.pas',
-  UController in 'UController.pas',
-  UCPFValidator in 'UCPFValidator.pas';
+  UAppClientes in 'Units\Application\UAppClientes.pas',
+  UControllerClientes in 'Units\Controllers\UControllerClientes.pas',
+  UDM in 'Units\DM\UDM.pas',
+  UDomainClientes in 'Units\Domain\UDomainClientes.pas',
+  URepositoryClientes in 'Units\Repository\URepositoryClientes.pas',
+  UCPFValidator in 'Units\Utils\UCPFValidator.pas';
 
 {$R *.res}
 

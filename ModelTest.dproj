@@ -128,12 +128,12 @@
             <Form>FormPrincipal</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="UClasseModelo.pas"/>
-        <DCCReference Include="URepository.pas"/>
-        <DCCReference Include="UDM.pas"/>
-        <DCCReference Include="UApplication.pas"/>
-        <DCCReference Include="UController.pas"/>
-        <DCCReference Include="UCPFValidator.pas"/>
+        <DCCReference Include="Units\Application\UAppClientes.pas"/>
+        <DCCReference Include="Units\Controllers\UControllerClientes.pas"/>
+        <DCCReference Include="Units\DM\UDM.pas"/>
+        <DCCReference Include="Units\Domain\UDomainClientes.pas"/>
+        <DCCReference Include="Units\Repository\URepositoryClientes.pas"/>
+        <DCCReference Include="Units\Utils\UCPFValidator.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

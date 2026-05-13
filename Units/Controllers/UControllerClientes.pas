@@ -1,8 +1,8 @@
-unit UController;
+unit UControllerClientes;
 
 interface
 
-uses UApplication, System.Generics.Collections, System.Classes, UClasseModelo, System.SysUtils,Vcl.Dialogs;
+uses UAppClientes, System.Generics.Collections, System.Classes, UDomainClientes, System.SysUtils,Vcl.Dialogs;
 
 type IController = interface
   function BuscarCliente(AID:Integer):TComp;

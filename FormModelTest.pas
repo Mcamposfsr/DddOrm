@@ -14,7 +14,7 @@ uses
 
   System.Generics.Collections,
   //CLASSE MODELO ORM
-  UClasseModelo,UDM,URepository,UApplication,UController,
+  UDomainClientes,UDM,URepositoryClientes,UAppClientes,UControllerClientes,
 
   dbebr.factory.interfaces,
   dbebr.factory.firedac,
