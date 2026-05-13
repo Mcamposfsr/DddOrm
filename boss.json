@@ -1,0 +1,11 @@
+{
+	"name": "ModelTest",
+	"description": "",
+	"version": "1.0.0",
+	"homepage": "",
+	"mainsrc": "./src",
+	"projects": [],
+	"dependencies": {
+		"https://github.com/hashload/ormbr": "^1.1.8"
+	}
+}
