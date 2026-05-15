@@ -2,7 +2,7 @@ unit UAppOrdemServico;
 
 interface
 
-uses UDomainOS, System.Generics.Collections, UIRepository, System.SysUtils;
+uses UDomainOS, System.Generics.Collections, UIRepository, System.SysUtils,VCL.Dialogs;
 
 type IAppOrdemServico = Interface
 //    Function BuscarOS(AIDCliente:Integer):TObjectList<TOrdemServico>;
@@ -82,7 +82,6 @@ implementation
       AValor,
       AEstado
       );
-
       FRepository.Update(LID,LOS);
     finally
       LOS.Free;

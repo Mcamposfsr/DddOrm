@@ -12,13 +12,15 @@ uses
   UDomainOS in 'Units\Domain\UDomainOS.pas',
   UAppOrdemServico in 'Units\Application\UAppOrdemServico.pas',
   UIRepository in 'Units\Interfaces\UIRepository.pas',
-  UControllerOS in 'Units\Controllers\UControllerOS.pas';
+  UControllerOS in 'Units\Controllers\UControllerOS.pas',
+  UFormOS in 'Units\Forms\UFormOS.pas' {FormOS};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TFormOS, FormOS);
   Application.CreateForm(TFormPrincipal, FormPrincipal);
   Application.Run;
 end.

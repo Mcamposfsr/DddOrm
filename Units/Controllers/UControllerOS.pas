@@ -12,22 +12,22 @@ type IControllerOrdemServico = interface
 end;
 
 //CONTROLLER FORM O.S
-type TControllerOrdemServico = class
+type TControllerOrdemServico = class(TInterfacedObject,IControllerOrdemServico)
   public
     function BuscarOS(AID:Integer):TOrdemServico;
     procedure CadastrarOS(AIDCliente:Integer;ADataOS:TDate;AValor:Currency;AEstado:String);
     procedure AlterarOS(AID,AIDCliente:Integer;ADataOS:TDate;AValor:Currency;AEstado:String);
     procedure DeletarOS(AID:Integer);
 
-    constructor Create(AApp:IAppOrdemServico;ARep:IRepository<TAppOrdemServico>);
+    constructor Create(AApp:IAppOrdemServico;ARep:IRepository<TOrdemServico>);
   private
     FApp: IAppOrdemServico;
-    FRep: IRepository<TAppOrdemServico>;
+    FRep: IRepository<TOrdemServico>;
 end;
 
 implementation
 
-  constructor TControllerOrdemServico.Create(AApp:IAppOrdemServico;ARep:IRepository<TAppOrdemServico>);
+  constructor TControllerOrdemServico.Create(AApp:IAppOrdemServico;ARep:IRepository<TOrdemServico>);
   begin
     Self.FApp := AApp;
     Self.FRep := ARep;

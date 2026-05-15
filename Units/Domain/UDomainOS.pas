@@ -38,10 +38,15 @@ uses
     [Column('ID_OS', ftInteger)]
     property ID: Integer Read FID Write FID;
 
+    [Restrictions([NoUpdate])]
     [Column('ID_CLIENTE',ftInteger)]
     property IDCliente: Integer Read FIDCliente Write FIDCliente;
+
+    [Column('DATA_OS',ftDate)]
     property DataOS: TDate Read FDataOS Write FDAtaOs;
+    [Column('VALOR_OS',ftCurrency)]
     property ValorOS: Currency Read FValorOS Write FValorOS;
+    [Column('ESTADO_OS',ftString,1)]
     property EstadoOS: String Read FEstadoOS Write FEstadoOs;
 
   end;
