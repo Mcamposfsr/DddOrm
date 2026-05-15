@@ -2,7 +2,7 @@ object FormPrincipal: TFormPrincipal
   Left = 0
   Top = 0
   Caption = 'FormPrincipal'
-  ClientHeight = 507
+  ClientHeight = 531
   ClientWidth = 684
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,7 +17,7 @@ object FormPrincipal: TFormPrincipal
     Left = 0
     Top = 0
     Width = 684
-    Height = 507
+    Height = 531
     Align = alClient
     TabOrder = 0
     object Label1: TLabel
@@ -39,6 +39,19 @@ object FormPrincipal: TFormPrincipal
       Width = 27
       Height = 21
       Caption = 'CPF'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+    end
+    object Label3: TLabel
+      Left = 16
+      Top = 419
+      Width = 111
+      Height = 21
+      Caption = 'Situa'#231#227'o Cliente'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -16
@@ -88,7 +101,7 @@ object FormPrincipal: TFormPrincipal
         Top = 1
         Width = 112
         Height = 39
-        Margins.Left = 80
+        Margins.Left = 30
         Margins.Top = 0
         Margins.Right = 0
         Margins.Bottom = 0
@@ -105,13 +118,13 @@ object FormPrincipal: TFormPrincipal
       end
       object ButtonCadastrar: TButton
         AlignWithMargins = True
-        Left = 193
+        Left = 285
         Top = 1
         Width = 112
         Height = 39
         Margins.Left = 0
         Margins.Top = 0
-        Margins.Right = 80
+        Margins.Right = 30
         Margins.Bottom = 0
         Align = alLeft
         Caption = 'CADASTRAR'
@@ -132,7 +145,7 @@ object FormPrincipal: TFormPrincipal
         Height = 39
         Margins.Left = 0
         Margins.Top = 0
-        Margins.Right = 80
+        Margins.Right = 30
         Margins.Bottom = 0
         Align = alLeft
         Caption = 'BUSCAR'
@@ -147,11 +160,11 @@ object FormPrincipal: TFormPrincipal
       end
       object ButtonAlterar: TButton
         AlignWithMargins = True
-        Left = 378
+        Left = 428
         Top = 1
         Width = 112
         Height = 39
-        Margins.Left = 80
+        Margins.Left = 30
         Margins.Top = 0
         Margins.Right = 0
         Margins.Bottom = 0
@@ -166,10 +179,31 @@ object FormPrincipal: TFormPrincipal
         TabOrder = 2
         OnClick = ButtonAlterarClick
       end
+      object ButtonOS: TButton
+        AlignWithMargins = True
+        Left = 143
+        Top = 1
+        Width = 112
+        Height = 39
+        Margins.Left = 0
+        Margins.Top = 0
+        Margins.Right = 30
+        Margins.Bottom = 0
+        Align = alLeft
+        Caption = 'O.S'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 4
+        OnClick = ButtonCadastrarClick
+      end
     end
     object ButtonCancel: TButton
       Left = 425
-      Top = 458
+      Top = 482
       Width = 112
       Height = 31
       Caption = 'CANCELAR'
@@ -185,7 +219,7 @@ object FormPrincipal: TFormPrincipal
     end
     object ButtonSalvar: TButton
       Left = 553
-      Top = 458
+      Top = 482
       Width = 112
       Height = 31
       Caption = 'SALVAR'
@@ -199,11 +233,23 @@ object FormPrincipal: TFormPrincipal
       TabOrder = 3
       OnClick = ButtonSalvarClick
     end
+    object ComboBoxSituacao: TComboBox
+      Left = 16
+      Top = 446
+      Width = 145
+      Height = 23
+      Style = csDropDownList
+      Enabled = False
+      TabOrder = 6
+      Items.Strings = (
+        'R'
+        'I')
+    end
   end
   object DataSource: TDataSource
     DataSet = FDMemTable
-    Left = 32
-    Top = 432
+    Left = 24
+    Top = 488
   end
   object FDMemTable: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
@@ -213,7 +259,7 @@ object FormPrincipal: TFormPrincipal
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 120
-    Top = 432
+    Left = 88
+    Top = 488
   end
 end

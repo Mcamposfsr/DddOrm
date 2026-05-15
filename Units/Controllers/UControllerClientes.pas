@@ -2,52 +2,52 @@ unit UControllerClientes;
 
 interface
 
-uses UAppClientes, System.Generics.Collections, System.Classes, UDomainClientes, System.SysUtils,Vcl.Dialogs;
+uses UAppClientes, System.Generics.Collections, System.Classes, UDomainClientes, System.SysUtils,Vcl.Dialogs,UIRepository;
 
 type IController = interface
-  function BuscarCliente(AID:Integer):TComp;
-  procedure CadastrarCliente(ACPF,ANome:String);
-  procedure AlterarCLiente(AID:Integer;ANome,ACPF:String);
+  function BuscarCliente(AID:Integer):TCliente;
+  procedure CadastrarCliente(ANome,ACPF,AEstado:String);
+  procedure AlterarCLiente(AID:Integer;ANome,ACPF,AEstado:String);
   procedure DeletarCliente(AID:Integer);
 end;
 
 type TController = class(TInterfacedObject,IController)
 
   public
-    function BuscarCliente(AID:Integer):TComp;
-//    procedure BuscarTodosOsClientes:TObjectList<TComp>;
-    procedure CadastrarCliente(ANome,ACPF:String);
-    procedure AlterarCLiente(AID:Integer;ANome,ACPF:String);
+    function BuscarCliente(AID:Integer):TCliente;
+//    procedure BuscarTodosOsClientes:TObjectList<TCliente>;
+    procedure CadastrarCliente(ANome,ACPF,AEstado:String);
+    procedure AlterarCLiente(AID:Integer;ANome,ACPF,AEstado:String);
     procedure DeletarCliente(AID:Integer);
 
-    constructor Create(ARep:IRepository<TComp>;AApp:IApp);
+    constructor Create(ARep:IRepository<TCliente>;AApp:IAppClientes);
   private
     //REPOSITÓRIO QUE ENGLOBA ORM(PARA ATUALIZAR DATASET).
-    FRep: IRepository<TComp>;
+    FRep: IRepository<TCliente>;
 
     //APLICATION - CONTROLE DE FLUXO.
-    FApp: IApp;
+    FApp: IAppClientes;
 end;
 
 implementation
   //CONSTRUCTOR
-  constructor TController.Create(ARep:IRepository<TComp>;AApp:IApp);
+  constructor TController.Create(ARep:IRepository<TCliente>;AApp:IAppClientes);
   begin
     FRep := ARep;
     FApp := AApp;
   end;
 
   //BUSCAR CLIENTE
-  function TController.BuscarCliente(AID:Integer):TComp;
+  function TController.BuscarCliente(AID:Integer):TCliente;
   begin
     Result := FApp.BuscarClienteByID(AID);
   end;
 
   //CADASTRO
-  procedure TController.CadastrarCliente(ANome,ACPF:String);
+  procedure TController.CadastrarCliente(ANome,ACPF,AEstado:String);
   begin
     try
-      FApp.InserirCliente(ANome,ACPF);
+      FApp.InserirCliente(ANome,ACPF,AEstado);
       FRep.AtualizarDataSet;
       ShowMessage('Cliente Cadastrado!');
     except
@@ -57,10 +57,10 @@ implementation
   end;
 
   //ATUALIZAR CLIENTE
-  procedure TController.AlterarCLiente(AID:Integer;ANome,ACPF:String);
+  procedure TController.AlterarCLiente(AID:Integer;ANome,ACPF,AEstado:String);
   begin
     try
-      FApp.AtualizarCliente(AID,ANome,ACPF);
+      FApp.AtualizarCliente(AID,ANome,ACPF,AEstado);
       FRep.AtualizarDataSet;
       ShowMessage('Cliente Alterado!');
     except

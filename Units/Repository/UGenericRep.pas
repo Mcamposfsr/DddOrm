@@ -1,4 +1,4 @@
-unit URepositoryClientes;
+unit UGenericRep;
 
 interface
 
@@ -6,7 +6,7 @@ uses Vcl.Dialogs,Firedac.comp.Client, FireDAC.Stan.Param,
   System.SysUtils,Data.DB, FireDAC.Stan.Option, FireDAC.Comp.DataSet,
   DateUtils, System.Classes,System.Generics.Collections,
 
-  UAppClientes,
+  UIRepository,
 
 
   dbebr.factory.interfaces,
@@ -39,7 +39,8 @@ type TRepository<T: class, constructor> = class(TInterFacedObject,IRepository<T>
     procedure Delete(AClass:T);
 
     procedure ReceberDataSet(ADataSet: TDataSet);
-    procedure AtualizarDataSet;
+    procedure AtualizarDataSet; Overload;
+    procedure AtualizarDataSetWhere(AColumn,AValue:String); Overload;
 
     constructor Create(AConn:TFDConnection);
 
@@ -124,6 +125,11 @@ implementation
   procedure TRepository<T>.ReceberDataSet(ADataSet: TDataSet);
   begin
     Self.FContainerDataSet := TContainerFDMemTable<T>.Create(FConn,ADataSet);
+  end;
+
+  procedure TRepository<T>.AtualizarDataSetWhere(AColumn,AValue:String);
+  begin
+
   end;
 
   //ATUALIZAR DATASET

@@ -3,7 +3,7 @@ unit UCPFValidator;
 interface
 
 uses
-  System.SysUtils;
+  System.SysUtils,Vcl.Dialogs;
 
 type
   TCPFValidator = class

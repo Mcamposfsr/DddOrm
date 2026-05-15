@@ -22,16 +22,17 @@ type
   [Table('CLIENTES', '')]
   [PrimaryKey('ID_CLIENTE', 'Chave primária')]
 
-  TComp = class
+  TCliente = class
 
   private
     FID: Integer;
     FNome: String;
     FCPF: String;
+    FEstado: String;
 
   public
     Function ValidarCpf: Boolean;
-    constructor Create(AID: Integer; ANome, ACPF: String); Overload;
+    constructor Create(AID: Integer; ANome, ACPF, AState: String); Overload;
     constructor Create; Overload;
 
   published
@@ -46,24 +47,28 @@ type
     [Column('CPF_CLIENTE', ftString, 18)]
     property CPF: String Read FCPF Write FCPF;
 
+    [Column('ESTADO_CLIENTE',ftString,1)]
+    property Estado: String READ FEstado Write FEstado;
+
   end;
 
 implementation
 
 // CONSTRUCTOR;
-constructor TComp.Create(AID: Integer; ANome, ACPF: String);
+constructor TCliente.Create(AID: Integer; ANome, ACPF, AState: String);
 begin
   Self.FID := AID;
   Self.FNome := ANome;
   Self.CPF := ACPF;
+  Self.FEstado := AState;
 end;
 
-constructor TComp.Create;
+constructor TCliente.Create;
 begin
   Inherited
 end;
 
-Function TComp.ValidarCpf: Boolean;
+Function TCliente.ValidarCpf: Boolean;
 begin
   Result := TCPFValidator.Validate(Self.FCPF);
 end;

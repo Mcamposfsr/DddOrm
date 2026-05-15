@@ -14,7 +14,7 @@ uses
 
   System.Generics.Collections,
   //CLASSE MODELO ORM
-  UDomainClientes,UDM,URepositoryClientes,UAppClientes,UControllerClientes,
+  UDomainClientes,UDM,UGenericRep,UAppClientes,UControllerClientes,UIRepository,
 
   dbebr.factory.interfaces,
   dbebr.factory.firedac,
@@ -45,6 +45,9 @@ type
     Label1: TLabel;
     Label2: TLabel;
     ButtonSalvar: TButton;
+    ButtonOS: TButton;
+    Label3: TLabel;
+    ComboBoxSituacao: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure ButtonSalvarClick(Sender: TObject);
     procedure ButtonBuscarClick(Sender: TObject);
@@ -55,8 +58,8 @@ type
   private
     //FERRAMENTAS
     FDM: IDM;
-    FRepository: IRepository<TComp>;
-    FApp: IApp;
+    FRepository: IRepository<TCliente>;
+    FApp: IAppClientes;
     FController: IController;
 
     //CONTROLE FORM
@@ -98,12 +101,12 @@ implementation
     );
 
     //CRIAR REPOSITORY
-    FRepository := TRepository<TComp>.Create(FDM.GetConnection);
+    FRepository := TRepository<TCliente>.Create(FDM.GetConnection);
     //PASSAR DATASET PARA LIGAR AO ORM
     FRepository.ReceberDataSet(Self.FDMemTable);
 
     //CRIAR APPLICATION
-    FApp := TApp.Create(FRepository);
+    FApp := TAppClientes.Create(FRepository);
 
     //CONTROLLER
     FController := TController.Create(FRepository,FApp);
@@ -116,10 +119,16 @@ implementation
   //BUSCAR DADOS DO CLIENTE SELECIONADO
   procedure TFormPrincipal.ButtonBuscarClick(Sender: TObject);
   var
-  LCLiente: TComp;
+  LCLiente: TCliente;
   begin
     LCliente := nil;
     try
+      if Self.FDMemTable.RecordCount = 0 then
+      begin
+        ShowMessage('Nenhum cliente cadastrado');
+        Exit;
+      end;
+
       //BUSCAR ID DATASET.
       FIDCurrentClient := Self.FDMemTable.FieldByName('ID_CLIENTE').AsInteger;
 
@@ -129,6 +138,7 @@ implementation
       //PASSAGEM DE VALORES
       Self.EditNome.Text := LCliente.Nome;
       Self.EditCPF.Text := LCliente.CPF;
+      Self.ComboBoxSituacao.ItemIndex := Self.ComboBoxSituacao.Items.IndexOf(LCliente.Estado);
     finally
       LCliente.Free;
     end;
@@ -142,6 +152,7 @@ implementation
     Self.FormControl(True);
     Self.EditNome.Text := '';
     Self.EditCPF.Text := '';
+    Self.ComboBoxSituacao.Text := '';
     Self.FOperacao := 'INSERT';
   end;
 
@@ -185,7 +196,8 @@ implementation
       begin
         Self.FController.CadastrarCliente(
         Self.EditNome.Text,
-        Self.EditCPF.Text
+        Self.EditCPF.Text,
+        Self.ComboBoxSituacao.Text
         );
        Self.FormControl(False);
       end
@@ -194,7 +206,8 @@ implementation
         Self.FController.AlterarCLiente(
         Self.FDMemTable.FieldByName('ID_CLIENTE').AsInteger,
         Self.EditNome.Text,
-        Self.EditCPF.Text
+        Self.EditCPF.Text,
+        Self.ComboBoxSituacao.Text
         );
         Self.FormControl(False);
       end;
@@ -219,6 +232,7 @@ implementation
       Self.EditCPF.Enabled := AState;
       Self.ButtonCancel.Enabled := AState;
       Self.ButtonSalvar.Enabled := AState;
+      Self.ComboBoxSituacao.Enabled := AState;
     end
     else
     begin
@@ -226,11 +240,13 @@ implementation
       Self.EditCPF.Enabled := AState;
       Self.ButtonCancel.Enabled := AState;
       Self.ButtonSalvar.Enabled := AState;
+      Self.ComboBoxSituacao.Enabled := AState;
 
       FIDCurrentClient := -1;
       Self.FOperacao := '';
       Self.EditNome.Text := '';
       Self.EditCPF.Text := '';
+      Self.ComboBoxSituacao.ItemIndex := -1;
     end;
   end;
 

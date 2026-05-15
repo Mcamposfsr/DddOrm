@@ -1,73 +1,58 @@
 unit UAppClientes;
 
 interface
- uses System.Generics.Collections,UDomainClientes, System.SysUtils, Data.DB, Vcl.Dialogs;
+ uses System.Generics.Collections,UDomainClientes, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository;
 
- //ABSTRAÇÃO REPOSITÓRIO
-  type IRepository<T: class, constructor> = interface
-    //CRUD REPOSITORY
-      function Select(AID:String):T;
-      function SelectAll:TObjectList<T>;
-      procedure Insert(AClass:T);
-      procedure Update(AID:String;ANewClass:T);
-      procedure Delete(AClass:T);
-
-      //TRABALHAR RETORNO PARA UI
-      procedure ReceberDataSet(ADataSet: TDataSet);
-      procedure AtualizarDataSet;
-  end;
-
-
-  type IApp = Interface
-    Function BuscarClientes:TObjectList<TComp>;
-    Function BuscarClienteByID(AID:Integer):TComp;
-    procedure InserirCliente(ANome,ACPF:String);
-    procedure AtualizarCliente(AID:Integer;ANome,ACPF:String);
+  type IAppClientes = Interface
+    Function BuscarClientes:TObjectList<TCliente>;
+    Function BuscarClienteByID(AID:Integer):TCliente;
+    procedure InserirCliente(ANome,ACPF,AEstado:String);
+    procedure AtualizarCliente(AID:Integer;ANome,ACPF,AEstado:String);
     procedure DeletarCliente(AID:Integer);
 
   End;
 
-  type TApp = class(TInterfacedObject,IApp)
+  type TAppClientes = class(TInterfacedObject,IAppClientes)
     public
-      Function BuscarClientes:TObjectList<TComp>;
-      Function BuscarClienteByID(AID:Integer):TComp;
-      procedure InserirCliente(ANome,ACPF:String);
-      procedure AtualizarCliente(AID:Integer;ANome,ACPF:String);
+      Function BuscarClientes:TObjectList<TCliente>;
+      Function BuscarClienteByID(AID:Integer):TCliente;
+      procedure InserirCliente(ANome,ACPF,AEstado:String);
+      procedure AtualizarCliente(AID:Integer;ANome,ACPF,AEstado:String);
       procedure DeletarCliente(AID:Integer);
 
-      constructor Create(ARep:IRepository<TComp>);
+      constructor Create(ARep:IRepository<TCliente>);
     private
 
-      FRepository: IRepository<TComp>;
+      FRepository: IRepository<TCliente>;
 
   end;
 
 implementation
 
   //RECEBER REPOSITORY
-  constructor TApp.Create(ARep:IRepository<TComp>);
+  constructor TAppClientes.Create(ARep:IRepository<TCliente>);
   begin
     FRepository := ARep;
   end;
 
-  Function TApp.BuscarClientes:TObjectList<TComp>;
+  Function TAppClientes.BuscarClientes:TObjectList<TCliente>;
   begin
     Result := FRepository.SelectAll;
   end;
 
-  Function TApp.BuscarClienteByID(AID:Integer):TComp;
+  Function TAppClientes.BuscarClienteByID(AID:Integer):TCliente;
   var LID: String;
   begin
     LID := IntToStr(AID);
     Result := FRepository.Select(LID);
   end;
 
-  procedure TApp.InserirCliente(ANome,ACPF:String);
-  var LCliente: TComp;
+  procedure TAppClientes.InserirCliente(ANome,ACPF,AEstado:String);
+  var LCliente: TCliente;
   begin
     LCliente := nil;
     try
-     LCliente := TComp.Create(0,ANome,ACPF);
+     LCliente := TCliente.Create(0,ANome,ACPF,AEstado);
 
      //REGRA DE NEGÓCIO - VALIDAR CPF
      if not LCliente.ValidarCpf then
@@ -79,15 +64,15 @@ implementation
     end;
   end;
 
-  procedure TApp.AtualizarCliente(AID:Integer;ANome,ACPF:String);
+  procedure TAppClientes.AtualizarCliente(AID:Integer;ANome,ACPF,AEstado:String);
   var
-  LCliente: TComp;
+  LCliente: TCliente;
   LID: String;
   begin
     LID := IntToStr(AID);
     LCliente := nil;
     try
-     LCliente := TComp.Create(AID,ANome,ACPF);
+     LCliente := TCliente.Create(AID,ANome,ACPF,AEstado);
 
      //REGRA DE NEGÓCIO - VALIDAR CPF
      if not LCliente.ValidarCpf then
@@ -99,16 +84,16 @@ implementation
     end;
   end;
 
-  procedure TApp.DeletarCliente(AID:Integer);
+  procedure TAppClientes.DeletarCliente(AID:Integer);
   var
-  LCliente: TComp;
+  LCliente: TCliente;
   LID: String;
   begin
     LID := IntToStr(AID);
     LCliente := nil;
     try
       //CLASSE MÍNIMA APENAS PARA DELETE
-     LCliente := TComp.Create(AID,'','');
+     LCliente := TCliente.Create(AID,'','','');
      FRepository.Delete(LCliente);
     finally
       LCliente.Free;

@@ -71,7 +71,7 @@
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
         <SanitizedProjectName>ModelTest</SanitizedProjectName>
-        <DCC_UnitSearchPath>..\modules\.dcp;..\modules\.dcu;..\modules;..\modules\cqlbr\Source\Core;..\modules\cqlbr\Source\Drivers;..\modules\cqlbr\Source;..\modules\dbcbr\Source\Core;..\modules\dbcbr\Source\Drivers;..\modules\dbcbr\Source;..\modules\dbebr\Source\Core;..\modules\dbebr\Source\Drivers;..\modules\dbebr\Source;..\modules\jsonbr\Source\Core;..\modules\jsonbr\Source\Middleware-Horse;..\modules\jsonbr\Source;..\modules\ormbr\Source\Core;..\modules\ormbr\Source\Criteria;..\modules\ormbr\Source\Dataset;..\modules\ormbr\Source\External\SQLite3;..\modules\ormbr\Source\Livebindings;..\modules\ormbr\Source\Metadata;..\modules\ormbr\Source\Middleware;..\modules\ormbr\Source\Middleware-Horse;..\modules\ormbr\Source\Monitor;..\modules\ormbr\Source\Objectset;..\modules\ormbr\Source\RESTful\Client;..\modules\ormbr\Source\RESTful\Common;..\modules\ormbr\Source\RESTful\Server;..\modules\ormbr\Source;$(DCC_UnitSearchPath);modules\.dcp;modules\.dcu;modules;modules\cqlbr\Source\Core;modules\cqlbr\Source\Drivers;modules\cqlbr\Source;modules\dbcbr\Source\Core;modules\dbcbr\Source\Drivers;modules\dbcbr\Source;modules\dbebr\Source\Core;modules\dbebr\Source\Drivers;modules\dbebr\Source;modules\jsonbr\Source\Core;modules\jsonbr\Source\Middleware-Horse;modules\jsonbr\Source;modules\ormbr\Source\Core;modules\ormbr\Source\Criteria;modules\ormbr\Source\Dataset;modules\ormbr\Source\External\SQLite3;modules\ormbr\Source\Livebindings;modules\ormbr\Source\Metadata;modules\ormbr\Source\Middleware;modules\ormbr\Source\Middleware-Horse;modules\ormbr\Source\Monitor;modules\ormbr\Source\Objectset;modules\ormbr\Source\RESTful\Client;modules\ormbr\Source\RESTful\Common;modules\ormbr\Source\RESTful\Server;modules\ormbr\Source</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\modules\.dcp;..\modules\.dcu;..\modules;..\modules\cqlbr\Source\Core;..\modules\cqlbr\Source\Drivers;..\modules\cqlbr\Source;..\modules\dbcbr\Source\Core;..\modules\dbcbr\Source\Drivers;..\modules\dbcbr\Source;..\modules\dbebr\Source\Core;..\modules\dbebr\Source\Drivers;..\modules\dbebr\Source;..\modules\jsonbr\Source\Core;..\modules\jsonbr\Source\Middleware-Horse;..\modules\jsonbr\Source;..\modules\ormbr\Source\Core;..\modules\ormbr\Source\Criteria;..\modules\ormbr\Source\Dataset;..\modules\ormbr\Source\External\SQLite3;..\modules\ormbr\Source\Livebindings;..\modules\ormbr\Source\Metadata;..\modules\ormbr\Source\Middleware;..\modules\ormbr\Source\Middleware-Horse;..\modules\ormbr\Source\Monitor;..\modules\ormbr\Source\Objectset;..\modules\ormbr\Source\RESTful\Client;..\modules\ormbr\Source\RESTful\Common;..\modules\ormbr\Source\RESTful\Server;..\modules\ormbr\Source;modules\.dcp;modules\.dcu;modules;modules\cqlbr\Source\Core;modules\cqlbr\Source\Drivers;modules\cqlbr\Source;modules\dbcbr\Source\Core;modules\dbcbr\Source\Drivers;modules\dbcbr\Source;modules\dbebr\Source\Core;modules\dbebr\Source\Drivers;modules\dbebr\Source;modules\jsonbr\Source\Core;modules\jsonbr\Source\Middleware-Horse;modules\jsonbr\Source;modules\ormbr\Source\Core;modules\ormbr\Source\Criteria;modules\ormbr\Source\Dataset;modules\ormbr\Source\External\SQLite3;modules\ormbr\Source\Livebindings;modules\ormbr\Source\Metadata;modules\ormbr\Source\Middleware;modules\ormbr\Source\Middleware-Horse;modules\ormbr\Source\Monitor;modules\ormbr\Source\Objectset;modules\ormbr\Source\RESTful\Client;modules\ormbr\Source\RESTful\Common;modules\ormbr\Source\RESTful\Server;modules\ormbr\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_UsePackage>vclwinx;fmx;vclie;DbxCommonDriver;bindengine;IndyIPCommon;VCLRESTComponents;FireDACCommonODBC;FireDACCommonDriver;appanalytics;IndyProtocols;vclx;Skia.Package.RTL;IndyIPClient;dbxcds;vcledge;bindcompvclwinx;bindcompfmx;inetdb;ibmonitor;FireDACSqliteDriver;DbxClientDriver;soapmidas;vclactnband;fmxFireDAC;dbexpress;DBXMySQLDriver;VclSmp;inet;vcltouch;fmxase;dbrtl;Skia.Package.FMX;fmxdae;FireDACMSAccDriver;CustomIPTransport;vcldsnap;DBXInterBaseDriver;IndySystem;Skia.Package.VCL;vcldb;ibxbindings;vclFireDAC;bindcomp;FireDACCommon;IndyCore;RESTBackendComponents;bindcompdbx;rtl;FireDACMySQLDriver;FireDACADSDriver;RESTComponents;DBXSqliteDriver;vcl;IndyIPServer;dsnapxml;dsnapcon;adortl;vclimg;FireDACPgDriver;FireDAC;inetdbxpress;xmlrtl;tethering;ibxpress;bindcompvcl;dsnap;CloudService;vclib;fmxobj;bindcompvclsmp;soaprtl;soapserver;FireDACIBDriver;$(DCC_UsePackage)</DCC_UsePackage>
@@ -132,8 +132,12 @@
         <DCCReference Include="Units\Controllers\UControllerClientes.pas"/>
         <DCCReference Include="Units\DM\UDM.pas"/>
         <DCCReference Include="Units\Domain\UDomainClientes.pas"/>
-        <DCCReference Include="Units\Repository\URepositoryClientes.pas"/>
+        <DCCReference Include="Units\Repository\UGenericRep.pas"/>
         <DCCReference Include="Units\Utils\UCPFValidator.pas"/>
+        <DCCReference Include="Units\Domain\UDomainOS.pas"/>
+        <DCCReference Include="Units\Application\UAppOrdemServico.pas"/>
+        <DCCReference Include="Units\Interfaces\UIRepository.pas"/>
+        <DCCReference Include="Units\Controllers\UControllerOS.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -157,6 +161,12 @@
             </Delphi.Personality>
             <Deployment Version="4">
                 <DeployFile LocalName="Win32\Debug\ModelTest.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>ModelTest.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Win32\Release\ModelTest.exe" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>ModelTest.exe</RemoteName>
                         <Overwrite>true</Overwrite>

@@ -7,8 +7,12 @@ uses
   UControllerClientes in 'Units\Controllers\UControllerClientes.pas',
   UDM in 'Units\DM\UDM.pas',
   UDomainClientes in 'Units\Domain\UDomainClientes.pas',
-  URepositoryClientes in 'Units\Repository\URepositoryClientes.pas',
-  UCPFValidator in 'Units\Utils\UCPFValidator.pas';
+  UGenericRep in 'Units\Repository\UGenericRep.pas',
+  UCPFValidator in 'Units\Utils\UCPFValidator.pas',
+  UDomainOS in 'Units\Domain\UDomainOS.pas',
+  UAppOrdemServico in 'Units\Application\UAppOrdemServico.pas',
+  UIRepository in 'Units\Interfaces\UIRepository.pas',
+  UControllerOS in 'Units\Controllers\UControllerOS.pas';
 
 {$R *.res}
 
