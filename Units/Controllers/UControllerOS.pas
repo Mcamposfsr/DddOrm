@@ -6,18 +6,18 @@ uses UDomainOS,UIRepository,UAppOrdemServico, System.Generics.Collections,System
 
 type IControllerOrdemServico = interface
   function BuscarOS(AID:Integer):TOrdemServico;
-  procedure CadastrarOS(AIDCliente:Integer;ADataOS:TDate;AValor:Currency;AEstado:String);
-  procedure AlterarOS(AID,AIDCliente:Integer;ADataOS:TDate;AValor:Currency;AEstado:String);
-  procedure DeletarOS(AID:Integer);
+  procedure CadastrarOS(AIDCliente:Integer;ADataOS:TDate;AValor,AEstado:String);
+  procedure AlterarOS(AID,AIDCliente:Integer;ADataOS:TDate;AValor,AEstado:String);
+  procedure DeletarOS(AID,AIDCliente:Integer);
 end;
 
 //CONTROLLER FORM O.S
 type TControllerOrdemServico = class(TInterfacedObject,IControllerOrdemServico)
   public
     function BuscarOS(AID:Integer):TOrdemServico;
-    procedure CadastrarOS(AIDCliente:Integer;ADataOS:TDate;AValor:Currency;AEstado:String);
-    procedure AlterarOS(AID,AIDCliente:Integer;ADataOS:TDate;AValor:Currency;AEstado:String);
-    procedure DeletarOS(AID:Integer);
+    procedure CadastrarOS(AIDCliente:Integer;ADataOS:TDate;AValor,AEstado:String);
+    procedure AlterarOS(AID,AIDCliente:Integer;ADataOS:TDate;AValor,AEstado:String);
+    procedure DeletarOS(AID,AIDCliente:Integer);
 
     constructor Create(AApp:IAppOrdemServico;ARep:IRepository<TOrdemServico>);
   private
@@ -40,11 +40,17 @@ implementation
   end;
 
   //CADASTRAR NOVA O.S
-  procedure TControllerOrdemServico.CadastrarOS(AIDCliente:Integer;ADataOS:TDate;AValor:Currency;AEstado:String);
+  procedure TControllerOrdemServico.CadastrarOS(AIDCliente:Integer;ADataOS:TDate;AValor,AEstado:String);
+  var LValor: Currency;
   begin
     try
-      Self.FApp.InserirOS(AIDCliente,ADataOS,AValor,AEstado);
-      Self.FRep.AtualizarDataSet;
+      if AValor = '' then
+      raise Exception.Create('Valor inválido')
+      else
+        LValor := StrToCurr(AValor);
+
+      Self.FApp.InserirOS(AIDCliente,ADataOS,LValor,AEstado);
+      Self.FRep.AtualizarDataSetWhere('ID_CLIENTE',AIDCliente);
     except
       on E: Exception do
       begin
@@ -54,11 +60,17 @@ implementation
   end;
 
   //ALTERAR NOVA O.S
-  procedure TControllerOrdemServico.AlterarOS(AID,AIDCliente:Integer;ADataOS:TDate;AValor:Currency;AEstado:String);
+  procedure TControllerOrdemServico.AlterarOS(AID,AIDCliente:Integer;ADataOS:TDate;AValor,AEstado:String);
+  var LValor: Currency;
   begin
     try
-      Self.FApp.AtualizarOS(AID,AIDCliente,ADataOS,AValor,AEstado);
-      Self.FRep.AtualizarDataSet;
+      if AValor = '' then
+      raise Exception.Create('Valor inválido')
+      else
+        LValor := StrToCurr(AValor);
+
+      Self.FApp.AtualizarOS(AID,AIDCliente,ADataOS,LValor,AEstado);
+      Self.FRep.AtualizarDataSetWhere('ID_CLIENTE',AIDCliente);
     except
       on E: Exception do
       begin
@@ -68,11 +80,12 @@ implementation
   end;
 
   //DELETAR NOVA O.S
-  procedure TControllerOrdemServico.DeletarOS(AID:Integer);
+  procedure TControllerOrdemServico.DeletarOS(AID,AIDCliente:Integer);
   begin
     try
       Self.FApp.DeletarOS(AID);
-      Self.FRep.AtualizarDataSet;
+      //ID CLIENTE PARA ATUALIZAR DATASET
+      Self.FRep.AtualizarDataSetWhere('ID_CLIENTE',AIDCliente);
     except
       on E: Exception do
       begin

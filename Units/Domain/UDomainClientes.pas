@@ -31,7 +31,8 @@ type
     FEstado: String;
 
   public
-    Function ValidarCpf: Boolean;
+    procedure Validar;
+    procedure VerificarEstado;
     constructor Create(AID: Integer; ANome, ACPF, AState: String); Overload;
     constructor Create; Overload;
 
@@ -54,23 +55,41 @@ type
 
 implementation
 
-// CONSTRUCTOR;
-constructor TCliente.Create(AID: Integer; ANome, ACPF, AState: String);
-begin
-  Self.FID := AID;
-  Self.FNome := ANome;
-  Self.CPF := ACPF;
-  Self.FEstado := AState;
-end;
+  // CONSTRUCTOR;
+  constructor TCliente.Create(AID: Integer; ANome, ACPF, AState: String);
+  begin
+    Self.FID := AID;
+    Self.FNome := ANome;
+    Self.CPF := ACPF;
+    Self.FEstado := AState;
+  end;
 
-constructor TCliente.Create;
-begin
-  Inherited
-end;
+  constructor TCliente.Create;
+  begin
+    Inherited
+  end;
 
-Function TCliente.ValidarCpf: Boolean;
-begin
-  Result := TCPFValidator.Validate(Self.FCPF);
-end;
+  //VALIDAR DOMÍNIO
+  procedure TCliente.Validar;
+  begin
 
+    if Self.FNome = '' then
+      Raise Exception.Create('NOME NÃO PODE SER VAZIO');
+
+    if Self.CPF = '' then
+      Raise Exception.Create('CPF NÃO PODE SER VAZIO');
+
+    if Self.Estado = '' then
+      Raise Exception.Create('ESTADO NÃO PODE SER VAZIO');
+
+    if not TCPFValidator.Validate(Self.FCPF) then
+      Raise Exception.Create('CPF INVÁLIDO');
+  end;
+
+  //VERIFICAR SE CLIENTE ESTÁ IRREGULAR
+  procedure TCliente.VerificarEstado;
+  begin
+    if Self.Estado = 'I' then
+      Raise Exception.Create('CLIENTE IRREGULAR!');
+  end;
 end.

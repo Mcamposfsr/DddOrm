@@ -10,7 +10,7 @@ uses
   UDM,UIRepository,UAppOrdemServico,UDomainOS,UGenericRep,UControllerOS,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client,UDomainClientes
   ;
 
 type
@@ -32,7 +32,6 @@ type
     DataSource: TDataSource;
     FDMemTable: TFDMemTable;
     DateTimePickerOS: TDateTimePicker;
-    procedure FormCreate(Sender: TObject);
     procedure ButtonBuscarClick(Sender: TObject);
     procedure ButtonCadastrarClick(Sender: TObject);
     procedure ButtonAlterarClick(Sender: TObject);
@@ -43,7 +42,8 @@ type
   private
     //FERRAMENTAS
     FDM: IDM;
-    FRepository: IRepository<TOrdemServico>;
+    FRepOS: IRepository<TOrdemServico>;
+    FRepCliente: IRepository<TCliente>;
     FApp: IAppOrdemServico;
     FController: IControllerOrdemServico;
     FIDCurrentOS: Integer;
@@ -53,7 +53,12 @@ type
     procedure FormControl(AState:Boolean);
 
   public
-    { Public declarations }
+    //RECEBER ID CLIENTE ATUAL + REPOSITÓRIO CLIENTE PARA REGRAS DE FLUXO NO APP O.S
+    constructor Create(
+    AOWner:TComponent;
+    AIDCliente:Integer;
+    ARepCliente:IRepository<TCliente>
+    ); Reintroduce;
   end;
 
 
@@ -64,10 +69,12 @@ implementation
 
 {$R *.dfm}
 
-procedure TFormOS.FormCreate(Sender: TObject);
+  constructor TFormOS.Create(AOWner:TComponent;AIDCliente:Integer;ARepCliente:IRepository<TCliente>);
   var LLocationDB: String;
   begin
-    FIDCliente := 32;
+    inherited Create(AOwner);
+    FIDCliente := AIDCliente;
+    FRepCliente := ARepCliente;
 
     LLocationDB := ExtractFilePath(ParamStr(0)) + '\..\..\DataBase\TESTE.FDB';
     //AJUSTAR CLIENTE - SERÁ RECEBIDO NO CREATE DO FORM
@@ -87,19 +94,20 @@ procedure TFormOS.FormCreate(Sender: TObject);
     );
 
     //CRIAR REPOSITORY
-    FRepository := TRepository<TOrdemServico>.Create(FDM.GetConnection);
+    FRepOS := TRepository<TOrdemServico>.Create(FDM.GetConnection);
 
     //PASSAR DATASET PARA LIGAR AO ORM
-    FRepository.ReceberDataSet(Self.FDMemTable);
+    FRepOS.ReceberDataSet(Self.FDMemTable);
 
     //CRIAR APPLICATION
-    FApp := TAppOrdemServico.Create(FRepository);
+    FApp := TAppOrdemServico.Create(Self.FRepOS,Self.FRepCliente);
 
     //CONTROLLER
-    FController := TControllerOrdemServico.Create(FApp,FRepository);
+    FController := TControllerOrdemServico.Create(FApp,FRepOS);
 
-    FRepository.AtualizarDataSet;
+    FRepOS.AtualizarDataSetWhere('ID_CLIENTE',FIDCliente);
   end;
+
 
   //BUSCAR O.S
   procedure TFormOS.ButtonBuscarClick(Sender: TObject);
@@ -133,7 +141,7 @@ procedure TFormOS.FormCreate(Sender: TObject);
       Self.FOperacao := '';
       Self.EditValor.Text := '';
       Self.ComboBoxSituacao.ItemIndex := -1;
-      Self.DateTimePickerOS.DateTime := 0;
+      Self.DateTimePickerOS.DateTime := now;
       Self.FormControl(True);
       Self.FOperacao := 'INSERT';
   end;
@@ -157,7 +165,7 @@ procedure TFormOS.FormCreate(Sender: TObject);
     if FIDCurrentOS <> -1 then
     begin
       //CHAMADA CONTROLLER
-      Self.FController.DeletarOS(FIDCurrentOS);
+      Self.FController.DeletarOS(FIDCurrentOS,Self.FIDCliente);
 
       //CONTROLE DE ESTADO FORMULÁRIO
       Self.FormControl(False);
@@ -165,7 +173,7 @@ procedure TFormOS.FormCreate(Sender: TObject);
       ShowMessage('Cliente Deletado!');
     end
     else
-      ShowMessage('SELECIONE UM CLIENTE!');
+      ShowMessage('SELECIONE UMA O.S!');
 
   end;
 
@@ -180,7 +188,7 @@ procedure TFormOS.FormCreate(Sender: TObject);
         Self.FController.CadastrarOS(
         FIDCliente,
         Self.DateTimePickerOS.Date,
-        StrToCurr(Self.EditValor.Text),
+        Self.EditValor.Text,
         Self.ComboBoxSituacao.Text
         );
        Self.FormControl(False);
@@ -191,7 +199,7 @@ procedure TFormOS.FormCreate(Sender: TObject);
         Self.FDMemTable.FieldByName('ID_OS').AsInteger,
         FIDCliente,
         Self.DateTimePickerOS.Date,
-        StrToCurr(Self.EditValor.Text),
+        Self.EditValor.Text,
         Self.ComboBoxSituacao.Text
         );
         Self.FormControl(False);

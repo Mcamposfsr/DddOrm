@@ -2,7 +2,7 @@ unit UAppOrdemServico;
 
 interface
 
-uses UDomainOS, System.Generics.Collections, UIRepository, System.SysUtils,VCL.Dialogs;
+uses UDomainOS, System.Generics.Collections, UIRepository, System.SysUtils,VCL.Dialogs,UDomainClientes;
 
 type IAppOrdemServico = Interface
 //    Function BuscarOS(AIDCliente:Integer):TObjectList<TOrdemServico>;
@@ -21,19 +21,21 @@ type IAppOrdemServico = Interface
       procedure AtualizarOS(AID,AIDCliente:Integer;ADataOS:TDate;AValor:Currency;AEstado:String);
       procedure DeletarOS(AID:Integer);
 
-      constructor Create(ARep:IRepository<TOrdemServico>);
+      constructor Create(ARepOS:IRepository<TOrdemServico>;ARepCliente:IRepository<TCliente>);
     private
 
-      FRepository: IRepository<TOrdemServico>;
+      FRepOS: IRepository<TOrdemServico>;
+      FRepCliente: IRepository<TCliente>;
 
   end;
 
 implementation
 
   //RECEBER REPOSITORY
-  constructor TAppOrdemServico.Create(ARep:IRepository<TOrdemServico>);
+  constructor TAppOrdemServico.Create(ARepOS:IRepository<TOrdemServico>;ARepCliente:IRepository<TCliente>);
   begin
-    FRepository := ARep;
+    FRepOS := ARepOS;
+    FRepCliente := ARepCliente;
   end;
 
   //BUSCAR ORDEM DE SERVIÇO
@@ -41,17 +43,27 @@ implementation
   var LID: String;
   begin
     LID := IntToStr(AID);
-    Result := FRepository.Select(LID);
+    Result := FRepOS.Select(LID);
   end;
 
 
 
   //CADASTRAR OS
   procedure TAppOrdemServico.InserirOS(AIDCliente:Integer;ADataOS:TDate;AValor:Currency;AEstado:String);
-  var LOS: TOrdemServico;
+  var
+  LOS: TOrdemServico;
+  LID: String;
+  LCLiente: TCliente;
   begin
+    LID := IntToStr(AIDCliente);
     LOS := nil;
+    LCliente := nil;
     try
+      LCliente := FRepCliente.Select(LID);
+
+      //REGRA DE FLUXO UTILIZANDO REPOSITORY CLIENTES
+      LCliente.VerificarEstado;
+
       LOS := TOrdemServico.Create(
       0,
       AIDCliente,
@@ -60,8 +72,11 @@ implementation
       AEstado
       );
 
-      FRepository.Insert(LOS);
+      LOS.Validar;
+
+      FRepOS.Insert(LOS);
     finally
+      LCliente.Free;
       LOS.Free;
     end;
   end;
@@ -76,13 +91,16 @@ implementation
     LOS := nil;
     try
       LOS := TOrdemServico.Create(
-      0,
+      AID,
       AIDCliente,
       ADataOS,
       AValor,
       AEstado
       );
-      FRepository.Update(LID,LOS);
+
+      LOS.Validar;
+
+      FRepOS.Update(LID,LOS);
     finally
       LOS.Free;
     end;
@@ -104,7 +122,7 @@ implementation
       ''
       );
 
-      FRepository.Delete(LOS);
+      FRepOS.Delete(LOS);
     finally
       LOS.Free;
     end;

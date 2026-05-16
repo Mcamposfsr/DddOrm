@@ -20,7 +20,6 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TFormOS, FormOS);
   Application.CreateForm(TFormPrincipal, FormPrincipal);
   Application.Run;
 end.

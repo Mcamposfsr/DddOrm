@@ -40,7 +40,7 @@ type TRepository<T: class, constructor> = class(TInterFacedObject,IRepository<T>
 
     procedure ReceberDataSet(ADataSet: TDataSet);
     procedure AtualizarDataSet; Overload;
-    procedure AtualizarDataSetWhere(AColumn,AValue:String); Overload;
+    procedure AtualizarDataSetWhere(AColumn:String;AValue:Integer); Overload;
 
     constructor Create(AConn:TFDConnection);
 
@@ -127,9 +127,17 @@ implementation
     Self.FContainerDataSet := TContainerFDMemTable<T>.Create(FConn,ADataSet);
   end;
 
-  procedure TRepository<T>.AtualizarDataSetWhere(AColumn,AValue:String);
+  procedure TRepository<T>.AtualizarDataSetWhere(AColumn:String;AValue:Integer);
+  var
+  LSQL: String;
+  LID: String;
   begin
-
+    LID := IntToStr(AValue);
+    LSQL := AColumn + '=' + LID;
+    if Assigned(Self.FContainerDataSet) then
+      Self.FContainerDataSet.OpenWhere(LSQL)
+    else
+      Raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
   end;
 
   //ATUALIZAR DATASET

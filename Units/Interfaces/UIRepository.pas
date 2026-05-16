@@ -15,7 +15,8 @@ interface
 
       //TRABALHAR RETORNO PARA UI
       procedure ReceberDataSet(ADataSet: TDataSet);
-      procedure AtualizarDataSet;
+      procedure AtualizarDataSet; Overload;
+      procedure AtualizarDataSetWhere(AColumn:String;AValue:Integer); Overload;
   end;
 
 implementation

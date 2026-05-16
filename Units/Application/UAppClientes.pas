@@ -54,9 +54,8 @@ implementation
     try
      LCliente := TCliente.Create(0,ANome,ACPF,AEstado);
 
-     //REGRA DE NEGÓCIO - VALIDAR CPF
-     if not LCliente.ValidarCpf then
-      raise Exception.Create('CPF INVÁLIDO');
+      //REGRA DE NEGÓCIO - VALIDAR DOMÍNIO CLIENTE
+     LCliente.Validar;
 
      FRepository.Insert(LCliente);
     finally
@@ -74,9 +73,8 @@ implementation
     try
      LCliente := TCliente.Create(AID,ANome,ACPF,AEstado);
 
-     //REGRA DE NEGÓCIO - VALIDAR CPF
-     if not LCliente.ValidarCpf then
-      raise Exception.Create('CPF INVÁLIDO');
+     //REGRA DE NEGÓCIO - VALIDAR DOMÍNIO CLIENTE
+     LCliente.Validar;
 
      FRepository.Update(LID,LCliente);
     finally

@@ -20,7 +20,6 @@ uses
   [Entity]
   [Table('ORDEM_SERVICO','')]
   [PrimaryKey('ID_OS','Chave Primária')]
-
   TOrdemServico = class
 
   private
@@ -31,14 +30,16 @@ uses
     FEstadoOS: String;
 
   public
+    procedure Validar;
     Constructor Create(AID,AIDCliente:Integer;ADataOS:TDate;AValorOS:Currency;AEstado:String); Overload;
+
 
   published
     [Restrictions([NotNull,NoUpdate,NoInsert])] //CONTROLE DA CHAVE PRIMÁRIA
     [Column('ID_OS', ftInteger)]
     property ID: Integer Read FID Write FID;
 
-    [Restrictions([NoUpdate])]
+//    [Restrictions([NoUpdate])]
     [Column('ID_CLIENTE',ftInteger)]
     property IDCliente: Integer Read FIDCliente Write FIDCliente;
 
@@ -65,6 +66,20 @@ implementation
     Self.FDataOS := ADataOS;
     Self.FValorOS := AValorOS;
     Self.FEstadoOS := AEstado;
+  end;
+
+  procedure TOrdemServico.Validar;
+  begin
+
+    if Self.FDataOS < IncMonth(now, -3) then
+      Raise Exception.Create('DATA INVÁLIDA - LIMITE DE ATÉ 3 MESES ATRÁS');
+
+    if Self.FValorOS = 0 then
+      Raise Exception.Create('VALOR INVÁLIDO');
+
+    if Self.FEstadoOS = '' then
+      Raise Exception.Create('ESTADO NÃO PODE SER VAZIO');
+
   end;
 
 end.

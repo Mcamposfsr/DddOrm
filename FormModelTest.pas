@@ -10,7 +10,7 @@ uses
   FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FB,
   FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Comp.Client,FireDAC.Stan.Param, FireDAC.DatS,
-  FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
+  FireDAC.DApt.Intf, FireDAC.Comp.DataSet,UFormOS,
 
   System.Generics.Collections,
   //CLASSE MODELO ORM
@@ -55,6 +55,7 @@ type
     procedure ButtonCadastrarClick(Sender: TObject);
     procedure ButtonAlterarClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
+    procedure ButtonOSClick(Sender: TObject);
   private
     //FERRAMENTAS
     FDM: IDM;
@@ -144,6 +145,21 @@ implementation
     end;
   end;
 
+  procedure TFormPrincipal.ButtonOSClick(Sender: TObject);
+  var
+  LForm: TFormOS;
+  LID: Integer;
+  begin
+    LID := Self.FDMemTable.FieldByName('ID_CLIENTE').AsInteger;
+    LForm := nil;
+    try
+      LForm := TFormOS.Create(nil,LID,Self.FRepository);
+      LForm.ShowModal;
+    finally
+      LForm.Free;
+    end;
+  end;
+
 
   //CADASTRO
   procedure TFormPrincipal.ButtonCadastrarClick(Sender: TObject);
@@ -152,7 +168,7 @@ implementation
     Self.FormControl(True);
     Self.EditNome.Text := '';
     Self.EditCPF.Text := '';
-    Self.ComboBoxSituacao.Text := '';
+    Self.ComboBoxSituacao.ItemIndex := -1;
     Self.FOperacao := 'INSERT';
   end;
 
@@ -187,7 +203,8 @@ implementation
       ShowMessage('SELECIONE UM CLIENTE!');
   end;
 
-  // ############ CANCEL / SAVE ############ CANCEL / SAVE ############ CANCEL / SAVE ############ CANCEL / SAVE ############ CANCEL / SAVE
+
+// ############ CANCEL / SAVE ############ CANCEL / SAVE ############ CANCEL / SAVE ############ CANCEL / SAVE ############ CANCEL / SAVE
 
   //SALVAR
   procedure TFormPrincipal.ButtonSalvarClick(Sender: TObject);

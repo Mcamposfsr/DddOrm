@@ -190,7 +190,7 @@ object FormPrincipal: TFormPrincipal
         Margins.Right = 30
         Margins.Bottom = 0
         Align = alLeft
-        Caption = 'O.S'
+        Caption = 'BUSCAR O.S'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -198,7 +198,7 @@ object FormPrincipal: TFormPrincipal
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 4
-        OnClick = ButtonCadastrarClick
+        OnClick = ButtonOSClick
       end
     end
     object ButtonCancel: TButton
