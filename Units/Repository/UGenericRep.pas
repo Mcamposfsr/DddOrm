@@ -2,48 +2,48 @@ unit UGenericRep;
 
 interface
 
-uses Vcl.Dialogs,Firedac.comp.Client, FireDAC.Stan.Param,
-  System.SysUtils,Data.DB, FireDAC.Stan.Option, FireDAC.Comp.DataSet,
-  DateUtils, System.Classes,System.Generics.Collections,
-
-  UIRepository,
-
-
-  dbebr.factory.interfaces,
-  dbebr.factory.firedac,
-  ormbr.dml.generator.firebird,
-  ormbr.container.fdmemtable,
-  ormbr.container.dataset.interfaces,
+uses
+  Vcl.Dialogs, Firedac.comp.Client, FireDAC.Stan.Param, System.SysUtils, Data.DB,
+  FireDAC.Stan.Option, FireDAC.Comp.DataSet, DateUtils, System.Classes,
+  System.Generics.Collections, UIRepository, dbebr.factory.interfaces,
+  dbebr.factory.firedac, ormbr.dml.generator.firebird,
+  ormbr.container.fdmemtable, ormbr.container.dataset.interfaces,
 
 
   //OBJECT SET
-  ormbr.container.objectset.interfaces,
-  ormbr.container.objectset;
+  ormbr.container.objectset.interfaces, ormbr.container.objectset;
 
   //INTERFACE DM
- type IDM = Interface
-  Function GetConnection:TFDConnection;
-  procedure ConectarBD;
-  procedure DesconectarBd;
-  procedure ConnectionTest;
-End;
+type
+  IDM = interface
+    function GetConnection: TFDConnection;
+    procedure ConectarBD;
+    procedure DesconectarBd;
+    procedure ConnectionTest;
+  end;
 
-type TRepository<T: class, constructor> = class(TInterFacedObject,IRepository<T>)
+type
+  TRepository<T: class, constructor> = class(TInterFacedObject, IRepository<T>)
+  private
+    FConexaoAtual: IDBConnection;
+    procedure SetConexaoAtual(const Value: IDBConnection);
+  private
+    function GetConexaoAtual: IDBConnection;
 
   public
-
-    function Select(AID:String):T;
-    function SelectAll:TObjectList<T>;
-    procedure Insert(AClass:T);
-    procedure Update(AID:String;ANewClass:T);
-    procedure Delete(AClass:T);
+    function Select(AID: string): T;
+    function SelectAll: TObjectList<T>;
+    procedure Insert(AClass: T);
+    procedure Update(AID: string; ANewClass: T);
+    procedure Delete(AClass: T);
 
     procedure ReceberDataSet(ADataSet: TDataSet);
-    procedure AtualizarDataSet; Overload;
-    procedure AtualizarDataSetWhere(AColumn:String;AValue:Integer); Overload;
+    procedure AtualizarDataSet; overload;
+    procedure AtualizarDataSetWhere(AColumn: string; AValue: Integer); overload;
 
-    constructor Create(AConn:TFDConnection);
-
+    constructor Create(AConn: TFDConnection); overload;
+    constructor Create(AConn: IDBConnection); overload;
+    property ConexaoAtual: IDBConnection read GetConexaoAtual;
   private
     //ABSTRAÇÃO CONEXÃO ORMBr
     FConn: IDBConnection;
@@ -54,99 +54,122 @@ type TRepository<T: class, constructor> = class(TInterFacedObject,IRepository<T>
     //CONTAINER CRUD
     FObjectContainer: IContainerObjectSet<T>;
 
-    function Teste:IDBResultSet;
+    function Teste: IDBResultSet;
 
-end;
+  end;
 
 implementation
 
   //CONSTRUCTOR
-  constructor TRepository<T>.Create(AConn:TFDConnection);
-  begin
+
+constructor TRepository<T>.Create(AConn: TFDConnection);
+begin
     //ABSTRAÇÃO DO TIPO DE CONEXÃO "IDBConnection" - (FDConnection,enumFireBird)
-    FConn := TFactoryFireDAC.Create(AConn,dnFirebird);
+  FConn := TFactoryFireDAC.Create(AConn, dnFirebird);
     //CONTAINER CRUD
-    FObjectContainer := TContainerObjectSet<T>.Create(FConn);
-  end;
+  FObjectContainer := TContainerObjectSet<T>.Create(FConn);
+end;
+
+
+constructor TRepository<T>.Create(AConn: IDBConnection);
+begin
+    //ABSTRAÇÃO DO TIPO DE CONEXÃO "IDBConnection" - (FDConnection,enumFireBird)
+  FConn := AConn;
+    //CONTAINER CRUD
+  FObjectContainer := TContainerObjectSet<T>.Create(FConn);
+end;
 
   // ############### CRUD ############### CRUD ############### CRUD ############### CRUD ############### CRUD ############### CRUD
 
   //SELECIONAR TODOS
-  function TRepository<T>.SelectAll: TObjectList<T>;
-  begin
-    Result := FObjectContainer.Find;
-  end;
+function TRepository<T>.SelectAll: TObjectList<T>;
+begin
+  Result := FObjectContainer.Find;
+end;
 
-  //SELECIONAR POR ID
-  function TRepository<T>.Select(AID:String):T;
-  begin
-    Result := FObjectContainer.Find(AID);
-  end;
+procedure TRepository<T>.SetConexaoAtual(const Value: IDBConnection);
+begin
+  FConexaoAtual := Value;
+end;
+
+//SELECIONAR POR ID
+function TRepository<T>.Select(AID: string): T;
+begin
+  Result := FObjectContainer.Find(AID);
+end;
 
   //INSERIR
-  procedure TRepository<T>.Insert(AClass:T);
-  begin
-    FObjectContainer.Insert(AClass);
-  end;
+procedure TRepository<T>.Insert(AClass: T);
+begin
+  FObjectContainer.Insert(AClass);
+end;
 
   //ATUALIZAR
-  procedure TRepository<T>.Update(AID:String;ANewClass:T);
-  var LCurrentClass: T;
-  begin
-    LCurrentClass := nil;
-    try
+procedure TRepository<T>.Update(AID: string; ANewClass: T);
+var
+  LCurrentClass: T;
+begin
+  LCurrentClass := nil;
+  try
       //BUSCAR CLIENTE ATUAL
-      LCurrentClass := FObjectContainer.Find(AID);
-      FObjectContainer.Modify(LCurrentClass);
-      FObjectContainer.Update(ANewClass);
-    finally
+    LCurrentClass := FObjectContainer.Find(AID);
+    FObjectContainer.Modify(LCurrentClass);
+    FObjectContainer.Update(ANewClass);
+  finally
       //LIBERAR APENAS A CLASSE ATUAL, CLASSE NOVA, CHAMADOR DA FUNÇÃO LIBERA.
-      LCurrentClass.Free;
-    end;
+    LCurrentClass.Free;
   end;
+end;
 
   //DELETAR
-  procedure TRepository<T>.Delete(AClass:T);
-  begin
-    FObjectContainer.Delete(AClass);
-  end;
+procedure TRepository<T>.Delete(AClass: T);
+begin
+  FObjectContainer.Delete(AClass);
+end;
 
-  //SQL DIRETO
-  function TRepository<T>.Teste:IDBResultSet;
-  var LDataSet: IDBResultSet;
-  begin
-     LDataSet := FConn.CreateResultSet('SELECT COUNT(*) AS CONTAGEM FROM CLIENTES');
-     Result := LDataSet;
-  end;
+function TRepository<T>.GetConexaoAtual: IDBConnection;
+begin
+  result := FConn;
+end;
+
+//SQL DIRETO
+function TRepository<T>.Teste: IDBResultSet;
+var
+  LDataSet: IDBResultSet;
+begin
+  LDataSet := FConn.CreateResultSet('SELECT COUNT(*) AS CONTAGEM FROM CLIENTES');
+  Result := LDataSet;
+end;
 
   //################# DATASET ################# DATASET ################# DATASET ################# DATASET ################# DATASET
 
   //PASSAR CONTROLE DO DATA-SET PARA ORM REPOSITORY
-  procedure TRepository<T>.ReceberDataSet(ADataSet: TDataSet);
-  begin
-    Self.FContainerDataSet := TContainerFDMemTable<T>.Create(FConn,ADataSet);
-  end;
+procedure TRepository<T>.ReceberDataSet(ADataSet: TDataSet);
+begin
+  Self.FContainerDataSet := TContainerFDMemTable<T>.Create(FConn, ADataSet);
+end;
 
-  procedure TRepository<T>.AtualizarDataSetWhere(AColumn:String;AValue:Integer);
-  var
-  LSQL: String;
-  LID: String;
-  begin
-    LID := IntToStr(AValue);
-    LSQL := AColumn + '=' + LID;
-    if Assigned(Self.FContainerDataSet) then
-      Self.FContainerDataSet.OpenWhere(LSQL)
-    else
-      Raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
-  end;
+procedure TRepository<T>.AtualizarDataSetWhere(AColumn: string; AValue: Integer);
+var
+  LSQL: string;
+  LID: string;
+begin
+  LID := IntToStr(AValue);
+  LSQL := AColumn + '=' + LID;
+  if Assigned(Self.FContainerDataSet) then
+    Self.FContainerDataSet.OpenWhere(LSQL)
+  else
+    raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
+end;
 
   //ATUALIZAR DATASET
-  procedure TRepository<T>.AtualizarDataSet;
-  begin
-    if Assigned(Self.FContainerDataSet) then
-      Self.FContainerDataSet.Open
-    else
-      Raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
-  end;
+procedure TRepository<T>.AtualizarDataSet;
+begin
+  if Assigned(Self.FContainerDataSet) then
+    Self.FContainerDataSet.Open
+  else
+    raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
+end;
 
 end.
+

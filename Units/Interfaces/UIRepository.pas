@@ -2,11 +2,12 @@ unit UIRepository;
 
 interface
 
-  Uses Data.DB, System.Generics.Collections;
+  Uses Data.DB, System.Generics.Collections, dbebr.factory.interfaces;
 
  //ABSTRAÇÃO REPOSITÓRIO
   type IRepository<T: class, constructor> = interface
     //CRUD REPOSITORY
+      function GetConexaoAtual : IDBConnection;
       function Select(AID:String):T;
       function SelectAll:TObjectList<T>;
       procedure Insert(AClass:T);
@@ -17,6 +18,8 @@ interface
       procedure ReceberDataSet(ADataSet: TDataSet);
       procedure AtualizarDataSet; Overload;
       procedure AtualizarDataSetWhere(AColumn:String;AValue:Integer); Overload;
+      //
+      property ConexaoAtual : IDBConnection read GetConexaoAtual;
   end;
 
 implementation

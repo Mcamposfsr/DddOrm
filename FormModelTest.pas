@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.Grids,
-  Vcl.DBGrids, Vcl.ExtCtrls,
+  Vcl.DBGrids, Vcl.ExtCtrls, System.IOUtils,
   FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FB,
@@ -86,7 +86,13 @@ implementation
   procedure TFormPrincipal.FormCreate(Sender: TObject);
   var LLocationDB: String;
   begin
-    LLocationDB := ExtractFilePath(ParamStr(0)) + '\..\..\DataBase\TESTE.FDB';
+    // para banco Firebird 5
+    //LLocationDB := ExtractFilePath(ParamStr(0)) + '..\..\DataBase\TESTE.FDB';
+
+    // para banco Firebird 1.5
+    LLocationDB := TPath.GetFullPath(ExtractFilePath(ParamStr(0)) + '\..\..\..\TESTE_ORM.FDB');
+
+
     FIDCurrentClient := -1;
     //INICIAR SEM CLIENTE MARCADO
     FOperacao := '';
@@ -95,9 +101,9 @@ implementation
     //CRIAR DM
     FDM := TDM.Create(
     'SYSDBA',
-    'masterkey',
+    'managerx',
     'localhost',
-    '3050',
+    '3055',
     LLocationDB
     );
 

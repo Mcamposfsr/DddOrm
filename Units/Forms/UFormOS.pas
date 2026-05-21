@@ -41,7 +41,7 @@ type
     procedure EditValorKeyPress(Sender: TObject; var Key: Char);
   private
     //FERRAMENTAS
-    FDM: IDM;
+//    FDM: IDM;
     FRepOS: IRepository<TOrdemServico>;
     FRepCliente: IRepository<TCliente>;
     FApp: IAppOrdemServico;
@@ -85,16 +85,16 @@ implementation
 
 
     //CRIAR DM
-    FDM := TDM.Create(
-    'SYSDBA',
-    'masterkey',
-    'localhost',
-    '3050',
-    LLocationDB
-    );
+//    FDM := TDM.Create(
+//    'SYSDBA',
+//    'masterkey',
+//    'localhost',
+//    '3050',
+//    LLocationDB
+//    );
 
     //CRIAR REPOSITORY
-    FRepOS := TRepository<TOrdemServico>.Create(FDM.GetConnection);
+    FRepOS := TRepository<TOrdemServico>.Create(FRepCliente.ConexaoAtual);
 
     //PASSAR DATASET PARA LIGAR AO ORM
     FRepOS.ReceberDataSet(Self.FDMemTable);
