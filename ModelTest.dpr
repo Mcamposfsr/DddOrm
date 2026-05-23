@@ -1,7 +1,7 @@
 program ModelTest;
 
 uses
-  Vcl.Forms,
+  Vcl.Forms,System.IOUtils,System.SysUtils,
   FormModelTest in 'FormModelTest.pas' {FormPrincipal},
   UAppClientes in 'Units\Application\UAppClientes.pas',
   UControllerClientes in 'Units\Controllers\UControllerClientes.pas',
@@ -20,6 +20,33 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TFormPrincipal, FormPrincipal);
-  Application.Run;
+
+  try
+    var LLocationDB: String;
+
+    // para banco Firebird 5
+    LLocationDB := ExtractFilePath(ParamStr(0)) + '..\..\DataBase\TESTE.FDB';
+
+    // para banco Firebird 1.5
+//    LLocationDB := TPath.GetFullPath(ExtractFilePath(ParamStr(0)) + '\..\..\..\TESTE_ORM.FDB');
+
+    GDM := TDM.Create(
+    'SYSDBA',
+    'masterkey',
+    'localhost',
+    '3050',
+    LLocationDB
+    );
+
+    GDM.ConectarBD;
+
+    Application.CreateForm(TFormPrincipal, FormPrincipal);
+    Application.Run;
+
+  finally
+    GDM.Free;
+  end;
+
+
+
 end.

@@ -27,6 +27,8 @@ type
     procedure ConnectionTest;
   end;
 
+  var GDM: TDM;
+
 
 implementation
 

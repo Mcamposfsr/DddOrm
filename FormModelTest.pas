@@ -58,7 +58,6 @@ type
     procedure ButtonOSClick(Sender: TObject);
   private
     //FERRAMENTAS
-    FDM: IDM;
     FRepository: IRepository<TCliente>;
     FApp: IAppClientes;
     FController: IController;
@@ -86,29 +85,13 @@ implementation
   procedure TFormPrincipal.FormCreate(Sender: TObject);
   var LLocationDB: String;
   begin
-    // para banco Firebird 5
-    //LLocationDB := ExtractFilePath(ParamStr(0)) + '..\..\DataBase\TESTE.FDB';
-
-    // para banco Firebird 1.5
-    LLocationDB := TPath.GetFullPath(ExtractFilePath(ParamStr(0)) + '\..\..\..\TESTE_ORM.FDB');
-
 
     FIDCurrentClient := -1;
     //INICIAR SEM CLIENTE MARCADO
     FOperacao := '';
 
-
-    //CRIAR DM
-    FDM := TDM.Create(
-    'SYSDBA',
-    'managerx',
-    'localhost',
-    '3055',
-    LLocationDB
-    );
-
     //CRIAR REPOSITORY
-    FRepository := TRepository<TCliente>.Create(FDM.GetConnection);
+    FRepository := TRepository<TCliente>.Create(GDM.GetConnection);
     //PASSAR DATASET PARA LIGAR AO ORM
     FRepository.ReceberDataSet(Self.FDMemTable);
 
