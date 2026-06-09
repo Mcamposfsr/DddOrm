@@ -2,7 +2,7 @@ unit UAppFormasPGTO;
 
 
 interface
- uses System.Generics.Collections,UDomainFormasPagamento, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository;
+ uses System.Generics.Collections,UDomainFormasPGTO, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository;
 
   type IAppFormasPGTO = Interface
     Function BuscarFormasPGTO:TObjectList<TFormasPGTO>;

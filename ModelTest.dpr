@@ -16,12 +16,16 @@ uses
   UIRepository in 'Units\Interfaces\UIRepository.pas',
   UControllerOS in 'Units\Controllers\UControllerOS.pas',
   UFormOS in 'Units\Forms\UFormOS.pas' {FormOS},
-  UDomainFormasPagamento in 'Units\Domain\UDomainFormasPagamento.pas',
+  UDomainFormasPGTO in 'Units\Domain\UDomainFormasPGTO.pas',
   UDomainClientesPGTO in 'Units\Domain\UDomainClientesPGTO.pas',
   UAppClientesPGTO in 'Units\Application\UAppClientesPGTO.pas',
   UAppFormasPGTO in 'Units\Application\UAppFormasPGTO.pas',
   UControllerClientesPGTO in 'Units\Controllers\UControllerClientesPGTO.pas',
-  UControllerFormasPGTO in 'Units\Controllers\UControllerFormasPGTO.pas';
+  UControllerFormasPGTO in 'Units\Controllers\UControllerFormasPGTO.pas',
+  UFormCadastroFormaPGTO in 'Units\Forms\FormsSecundarios\UFormCadastroFormaPGTO.pas' {FormCadastroPGTO},
+  UFormClientesPGTO in 'Units\Forms\UFormClientesPGTO.pas' {FormClientesPGTO},
+  UFormFormasPGTO in 'Units\Forms\UFormFormasPGTO.pas' {FormFormasPGTO},
+  UFormCadastroClientePGTO in 'Units\Forms\FormsSecundarios\UFormCadastroClientePGTO.pas' {FormCadastroClientes};
 
 //VARIÁVEL DE AJUSTE PARA BANCO.
   var LLocationDB: String;
@@ -50,7 +54,7 @@ begin
 
     GDM.ConectarBD;
 
-    Application.CreateForm(TFormPrincipal, FormPrincipal);
+    Application.CreateForm(TFormClientesPGTO, FormClientesPGTO);
   Application.Run;
 
   finally

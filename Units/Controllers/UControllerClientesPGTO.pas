@@ -6,18 +6,20 @@ uses UDomainClientesPGTO,UIRepository,UAppClientesPGTO, System.Generics.Collecti
 
 type IControllerClientesPGTO = interface
   function BuscarClientePGTO(ACOD:Integer):TClientePGTO;
-  procedure CadastrarClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail:String;ALimiteCredito:Currency);
-  procedure AlterarClientePGTO(ACOD:Integer;ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail:String;ALimiteCredito:Currency);
+  procedure CadastrarClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
+  procedure AlterarClientePGTO(ACOD:Integer;ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
   procedure DeletarClientePGTO(ACOD:Integer);
+  procedure FiltrarClientesPGTO(ANome:String);
 end;
 
 //CONTROLLER FORM CLIENTES PAGAMENTO
 type TControllerClientesPGTO = class(TInterfacedObject,IControllerClientesPGTO)
   public
     function BuscarClientePGTO(ACOD:Integer):TClientePGTO;
-    procedure CadastrarClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail:String;ALimiteCredito:Currency);
-    procedure AlterarClientePGTO(ACOD:Integer;ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail:String;ALimiteCredito:Currency);
+    procedure CadastrarClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
+    procedure AlterarClientePGTO(ACOD:Integer;ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
     procedure DeletarClientePGTO(ACOD:Integer);
+    procedure FiltrarClientesPGTO(ANome:String);
 
     constructor Create(AApp:IAppClientesPGTO;ARep:IRepository<TClientePGTO>);
   private
@@ -48,18 +50,21 @@ implementation
   APessoa,
   ADocumento,
   AAtivo,
-  AEmail:String;
-  ALimiteCredito:Currency);
-  var LValor: Currency;
+  AEmail,
+  ALimiteCredito: String
+  );
+  var
+  LLimiteCredito: Currency;
+
   begin
     try
-      Self.FApp.InserirClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito);
+      //RETIRAR O '.' ANTES DA CONVERSÃO PARA EVITAR ERROS DE CONVERSÃO
+      LLimiteCredito := StrToFloat(StringReplace(ALimiteCredito, '.', '', [rfReplaceAll]));
+      Self.FApp.InserirClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,LLimiteCredito);
       Self.FRep.AtualizarDataSet;
     except
       on E: Exception do
-      begin
-        ShowMessage('Ocorreu um erro: ' +  sLineBreak + E.Message);
-      end;
+        ShowMessage('Ocorreu um erro: ' + sLineBreak + E.Message);
     end;
   end;
 
@@ -73,13 +78,14 @@ implementation
   APessoa,
   ADocumento,
   AAtivo,
-  AEmail:String;
-  ALimiteCredito:Currency
+  AEmail,
+  ALimiteCredito:String
   );
-  var LValor: Currency;
+  var LLimiteCredito: Currency;
   begin
     try
-      Self.FApp.AtualizarClientePGTO(ACOD,ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito);
+      LLimiteCredito := StrToFloat(StringReplace(ALimiteCredito, '.', '', [rfReplaceAll]));
+      Self.FApp.AtualizarClientePGTO(ACOD,ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,LLimiteCredito);
       Self.FRep.AtualizarDataSet;
     except
       on E: Exception do
@@ -95,6 +101,19 @@ implementation
     try
       Self.FApp.DeletarClientePGTO(ACOD);
       Self.FRep.AtualizarDataSet;
+    except
+      on E: Exception do
+      begin
+        ShowMessage('Ocorreu um erro: ' +  sLineBreak + E.Message);
+      end;
+    end;
+  end;
+
+  //FILTRAR
+  procedure TControllerClientesPGTO.FiltrarClientesPGTO(ANome:String);
+  begin
+    try
+      Self.FRep.FiltrarDataSet('CLI_NOME',ANome);
     except
       on E: Exception do
       begin

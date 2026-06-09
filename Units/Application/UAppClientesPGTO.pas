@@ -63,7 +63,6 @@ implementation
     LCliente := nil;
     try
      LCliente := TClientePGTO.Create(0,ANome,AEndereco,ANumero,ATelefone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito);
-
      FRepository.Insert(LCliente);
     finally
       LCliente.Free;

@@ -36,10 +36,13 @@ type
     procedure Insert(AClass: T);
     procedure Update(AID: string; ANewClass: T);
     procedure Delete(AClass: T);
+    procedure FiltrarDataSet(AColumn,AFilter:String);
 
     procedure ReceberDataSet(ADataSet: TDataSet);
     procedure AtualizarDataSet; overload;
     procedure AtualizarDataSetWhere(AColumn: string; AValue: Integer); overload;
+
+
 
     constructor Create(AConn: TFDConnection); overload;
     constructor Create(AConn: IDBConnection); overload;
@@ -125,6 +128,18 @@ end;
 procedure TRepository<T>.Delete(AClass: T);
 begin
   FObjectContainer.Delete(AClass);
+end;
+
+procedure TRepository<T>.FiltrarDataSet(AColumn,AFilter:String);
+begin
+  if AFilter = '' then
+  begin
+   Self.FContainerDataSet.DataSet.Filtered := False;
+   Self.FContainerDataSet.DataSet.Filter := '';
+   Exit
+  end;
+  Self.FContainerDataSet.DataSet.Filter := Format('%s like ''%s%%''', [AColumn, AFilter]);
+  Self.FContainerDataSet.DataSet.Filtered := True;
 end;
 
 function TRepository<T>.GetConexaoAtual: IDBConnection;

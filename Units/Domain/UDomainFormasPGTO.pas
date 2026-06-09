@@ -1,4 +1,4 @@
-unit UDomainFormasPagamento;
+unit UDomainFormasPGTO;
 
 interface
 

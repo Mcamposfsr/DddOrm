@@ -104,6 +104,8 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -142,12 +144,28 @@
         <DCCReference Include="Units\Forms\UFormOS.pas">
             <Form>FormOS</Form>
         </DCCReference>
-        <DCCReference Include="Units\Domain\UDomainFormasPagamento.pas"/>
+        <DCCReference Include="Units\Domain\UDomainFormasPGTO.pas"/>
         <DCCReference Include="Units\Domain\UDomainClientesPGTO.pas"/>
         <DCCReference Include="Units\Application\UAppClientesPGTO.pas"/>
         <DCCReference Include="Units\Application\UAppFormasPGTO.pas"/>
         <DCCReference Include="Units\Controllers\UControllerClientesPGTO.pas"/>
         <DCCReference Include="Units\Controllers\UControllerFormasPGTO.pas"/>
+        <DCCReference Include="Units\Forms\FormsSecundarios\UFormCadastroFormaPGTO.pas">
+            <Form>FormCadastroPGTO</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Forms\UFormClientesPGTO.pas">
+            <Form>FormClientesPGTO</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Forms\UFormFormasPGTO.pas">
+            <Form>FormFormasPGTO</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Forms\FormsSecundarios\UFormCadastroClientePGTO.pas">
+            <Form>FormCadastroClientes</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -169,8 +187,10 @@
                     <Source Name="MainSource">ModelTest.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k290.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Matheus\Desktop\ACBr\Lib\Delphi\LibD25\Win32\DCLACBr_Ponto.bpl">ACBr - (design-time) Ponto Eletrônico - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\19.0\Bpl\RosiDBDesignEditors_DX102.bpl">Rosi components DesignTime Dialogs</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

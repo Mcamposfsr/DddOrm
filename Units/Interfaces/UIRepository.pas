@@ -13,6 +13,7 @@ interface
       procedure Insert(AClass:T);
       procedure Update(AID:String;ANewClass:T);
       procedure Delete(AClass:T);
+      procedure FiltrarDataSet(AColumn,AFilter:String);
 
       //TRABALHAR RETORNO PARA UI
       procedure ReceberDataSet(ADataSet: TDataSet);

@@ -2,9 +2,9 @@ unit UControllerFormasPGTO;
 
 interface
 
-uses UDomainFormasPagamento,UIRepository,UAppFormasPGTO, System.Generics.Collections,System.Classes, System.SysUtils, Vcl.Dialogs;
+uses UDomainFormasPGTO,UIRepository,UAppFormasPGTO, System.Generics.Collections,System.Classes, System.SysUtils, Vcl.Dialogs;
 
-type IFormasPagamento = interface
+type IControllerFormasPGTO = interface
     function BuscarFormaPGTO(ACOD:Integer):TFormasPGTO;
     procedure CadastrarFormaPGTO(ANome:String;AParcelas:Integer;AJuros:Currency);
     procedure AlterarFormaPGTO(ACOD:Integer;ANome:String;AParcelas:Integer;AJuros:Currency);
@@ -12,7 +12,7 @@ type IFormasPagamento = interface
 end;
 
 //CONTROLLER FORM CLIENTES PAGAMENTO
-type TControllerFormasPGTO = class(TInterfacedObject,IFormasPagamento)
+type TControllerFormasPGTO = class(TInterfacedObject,IControllerFormasPGTO)
   public
     function BuscarFormaPGTO(ACOD:Integer):TFormasPGTO;
     procedure CadastrarFormaPGTO(ANome:String;AParcelas:Integer;AJuros:Currency);
@@ -40,12 +40,10 @@ implementation
   end;
 
   //CADASTRAR
-  procedure TControllerFormasPGTO.CadastrarFormaPGTO(
-  ANome:String;
-  AParcelas:Integer;
-  AJuros:Currency
-  );
-  var LValor: Currency;
+  procedure TControllerFormasPGTO.CadastrarFormaPGTO(ANome:String;AParcelas:Integer;AJuros:Currency);
+  var
+  LParcelas: Integer;
+  LJuros: Currency;
   begin
     try
       Self.FApp.InserirFormasPGTO(ANome,AParcelas,AJuros);
