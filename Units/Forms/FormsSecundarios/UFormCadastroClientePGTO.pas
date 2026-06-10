@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, NumericEdit, Vcl.StdCtrls,
 
-  UControllerClientesPGTO,UDomainClientesPGTO;
+  UControllerClientesPGTO,UDomainClientesPGTO, Vcl.Buttons;
 
 type
   TFormCadastroClientes = class(TForm)
@@ -17,21 +17,32 @@ type
     EditEndereco: TEdit;
     EditNumero: TEdit;
     Label3: TLabel;
-    Label4: TLabel;
     Label5: TLabel;
     EditDocumento: TEdit;
     Label6: TLabel;
     Label7: TLabel;
-    MemoTelefone: TMemo;
     ComboBoxPessoa: TComboBox;
     NumericEditCredito: TNumericEdit;
     Label8: TLabel;
     ComboBoxAtivo: TComboBox;
-    MemoEmail: TMemo;
-    Label9: TLabel;
     BtnFinal: TButton;
+    GroupBox1: TGroupBox;
+    EditEmail: TEdit;
+    BitBtnRemoverEmail: TBitBtn;
+    ListBoxEmail: TListBox;
+    BitBtnAdicionarEmail: TBitBtn;
+    GroupBox2: TGroupBox;
+    EditTelefone: TEdit;
+    BitBtnAdicionarTelefone: TBitBtn;
+    BitBtnRemoverTelefone: TBitBtn;
+    ListBoxTelefones: TListBox;
     procedure FormShow(Sender: TObject);
     procedure BtnFinalClick(Sender: TObject);
+    procedure BitBtnAdicionarEmailClick(Sender: TObject);
+    procedure BitBtnRemoverEmailClick(Sender: TObject);
+    procedure BitBtnAdicionarTelefoneClick(Sender: TObject);
+    procedure BitBtnRemoverTelefoneClick(Sender: TObject);
+    procedure GroupBox2Click(Sender: TObject);
   private
 
     //FERRAMENTAS
@@ -107,9 +118,18 @@ implementation
     end;
   end;
 
-  // ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
+  procedure TFormCadastroClientes.GroupBox2Click(Sender: TObject);
+begin
 
-  procedure TFormCadastroClientes.BtnFinalClick(Sender: TObject);
+end;
+
+// ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
+
+
+
+
+
+procedure TFormCadastroClientes.BtnFinalClick(Sender: TObject);
   begin
     //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
     if FOperacao = 'INSERT' then
@@ -118,11 +138,11 @@ implementation
       EditNome.Text,
       EditEndereco.Text,
       EditNumero.Text,
-      String.Join(';', MemoTelefone.Lines.ToStringArray),
+      String.Join(';', ListBoxTelefones.Items.ToStringArray),
       ComboBoxPessoa.Text,
       EditDocumento.Text,
       ComboBoxAtivo.Text,
-      String.Join(';', MemoEmail.Lines.ToStringArray),
+      String.Join(';', ListBoxEmail.Items.ToStringArray),
       NumericEditCredito.Text
       );
       ShowMessage('CLIENTE CADASTRADO!');
@@ -135,11 +155,11 @@ implementation
       EditNome.Text,
       EditEndereco.Text,
       EditNumero.Text,
-      String.Join(';', MemoTelefone.Lines.ToStringArray),
+      String.Join(';', ListBoxTelefones.Items.ToStringArray),
       ComboBoxPessoa.Text,
       EditDocumento.Text,
       ComboBoxAtivo.Text,
-      String.Join(';', MemoEmail.Lines.ToStringArray),
+      String.Join(';', ListBoxEmail.Items.ToStringArray),
       NumericEditCredito.Text
       );
       ShowMessage('CLIENTE ATUALIZADO!');
@@ -153,6 +173,38 @@ implementation
     end;
   end;
 
+  //ADICIONAR EMAIL A LISTA
+  procedure TFormCadastroClientes.BitBtnAdicionarEmailClick(Sender: TObject);
+  begin
+    ListBoxEmail.Items.Add(Self.EditEmail.Text);
+    Self.EditEmail.Clear;
+  end;
+
+  //REMOVER EMAIL DA LISTA
+  procedure TFormCadastroClientes.BitBtnRemoverEmailClick(Sender: TObject);
+  begin
+    if ListBoxEmail.ItemIndex >= 0 then
+      ListBoxEmail.Items.Delete(ListBoxEmail.ItemIndex)
+    else
+      ShowMessage('SELECIONE UM EMAIL!');
+  end;
+
+  //ADICIONAR TELEFONE A LISTA
+  procedure TFormCadastroClientes.BitBtnAdicionarTelefoneClick(Sender: TObject);
+  begin
+    ListBoxTelefones.Items.Add(Self.EditTelefone.Text);
+    Self.EditTelefone.Clear;
+  end;
+
+  //REMOVER TELEFONE DA LISTA
+  procedure TFormCadastroClientes.BitBtnRemoverTelefoneClick(Sender: TObject);
+  begin
+    if ListBoxTelefones.ItemIndex >= 0 then
+      ListBoxTelefones.Items.Delete(ListBoxTelefones.ItemIndex)
+    else
+      ShowMessage('SELECIONE UM TELEFONE!');
+  end;
+
   // ########## MÉTODOS AUXÍLIARES ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES
 
   // PASSAR VALORES DDO PARA FORM
@@ -163,18 +215,18 @@ implementation
     EditNumero.Text := ACliente.Numero;
     EditDocumento.Text := ACliente.Documento;
 
-    MemoTelefone.Lines.StrictDelimiter := True;
-    MemoTelefone.Lines.Delimiter := ';';
-    MemoTelefone.Lines.DelimitedText := ACliente.Telefone;
+    ListBoxTelefones.Items.StrictDelimiter := True;
+    ListBoxTelefones.Items.Delimiter := ';';
+    ListBoxTelefones.Items.DelimitedText := ACliente.Telefone;
 
     ComboBoxPessoa.ItemIndex := ComboBoxPessoa.Items.IndexOf(ACliente.Pessoa);
     NumericEditCredito.Value := ACliente.LimiteCredito;
 
     ComboBoxAtivo.ItemIndex :=  ComboBoxAtivo.Items.IndexOf(ACliente.Ativo);
 
-    MemoEmail.Lines.StrictDelimiter := True;
-    MemoEmail.Lines.Delimiter := ';';
-    MemoEmail.Lines.DelimitedText := ACliente.Email;
+    ListBoxEmail.Items.StrictDelimiter := True;
+    ListBoxEmail.Items.Delimiter := ';';
+    ListBoxEmail.Items.DelimitedText := ACliente.Email;
   end;
 
   // ATIVAR/DESATIVAR ELEMENTOS
@@ -184,11 +236,22 @@ implementation
     EditEndereco.Enabled := AEstado;
     EditNumero.Enabled := AEstado;
     EditDocumento.Enabled := AEstado;
-    MemoTelefone.Enabled := AEstado;
+
     ComboBoxPessoa.Enabled := AEstado;
     NumericEditCredito.Enabled := AEstado;
     ComboBoxAtivo.Enabled := AEstado;
-    MemoEmail.Enabled := AEstado;
+
+
+    ListBoxTelefones.Enabled := AEstado;
+    EditTelefone.Enabled := AEstado;
+    BitBtnRemoverTelefone.Enabled := AEstado;
+    BitBtnAdicionarTelefone.Enabled := AEstado;
+
+    ListBoxEmail.Enabled := AEstado;
+    EditEmail.Enabled := AEstado;
+    BitBtnAdicionarEmail.Enabled := AEstado;
+    BitBtnRemoverEmail.Enabled := AEstado;
+
     BtnFinal.Enabled := AEstado;
   end;
 

@@ -93,7 +93,8 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
     FRepository.AtualizarDataSet;
   end;
 
-  // ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
+
+// ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
 
   //FILTRAR
   procedure TFormFormasPGTO.EditFiltroChange(Sender: TObject);
