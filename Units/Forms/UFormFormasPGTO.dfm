@@ -46,8 +46,9 @@ object FormFormasPGTO: TFormFormasPGTO
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 0
+      TabOrder = 3
       OnClick = BtnDeletarClick
+      ExplicitTop = 0
     end
     object BtnAlterar: TButton
       AlignWithMargins = True
@@ -67,7 +68,7 @@ object FormFormasPGTO: TFormFormasPGTO
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 2
       OnClick = BtnAlterarClick
     end
     object BtnCadastrar: TButton
@@ -88,7 +89,7 @@ object FormFormasPGTO: TFormFormasPGTO
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 1
       OnClick = BtnCadastrarClick
     end
     object BtnBuscar: TButton
@@ -109,7 +110,7 @@ object FormFormasPGTO: TFormFormasPGTO
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 0
       OnClick = BtnBuscarClick
     end
   end
@@ -141,21 +142,21 @@ object FormFormasPGTO: TFormFormasPGTO
       Width = 689
       Height = 305
       DataSource = DataSource
-      TabOrder = 0
+      TabOrder = 1
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
     end
-    object Edit1: TEdit
+    object EditFiltro: TEdit
       Left = 24
       Top = 56
       Width = 689
       Height = 21
-      TabOrder = 1
+      TabOrder = 0
       TextHint = 'Filtrar Forma de Pagamento'
-      OnChange = Edit1Change
+      OnChange = EditFiltroChange
     end
   end
   object DataSource: TDataSource

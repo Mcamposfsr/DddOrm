@@ -128,22 +128,10 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="FormModelTest.pas">
-            <Form>FormPrincipal</Form>
-        </DCCReference>
-        <DCCReference Include="Units\Application\UAppClientes.pas"/>
-        <DCCReference Include="Units\Controllers\UControllerClientes.pas"/>
         <DCCReference Include="Units\DM\UDM.pas"/>
-        <DCCReference Include="Units\Domain\UDomainClientes.pas"/>
         <DCCReference Include="Units\Repository\UGenericRep.pas"/>
         <DCCReference Include="Units\Utils\UCPFValidator.pas"/>
-        <DCCReference Include="Units\Domain\UDomainOS.pas"/>
-        <DCCReference Include="Units\Application\UAppOrdemServico.pas"/>
         <DCCReference Include="Units\Interfaces\UIRepository.pas"/>
-        <DCCReference Include="Units\Controllers\UControllerOS.pas"/>
-        <DCCReference Include="Units\Forms\UFormOS.pas">
-            <Form>FormOS</Form>
-        </DCCReference>
         <DCCReference Include="Units\Domain\UDomainFormasPGTO.pas"/>
         <DCCReference Include="Units\Domain\UDomainClientesPGTO.pas"/>
         <DCCReference Include="Units\Application\UAppClientesPGTO.pas"/>
@@ -164,6 +152,10 @@
         </DCCReference>
         <DCCReference Include="Units\Forms\FormsSecundarios\UFormCadastroClientePGTO.pas">
             <Form>FormCadastroClientes</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Forms\UFormPrincipal.pas">
+            <Form>DDDORM</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Release">

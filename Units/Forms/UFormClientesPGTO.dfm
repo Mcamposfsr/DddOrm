@@ -44,7 +44,7 @@ object FormClientesPGTO: TFormClientesPGTO
       Width = 689
       Height = 305
       DataSource = DataSource
-      TabOrder = 0
+      TabOrder = 1
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
@@ -56,7 +56,7 @@ object FormClientesPGTO: TFormClientesPGTO
       Top = 56
       Width = 689
       Height = 21
-      TabOrder = 1
+      TabOrder = 0
       TextHint = 'Filtrar Clientes Por Nome'
       OnChange = EditFiltroNomeChange
     end
@@ -92,7 +92,7 @@ object FormClientesPGTO: TFormClientesPGTO
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 0
+      TabOrder = 3
       OnClick = BtnDeletarClick
     end
     object BtnAlterar: TButton
@@ -113,8 +113,9 @@ object FormClientesPGTO: TFormClientesPGTO
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 2
       OnClick = BtnAlterarClick
+      ExplicitTop = 0
     end
     object BtnCadastrar: TButton
       AlignWithMargins = True
@@ -134,8 +135,9 @@ object FormClientesPGTO: TFormClientesPGTO
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 1
       OnClick = BtnCadastrarClick
+      ExplicitTop = 0
     end
     object BtnBuscar: TButton
       AlignWithMargins = True
@@ -155,7 +157,7 @@ object FormClientesPGTO: TFormClientesPGTO
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 0
       OnClick = BtnBuscarClick
     end
   end

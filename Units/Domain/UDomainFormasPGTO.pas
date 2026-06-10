@@ -45,7 +45,7 @@ uses
     property Parcelas: Integer Read FParcelas Write FParcelas;
 
     [Restrictions([NotNull])]
-    [Column('FIN_JUROS',ftCurrency)]
+    [Column('FIN_JUROS',ftFloat)]
     property Juros: Currency Read FJuros Write FJuros;
 
   end;

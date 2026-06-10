@@ -56,6 +56,8 @@ type
     FOperacao: String;
     FIDCurrentClient: Integer;
 
+
+    procedure VerificarSelecao;
   public
     { Public declarations }
   end;
@@ -105,12 +107,21 @@ procedure TFormClientesPGTO.FormCreate(Sender: TObject);
   LFORMCadastroClientePGTO: TFormCadastroClientes;
   LCOD: Integer;
   begin
-    LCOD := Self.FDMemTable.FieldByName('CLI_CODIGO').AsInteger;
     try
-      LFORMCadastroClientePGTO := TFormCadastroClientes.Create(nil,FController,LCOD,'SELECT');
-      LFORMCadastroClientePGTO.ShowModal;
-    finally
-      LFORMCadastroClientePGTO.Free;
+      Self.VerificarSelecao;
+      LCOD := Self.FDMemTable.FieldByName('CLI_CODIGO').AsInteger;
+      try
+        LFORMCadastroClientePGTO := TFormCadastroClientes.Create(nil,FController,LCOD,'SELECT');
+        LFORMCadastroClientePGTO.ShowModal;
+      finally
+        LFORMCadastroClientePGTO.Free;
+      end;
+      
+    except
+      on E: exception do 
+      begin
+        ShowMessage(E.Message);
+      end;
     end;
   end;
 
@@ -135,13 +146,22 @@ procedure TFormClientesPGTO.FormCreate(Sender: TObject);
   LFORMCadastroClientePGTO: TFormCadastroClientes;
   LCOD: Integer;
   begin
-    LCOD := Self.FDMemTable.FieldByName('CLI_CODIGO').AsInteger;
-    try
+   try
+     Self.VerificarSelecao;
+
+     LCOD := Self.FDMemTable.FieldByName('CLI_CODIGO').AsInteger;
+     try
       LFORMCadastroClientePGTO := TFormCadastroClientes.Create(nil,FController,LCOD,'UPDATE');
       LFORMCadastroClientePGTO.ShowModal;
-    finally
+     finally
       LFORMCadastroClientePGTO.Free;
+     end;
+   except 
+    on E: Exception do
+    begin
+     ShowMessage(E.Message);
     end;
+   end;
   end;
 
   //DELETAR
@@ -150,6 +170,10 @@ procedure TFormClientesPGTO.FormCreate(Sender: TObject);
   LFORMCadastroClientePGTO: TFormCadastroClientes;
   LCOD: Integer;
   begin
+   try
+    //VERIFICAR SE HÁ CLIENTE SELECIONADO
+    Self.VerificarSelecao;
+    
     LCOD := Self.FDMemTable.FieldByName('CLI_CODIGO').AsInteger;
     try
       LFORMCadastroClientePGTO := TFormCadastroClientes.Create(nil,FController,LCOD,'DELETE');
@@ -157,7 +181,24 @@ procedure TFormClientesPGTO.FormCreate(Sender: TObject);
     finally
       LFORMCadastroClientePGTO.Free;
     end;
+    
+   except 
+    on E: Exception do
+    begin
+      ShowMessage(E.Message);
+    end;
+   end;
   end;
+
+  // ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES
+
+   procedure TFormClientesPGTO.VerificarSelecao;
+   begin
+    if Self.FDMemTable.RecordCount = 0 then
+    begin
+      raise Exception.Create('NENHUM CLIENTE SELECIONADO!');
+    end;
+   end;
 
 
 

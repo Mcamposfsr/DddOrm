@@ -138,7 +138,8 @@ begin
    Self.FContainerDataSet.DataSet.Filter := '';
    Exit
   end;
-  Self.FContainerDataSet.DataSet.Filter := Format('%s like ''%s%%''', [AColumn, AFilter]);
+  Self.FContainerDataSet.DataSet.FilterOptions := [foCaseInsensitive];
+  Self.FContainerDataSet.DataSet.Filter := Format('%s like ''%%%s%%''', [AColumn, AFilter]);
   Self.FContainerDataSet.DataSet.Filtered := True;
 end;
 

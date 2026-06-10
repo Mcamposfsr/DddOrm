@@ -35,7 +35,7 @@ type
     PainelPrincipal: TPanel;
     Label1: TLabel;
     DBGrid1: TDBGrid;
-    Edit1: TEdit;
+    EditFiltro: TEdit;
     DataSource: TDataSource;
     FDMemTable: TFDMemTable;
     procedure FormCreate(Sender: TObject);
@@ -43,7 +43,7 @@ type
     procedure BtnCadastrarClick(Sender: TObject);
     procedure BtnAlterarClick(Sender: TObject);
     procedure BtnDeletarClick(Sender: TObject);
-    procedure Edit1Change(Sender: TObject);
+    procedure EditFiltroChange(Sender: TObject);
   private
     //FERRAMENTAS
     FRepository: IRepository<TFormasPGTO>;
@@ -53,6 +53,8 @@ type
     //CONTROLE FORM
     FOperacao: String;
     FIDCurrentClient: Integer;
+
+    procedure VerificarSelecao;
   public
     { Public declarations }
   end;
@@ -70,7 +72,6 @@ implementation
 
 procedure TFormFormasPGTO.FormCreate(Sender: TObject);
  begin
-
     FIDCurrentClient := -1;
     //INICIAR SEM CLIENTE MARCADO
     FOperacao := '';
@@ -86,15 +87,18 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
     //CONTROLLER
     FController := TControllerFormasPGTO.Create(FApp,FRepository);
 
+    //CONFIGURAR FORMATO CAMPO DATASET
+    TFloatField(FDMemTable.FieldByName('FIN_JUROS')).DisplayFormat := '0.0 %';
+
     FRepository.AtualizarDataSet;
   end;
 
   // ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
 
   //FILTRAR
-  procedure TFormFormasPGTO.Edit1Change(Sender: TObject);
+  procedure TFormFormasPGTO.EditFiltroChange(Sender: TObject);
   begin
-//    DASDAS
+    Self.FController.FiltrarClientesPGTO(EditFiltro.Text);
   end;
 
   //BUSCAR
@@ -103,12 +107,21 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
   LFORMCadastroPGTO: TFormCadastroPGTO;
   LCOD: Integer;
   begin
-    LCOD := Self.FDMemTable.FieldByName('FIN_CODIGO').AsInteger;
     try
-      LFORMCadastroPGTO := TFormCadastroPGTO.Create(nil,FController,LCOD,'SELECT');
-      LFORMCadastroPGTO.ShowModal;
-    finally
-      LFORMCadastroPGTO.Free;
+      Self.VerificarSelecao;
+      LCOD := Self.FDMemTable.FieldByName('FIN_CODIGO').AsInteger;
+      try
+        LFORMCadastroPGTO := TFormCadastroPGTO.Create(nil,FController,LCOD,'SELECT');
+        LFORMCadastroPGTO.ShowModal;
+      finally
+        LFORMCadastroPGTO.Free;
+      end;
+
+    except
+      on E: Exception do
+      begin
+        ShowMessage(E.Message);
+      end;
     end;
   end;
 
@@ -133,12 +146,20 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
   LFORMCadastroPGTO: TFormCadastroPGTO;
   LCOD: Integer;
   begin
-    LCOD := Self.FDMemTable.FieldByName('FIN_CODIGO').AsInteger;
     try
-      LFORMCadastroPGTO := TFormCadastroPGTO.Create(nil,FController,LCOD,'UPDATE');
-      LFORMCadastroPGTO.ShowModal;
-    finally
-      LFORMCadastroPGTO.Free;
+      Self.VerificarSelecao;
+      LCOD := Self.FDMemTable.FieldByName('FIN_CODIGO').AsInteger;
+      try
+        LFORMCadastroPGTO := TFormCadastroPGTO.Create(nil,FController,LCOD,'UPDATE');
+        LFORMCadastroPGTO.ShowModal;
+      finally
+        LFORMCadastroPGTO.Free;
+      end;
+    except
+      on E: Exception do
+      begin
+        ShowMessage(E.Message);
+      end;
     end;
   end;
 
@@ -148,13 +169,32 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
   LFORMCadastroPGTO: TFormCadastroPGTO;
   LCOD: Integer;
   begin
-    LCOD := Self.FDMemTable.FieldByName('FIN_CODIGO').AsInteger;
     try
-      LFORMCadastroPGTO := TFormCadastroPGTO.Create(nil,FController,LCOD,'DELETE');
-      LFORMCadastroPGTO.ShowModal;
-    finally
-      LFORMCadastroPGTO.Free;
+      Self.VerificarSelecao;
+      LCOD := Self.FDMemTable.FieldByName('FIN_CODIGO').AsInteger;
+      try
+        LFORMCadastroPGTO := TFormCadastroPGTO.Create(nil,FController,LCOD,'DELETE');
+        LFORMCadastroPGTO.ShowModal;
+      finally
+        LFORMCadastroPGTO.Free;
+      end;
+
+    except
+      on E: Exception do
+      begin
+         ShowMessage(E.Message);
+      end;
     end;
   end;
+
+  // ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES
+
+   procedure TFormFormasPGTO.VerificarSelecao;
+   begin
+    if Self.FDMemTable.RecordCount = 0 then
+    begin
+      raise Exception.Create('NENHUMA FORMA DE PAGAMENTO SELECIONADA!');
+    end;
+   end;
 
 end.

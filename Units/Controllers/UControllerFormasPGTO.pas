@@ -6,18 +6,20 @@ uses UDomainFormasPGTO,UIRepository,UAppFormasPGTO, System.Generics.Collections,
 
 type IControllerFormasPGTO = interface
     function BuscarFormaPGTO(ACOD:Integer):TFormasPGTO;
-    procedure CadastrarFormaPGTO(ANome:String;AParcelas:Integer;AJuros:Currency);
-    procedure AlterarFormaPGTO(ACOD:Integer;ANome:String;AParcelas:Integer;AJuros:Currency);
+    procedure CadastrarFormaPGTO(ANome,AParcelas,AJuros:String);
+    procedure AlterarFormaPGTO(ACOD:Integer;ANome,AParcelas,AJuros:String);
     procedure DeletarFormaPGTO(ACOD:Integer);
+    procedure FiltrarClientesPGTO(ANome:String);
 end;
 
 //CONTROLLER FORM CLIENTES PAGAMENTO
 type TControllerFormasPGTO = class(TInterfacedObject,IControllerFormasPGTO)
   public
     function BuscarFormaPGTO(ACOD:Integer):TFormasPGTO;
-    procedure CadastrarFormaPGTO(ANome:String;AParcelas:Integer;AJuros:Currency);
-    procedure AlterarFormaPGTO(ACOD:Integer;ANome:String;AParcelas:Integer;AJuros:Currency);
+    procedure CadastrarFormaPGTO(ANome,AParcelas,AJuros:String);
+    procedure AlterarFormaPGTO(ACOD:Integer;ANome,AParcelas,AJuros:String);
     procedure DeletarFormaPGTO(ACOD:Integer);
+    procedure FiltrarClientesPGTO(ANome:String);
 
     constructor Create(AApp:IAppFormasPGTO;ARep:IRepository<TFormasPGTO>);
   private
@@ -40,13 +42,16 @@ implementation
   end;
 
   //CADASTRAR
-  procedure TControllerFormasPGTO.CadastrarFormaPGTO(ANome:String;AParcelas:Integer;AJuros:Currency);
+  procedure TControllerFormasPGTO.CadastrarFormaPGTO(ANome,AParcelas,AJuros:String);
   var
   LParcelas: Integer;
   LJuros: Currency;
   begin
     try
-      Self.FApp.InserirFormasPGTO(ANome,AParcelas,AJuros);
+      LParcelas := StrToInt(AParcelas);
+      LJuros := StrToCurr(StringReplace(AJuros, '%', '', [rfReplaceAll]));
+
+      Self.FApp.InserirFormasPGTO(ANome,LParcelas,LJuros);
       Self.FRep.AtualizarDataSet;
     except
       on E: Exception do
@@ -57,16 +62,16 @@ implementation
   end;
 
   //ALTERAR
-  procedure TControllerFormasPGTO.AlterarFormaPGTO(
-  ACOD:Integer;
-  ANome:String;
-  AParcelas:Integer;
-  AJuros:Currency
-  );
-  var LValor: Currency;
+  procedure TControllerFormasPGTO.AlterarFormaPGTO(ACOD:Integer;ANome,AParcelas,AJuros:String);
+  var
+  LParcelas: Integer;
+  LJuros: Currency;
   begin
     try
-      Self.FApp.AtualizarFormasPGTO(ACOD,ANome,AParcelas,AJuros);
+      LParcelas := StrToInt(AParcelas);
+      LJuros := StrToCurr(StringReplace(AJuros, '%', '', [rfReplaceAll]));
+
+      Self.FApp.AtualizarFormasPGTO(ACOD,ANome,LParcelas,LJuros);
       Self.FRep.AtualizarDataSet;
     except
       on E: Exception do
@@ -82,6 +87,19 @@ implementation
     try
       Self.FApp.DeletarFormasPGTO(ACOD);
       Self.FRep.AtualizarDataSet;
+    except
+      on E: Exception do
+      begin
+        ShowMessage('Ocorreu um erro: ' +  sLineBreak + E.Message);
+      end;
+    end;
+  end;
+
+  //FILTRAR
+  procedure TControllerFormasPGTO.FiltrarClientesPGTO(ANome:String);
+  begin
+    try
+      Self.FRep.FiltrarDataSet('FIN_NOME',ANome);
     except
       on E: Exception do
       begin

@@ -82,7 +82,7 @@ __recovery/
 modules/
 
 # Firebird database files (binaries)
-#*.fdb
+*.fdb
 #Database/*.fdb
 #Database/*.fdb
 

@@ -1,7 +1,7 @@
 object FormCadastroPGTO: TFormCadastroPGTO
   Left = 0
   Top = 0
-  Caption = 'Cadastro Clientes'
+  Caption = 'Cadastro de Pagamentos'
   ClientHeight = 130
   ClientWidth = 469
   Color = clBtnFace
@@ -73,15 +73,17 @@ object FormCadastroPGTO: TFormCadastroPGTO
       Top = 38
       Width = 73
       Height = 21
+      MaxLength = 5
       NumbersOnly = True
-      TabOrder = 1
+      TabOrder = 2
     end
     object NumericEditJuros: TNumericEdit
       Left = 236
       Top = 38
       Width = 126
       Height = 21
-      TabOrder = 2
+      MaxLength = 5
+      TabOrder = 1
       Text = '0,00%'
       Format = '0.00%'
     end

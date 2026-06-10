@@ -4,18 +4,10 @@ uses
   Vcl.Forms,
   System.IOUtils,
   System.SysUtils,
-  FormModelTest in 'FormModelTest.pas' {FormPrincipal},
-  UAppClientes in 'Units\Application\UAppClientes.pas',
-  UControllerClientes in 'Units\Controllers\UControllerClientes.pas',
   UDM in 'Units\DM\UDM.pas',
-  UDomainClientes in 'Units\Domain\UDomainClientes.pas',
   UGenericRep in 'Units\Repository\UGenericRep.pas',
   UCPFValidator in 'Units\Utils\UCPFValidator.pas',
-  UDomainOS in 'Units\Domain\UDomainOS.pas',
-  UAppOrdemServico in 'Units\Application\UAppOrdemServico.pas',
   UIRepository in 'Units\Interfaces\UIRepository.pas',
-  UControllerOS in 'Units\Controllers\UControllerOS.pas',
-  UFormOS in 'Units\Forms\UFormOS.pas' {FormOS},
   UDomainFormasPGTO in 'Units\Domain\UDomainFormasPGTO.pas',
   UDomainClientesPGTO in 'Units\Domain\UDomainClientesPGTO.pas',
   UAppClientesPGTO in 'Units\Application\UAppClientesPGTO.pas',
@@ -25,7 +17,8 @@ uses
   UFormCadastroFormaPGTO in 'Units\Forms\FormsSecundarios\UFormCadastroFormaPGTO.pas' {FormCadastroPGTO},
   UFormClientesPGTO in 'Units\Forms\UFormClientesPGTO.pas' {FormClientesPGTO},
   UFormFormasPGTO in 'Units\Forms\UFormFormasPGTO.pas' {FormFormasPGTO},
-  UFormCadastroClientePGTO in 'Units\Forms\FormsSecundarios\UFormCadastroClientePGTO.pas' {FormCadastroClientes};
+  UFormCadastroClientePGTO in 'Units\Forms\FormsSecundarios\UFormCadastroClientePGTO.pas' {FormCadastroClientes},
+  UFormPrincipal in 'Units\Forms\UFormPrincipal.pas' {DDDORM};
 
 //VARIÁVEL DE AJUSTE PARA BANCO.
   var LLocationDB: String;
@@ -52,10 +45,13 @@ begin
     LLocationDB
     );
 
+
     GDM.ConectarBD;
 
+    Application.CreateForm(TDDDORM, DDDORM);
     Application.CreateForm(TFormClientesPGTO, FormClientesPGTO);
-  Application.Run;
+    Application.CreateForm(TFormFormasPGTO, FormFormasPGTO);
+    Application.Run;
 
   finally
     GDM.Free;
