@@ -44,6 +44,7 @@ type
     procedure BtnAlterarClick(Sender: TObject);
     procedure BtnDeletarClick(Sender: TObject);
     procedure EditFiltroChange(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     //FERRAMENTAS
     FRepository: IRepository<TFormasPGTO>;
@@ -92,6 +93,8 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
 
     FRepository.AtualizarDataSet;
   end;
+
+
 
 
 // ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
@@ -186,6 +189,12 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
          ShowMessage(E.Message);
       end;
     end;
+  end;
+
+  procedure TFormFormasPGTO.FormKeyPress(Sender: TObject; var Key: Char);
+  begin
+    if Key = #27 then
+      Self.Close;
   end;
 
   // ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES

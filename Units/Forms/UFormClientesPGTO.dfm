@@ -11,9 +11,11 @@ object FormClientesPGTO: TFormClientesPGTO
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
   object PainelPrincipal: TPanel
@@ -115,7 +117,6 @@ object FormClientesPGTO: TFormClientesPGTO
       ParentFont = False
       TabOrder = 2
       OnClick = BtnAlterarClick
-      ExplicitTop = 0
     end
     object BtnCadastrar: TButton
       AlignWithMargins = True
@@ -137,7 +138,6 @@ object FormClientesPGTO: TFormClientesPGTO
       ParentFont = False
       TabOrder = 1
       OnClick = BtnCadastrarClick
-      ExplicitTop = 0
     end
     object BtnBuscar: TButton
       AlignWithMargins = True

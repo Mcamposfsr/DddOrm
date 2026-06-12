@@ -18,9 +18,12 @@ type
     Label3: TLabel;
     Label7: TLabel;
     NumericEditJuros: TNumericEdit;
-    BtnFinal: TButton;
+    BtnConfirmar: TButton;
+    Button1: TButton;
     procedure FormShow(Sender: TObject);
-    procedure BtnFinalClick(Sender: TObject);
+    procedure BtnConfirmarClick(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure Button1Click(Sender: TObject);
   private
 
     //FERRAMENTAS
@@ -50,6 +53,8 @@ implementation
 {$R *.dfm}
 
 
+
+
 constructor TFormCadastroPGTO.Create(
   AOWner: TComponent;
   AController: IControllerFormasPGTO;
@@ -77,28 +82,31 @@ constructor TFormCadastroPGTO.Create(
     end
     else if FOperacao = 'INSERT' then
     begin
-      BtnFinal.Caption := 'CADASTRAR';
+      //NADA A FAZER
     end
     else if FOperacao = 'UPDATE' then
     begin
       LFormaPagamento := FController.BuscarFormaPGTO(Self.FCODPGTO);
       Self.ReceberValores(LFormaPagamento);
       Self.FormControl(True);
-      BtnFinal.Caption := 'ATUALIZAR';
     end
     else if FOperacao = 'DELETE' then
     begin
       LFormaPagamento := FController.BuscarFormaPGTO(Self.FCODPGTO);
       Self.ReceberValores(LFormaPagamento);
       Self.FormControl(FALSE);
-      BtnFinal.Enabled := True;
-      BtnFinal.Caption := 'DELETAR';
+      BtnConfirmar.Enabled := True;
     end;
   end;
 
   // ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS
 
-  procedure TFormCadastroPGTO.BtnFinalClick(Sender: TObject);
+  procedure TFormCadastroPGTO.Button1Click(Sender: TObject);
+  begin
+    Self.Close;
+  end;
+
+  procedure TFormCadastroPGTO.BtnConfirmarClick(Sender: TObject);
   begin
     try
       //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
@@ -154,7 +162,20 @@ constructor TFormCadastroPGTO.Create(
     EditNome.Enabled := AEstado;
     EditParcelas.Enabled := AEstado;
     NumericEditJuros.Enabled := AEstado;
-    BtnFinal.Enabled := AEstado;
+    BtnConfirmar.Enabled := AEstado;
+  end;
+
+  // ENTER >>  TAB
+  procedure TFormCadastroPGTO.FormKeyPress(Sender: TObject; var Key: Char);
+  begin
+       if Key = #13 then
+    begin
+      Key := #0;
+      SelectNext(ActiveControl, True, True);
+    end;
+
+      if Key = #27 then
+    Self.Close;
   end;
 
 end.

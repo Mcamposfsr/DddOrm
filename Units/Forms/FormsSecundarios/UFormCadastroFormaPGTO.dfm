@@ -10,8 +10,10 @@ object FormCadastroPGTO: TFormCadastroPGTO
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  OnKeyPress = FormKeyPress
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -66,6 +68,7 @@ object FormCadastroPGTO: TFormCadastroPGTO
       Top = 38
       Width = 193
       Height = 21
+      CharCase = ecUpperCase
       TabOrder = 0
     end
     object EditParcelas: TEdit
@@ -75,7 +78,7 @@ object FormCadastroPGTO: TFormCadastroPGTO
       Height = 21
       MaxLength = 5
       NumbersOnly = True
-      TabOrder = 2
+      TabOrder = 1
     end
     object NumericEditJuros: TNumericEdit
       Left = 343
@@ -83,17 +86,27 @@ object FormCadastroPGTO: TFormCadastroPGTO
       Width = 74
       Height = 21
       MaxLength = 5
-      TabOrder = 1
+      TabOrder = 2
       Text = '0,00%'
       Format = '0.00%'
     end
-    object BtnFinal: TButton
+    object BtnConfirmar: TButton
       Left = 312
       Top = 80
       Width = 105
       Height = 33
+      Caption = 'CONFIRMAR'
+      TabOrder = 4
+      OnClick = BtnConfirmarClick
+    end
+    object Button1: TButton
+      Left = 188
+      Top = 80
+      Width = 105
+      Height = 33
+      Caption = 'CANCELAR'
       TabOrder = 3
-      OnClick = BtnFinalClick
+      OnClick = Button1Click
     end
   end
 end

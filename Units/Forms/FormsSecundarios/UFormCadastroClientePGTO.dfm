@@ -2,24 +2,27 @@ object FormCadastroClientes: TFormCadastroClientes
   Left = 0
   Top = 0
   Caption = 'Cadastro Clientes'
-  ClientHeight = 375
-  ClientWidth = 798
+  ClientHeight = 376
+  ClientWidth = 804
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  Scaled = False
+  OnKeyPress = FormKeyPress
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object PanelPrincipal: TPanel
     Left = 0
     Top = 0
-    Width = 798
-    Height = 375
+    Width = 804
+    Height = 376
     Align = alClient
     TabOrder = 0
     object Label1: TLabel
@@ -118,13 +121,16 @@ object FormCadastroClientes: TFormCadastroClientes
       Top = 54
       Width = 377
       Height = 21
+      CharCase = ecUpperCase
       TabOrder = 0
+      OnKeyPress = EditNomeKeyPress
     end
     object EditEndereco: TEdit
       Left = 16
       Top = 180
       Width = 377
       Height = 21
+      CharCase = ecUpperCase
       TabOrder = 3
     end
     object EditNumero: TEdit
@@ -132,6 +138,7 @@ object FormCadastroClientes: TFormCadastroClientes
       Top = 246
       Width = 137
       Height = 21
+      CharCase = ecUpperCase
       NumbersOnly = True
       TabOrder = 4
     end
@@ -140,6 +147,7 @@ object FormCadastroClientes: TFormCadastroClientes
       Top = 118
       Width = 209
       Height = 21
+      CharCase = ecUpperCase
       MaxLength = 18
       ParentShowHint = False
       ShowHint = True
@@ -162,6 +170,7 @@ object FormCadastroClientes: TFormCadastroClientes
       Top = 118
       Width = 157
       Height = 21
+      CharCase = ecUpperCase
       TabOrder = 2
       Text = '0,00'
       Format = ',0.00'
@@ -177,14 +186,14 @@ object FormCadastroClientes: TFormCadastroClientes
         'S'
         'N')
     end
-    object BtnFinal: TButton
+    object BtnConfirmar: TButton
       Left = 680
       Top = 328
       Width = 105
       Height = 33
-      Enabled = False
-      TabOrder = 9
-      OnClick = BtnFinalClick
+      Caption = 'CONFIRMAR'
+      TabOrder = 10
+      OnClick = BtnConfirmarClick
     end
     object GroupBox1: TGroupBox
       Left = 464
@@ -203,7 +212,8 @@ object FormCadastroClientes: TFormCadastroClientes
         Left = 16
         Top = 30
         Width = 225
-        Height = 24
+        Height = 21
+        AutoSize = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -216,7 +226,7 @@ object FormCadastroClientes: TFormCadastroClientes
         TextHint = 'xxxxxx@xxxxx.com'
       end
       object BitBtnRemoverEmail: TBitBtn
-        Left = 247
+        Left = 279
         Top = 30
         Width = 26
         Height = 21
@@ -255,12 +265,13 @@ object FormCadastroClientes: TFormCadastroClientes
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFF0000}
-        TabOrder = 1
+        TabOrder = 2
+        TabStop = False
         OnClick = BitBtnRemoverEmailClick
       end
       object ListBoxEmail: TListBox
         Left = 16
-        Top = 65
+        Top = 57
         Width = 289
         Height = 58
         Font.Charset = DEFAULT_CHARSET
@@ -272,7 +283,7 @@ object FormCadastroClientes: TFormCadastroClientes
         TabOrder = 3
       end
       object BitBtnAdicionarEmail: TBitBtn
-        Left = 279
+        Left = 247
         Top = 30
         Width = 26
         Height = 21
@@ -311,7 +322,7 @@ object FormCadastroClientes: TFormCadastroClientes
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFF0000}
-        TabOrder = 2
+        TabOrder = 1
         OnClick = BitBtnAdicionarEmailClick
       end
     end
@@ -344,9 +355,10 @@ object FormCadastroClientes: TFormCadastroClientes
         ShowHint = True
         TabOrder = 0
         TextHint = '(XX)XXXXX-XXXX'
+        OnKeyPress = EditTelefoneKeyPress
       end
       object BitBtnAdicionarTelefone: TBitBtn
-        Left = 279
+        Left = 247
         Top = 32
         Width = 26
         Height = 21
@@ -385,11 +397,11 @@ object FormCadastroClientes: TFormCadastroClientes
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFF0000}
-        TabOrder = 2
+        TabOrder = 1
         OnClick = BitBtnAdicionarTelefoneClick
       end
       object BitBtnRemoverTelefone: TBitBtn
-        Left = 247
+        Left = 279
         Top = 32
         Width = 26
         Height = 21
@@ -428,12 +440,13 @@ object FormCadastroClientes: TFormCadastroClientes
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFF0000}
-        TabOrder = 1
+        TabOrder = 2
+        TabStop = False
         OnClick = BitBtnRemoverTelefoneClick
       end
       object ListBoxTelefones: TListBox
         Left = 16
-        Top = 65
+        Top = 59
         Width = 289
         Height = 58
         Font.Charset = DEFAULT_CHARSET
@@ -445,6 +458,15 @@ object FormCadastroClientes: TFormCadastroClientes
         ParentFont = False
         TabOrder = 3
       end
+    end
+    object ButtonCancelar: TButton
+      Left = 552
+      Top = 328
+      Width = 105
+      Height = 33
+      Caption = 'CANCELAR'
+      TabOrder = 9
+      OnClick = ButtonCancelarClick
     end
   end
 end

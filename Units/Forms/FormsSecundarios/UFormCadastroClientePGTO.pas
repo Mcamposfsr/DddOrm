@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, NumericEdit, Vcl.StdCtrls,
 
-  UControllerClientesPGTO,UDomainClientesPGTO, Vcl.Buttons,UTelefoneValidator;
+  UControllerClientesPGTO,UDomainClientesPGTO, Vcl.Buttons,UTelefoneValidator, System.Character;
 
 type
   TFormCadastroClientes = class(TForm)
@@ -25,7 +25,7 @@ type
     NumericEditCredito: TNumericEdit;
     Label8: TLabel;
     ComboBoxAtivo: TComboBox;
-    BtnFinal: TButton;
+    BtnConfirmar: TButton;
     GroupBox1: TGroupBox;
     EditEmail: TEdit;
     BitBtnRemoverEmail: TBitBtn;
@@ -36,13 +36,18 @@ type
     BitBtnAdicionarTelefone: TBitBtn;
     BitBtnRemoverTelefone: TBitBtn;
     ListBoxTelefones: TListBox;
+    ButtonCancelar: TButton;
     procedure FormShow(Sender: TObject);
-    procedure BtnFinalClick(Sender: TObject);
+    procedure BtnConfirmarClick(Sender: TObject);
     procedure BitBtnAdicionarEmailClick(Sender: TObject);
     procedure BitBtnRemoverEmailClick(Sender: TObject);
     procedure BitBtnAdicionarTelefoneClick(Sender: TObject);
     procedure BitBtnRemoverTelefoneClick(Sender: TObject);
     procedure GroupBox2Click(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure ButtonCancelarClick(Sender: TObject);
+    procedure EditNomeKeyPress(Sender: TObject; var Key: Char);
+    procedure EditTelefoneKeyPress(Sender: TObject; var Key: Char);
   private
 
     //FERRAMENTAS
@@ -72,7 +77,7 @@ implementation
 
 {$R *.dfm}
 
-                 //INICIALIZAÇÃO DE FERRAMENTAS
+//INICIALIZAÇÃO DE FERRAMENTAS
   constructor TFormCadastroClientes.Create(
   AOWner: TComponent;
   AController: IControllerClientesPGTO;
@@ -87,7 +92,8 @@ implementation
     FOperacao :=  AOperacao;
   end;
 
-  //INICIALIZAÇÃO VISUAL
+
+//INICIALIZAÇÃO VISUAL
   procedure TFormCadastroClientes.FormShow(Sender: TObject);
   var LCliente: TClientePGTO;
   begin
@@ -100,22 +106,20 @@ implementation
     end
     else if FOperacao = 'INSERT' then
     begin
-      BtnFinal.Caption := 'CADASTRAR';
+      //NADA A FAZER
     end
     else if FOperacao = 'UPDATE' then
     begin
       LCliente := FController.BuscarClientePGTO(FCODCliente);
       Self.ReceberValores(LCliente);
       Self.FormControl(True);
-      BtnFinal.Caption := 'ATUALIZAR';
     end
     else if FOperacao = 'DELETE' then
     begin
       LCliente := FController.BuscarClientePGTO(FCODCliente);
       Self.ReceberValores(LCliente);
       Self.FormControl(FALSE);
-      BtnFinal.Enabled := True;
-      BtnFinal.Caption := 'DELETAR';
+      BtnConfirmar.Enabled := True;
     end;
   end;
 
@@ -126,11 +130,12 @@ end;
 
 // ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
 
+  procedure TFormCadastroClientes.ButtonCancelarClick(Sender: TObject);
+  begin
+    Self.Close;
+  end;
 
-
-
-
-procedure TFormCadastroClientes.BtnFinalClick(Sender: TObject);
+  procedure TFormCadastroClientes.BtnConfirmarClick(Sender: TObject);
   begin
     try
        //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
@@ -182,13 +187,22 @@ procedure TFormCadastroClientes.BtnFinalClick(Sender: TObject);
     end;
   end;
 
-  //ADICIONAR EMAIL A LISTA
+
+//ADICIONAR EMAIL A LISTA
   procedure TFormCadastroClientes.BitBtnAdicionarEmailClick(Sender: TObject);
   begin
     if Self.EditEmail.Text = '' then
+    begin
+      SelectNext(ActiveControl, True, True);
       Exit;
-    ListBoxEmail.Items.Add(Self.EditEmail.Text);
-    Self.EditEmail.Clear;
+    end
+    else
+    begin
+      ListBoxEmail.Items.Add(Self.EditEmail.Text);
+      Self.EditEmail.Clear;
+      Self.EditEmail.SetFocus;
+    end;
+
   end;
 
   //REMOVER EMAIL DA LISTA
@@ -204,9 +218,16 @@ procedure TFormCadastroClientes.BtnFinalClick(Sender: TObject);
   procedure TFormCadastroClientes.BitBtnAdicionarTelefoneClick(Sender: TObject);
   begin
     if Self.EditTelefone.Text = '' then
+    begin
+      SelectNext(ActiveControl, True, True);
       Exit;
-    ListBoxTelefones.Items.Add(Self.EditTelefone.Text);
-    Self.EditTelefone.Clear;
+    end
+    else
+    begin
+      ListBoxTelefones.Items.Add(Self.EditTelefone.Text);
+      Self.EditTelefone.Clear;
+      Self.EditTelefone.SetFocus;
+    end;
   end;
 
   //REMOVER TELEFONE DA LISTA
@@ -218,7 +239,23 @@ procedure TFormCadastroClientes.BtnFinalClick(Sender: TObject);
       ShowMessage('SELECIONE UM TELEFONE!');
   end;
 
-  // ########## MÉTODOS AUXÍLIARES ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES
+  //PERMITIR APENAS LETRAS NO NOME
+  procedure TFormCadastroClientes.EditNomeKeyPress(Sender: TObject;
+  var Key: Char);
+  begin
+    if not (TCharacter.IsLetter(Key) or (Key = ' ') or (Key = #8)) then
+    Key := #0;
+  end;
+
+  //PERMITIR APENAS DÍGITOS DE TELEFONE
+  procedure TFormCadastroClientes.EditTelefoneKeyPress(Sender: TObject;
+  var Key: Char);
+  begin
+    if not (Key in ['0'..'9', '(',')','-', #8]) then
+    Key := #0;
+  end;
+
+// ########## MÉTODOS AUXÍLIARES ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES
 
   // PASSAR VALORES DDO PARA FORM
   procedure TFormCadastroClientes.ReceberValores(ACliente:TClientePGTO);
@@ -265,7 +302,21 @@ procedure TFormCadastroClientes.BtnFinalClick(Sender: TObject);
     BitBtnAdicionarEmail.Enabled := AEstado;
     BitBtnRemoverEmail.Enabled := AEstado;
 
-    BtnFinal.Enabled := AEstado;
+    BtnConfirmar.Enabled := AEstado;
   end;
+
+ procedure TFormCadastroClientes.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+   if Key = #13 then
+  begin
+    Key := #0;
+    SelectNext(ActiveControl, True, True);
+  end;
+
+  if Key = #27 then
+    Self.Close;
+
+end;
+
 
 end.
