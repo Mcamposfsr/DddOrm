@@ -2,7 +2,8 @@ unit UControllerFormasPGTO;
 
 interface
 
-uses UDomainFormasPGTO,UIRepository,UAppFormasPGTO, System.Generics.Collections,System.Classes, System.SysUtils, Vcl.Dialogs;
+uses UDomainFormasPGTO,UIRepository,UAppFormasPGTO, System.Generics.Collections,
+System.Classes, System.SysUtils, Vcl.Dialogs, System.StrUtils,UErros,UFormatErrorText;
 
 type IControllerFormasPGTO = interface
     function BuscarFormaPGTO(ACOD:Integer):TFormasPGTO;
@@ -48,15 +49,22 @@ implementation
   LJuros: Currency;
   begin
     try
-      LParcelas := StrToInt(AParcelas);
+      LParcelas := StrToIntDef(AParcelas, -1);
+
       LJuros := StrToCurr(StringReplace(AJuros, '%', '', [rfReplaceAll]));
 
       Self.FApp.InserirFormasPGTO(ANome,LParcelas,LJuros);
       Self.FRep.AtualizarDataSet;
     except
+      //ERROS VALIDAÇÃO FORMULÁRIOS
+      on E: EErrorFormInput do
+      begin
+        raise Exception.Create('Falha ao cadastrar pagamento.' + FFormatErrorText(E.FCampos,E.FValores));
+      end;
+      //ERROS INESPERADOS
       on E: Exception do
       begin
-        ShowMessage('Ocorreu um erro: ' +  sLineBreak + E.Message);
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
       end;
     end;
   end;
@@ -74,9 +82,15 @@ implementation
       Self.FApp.AtualizarFormasPGTO(ACOD,ANome,LParcelas,LJuros);
       Self.FRep.AtualizarDataSet;
     except
+      //ERROS VALIDAÇÃO FORMULÁRIOS
+      on E: EErrorFormInput do
+      begin
+        raise Exception.Create('Falha ao cadastrar pagamento.' + FFormatErrorText(E.FCampos,E.FValores));
+      end;
+      //ERROS INESPERADOS
       on E: Exception do
       begin
-        ShowMessage('Ocorreu um erro: ' +  sLineBreak + E.Message);
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
       end;
     end;
   end;

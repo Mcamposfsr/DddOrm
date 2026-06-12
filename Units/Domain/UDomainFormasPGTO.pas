@@ -12,7 +12,11 @@ uses
   ormbr.types.nullable,
   dbcbr.types.mapping,
   dbcbr.mapping.register,
-  ormbr.types.blob;
+  ormbr.types.blob,
+
+  Vcl.Dialogs,
+
+  UErros;
 
 
   type
@@ -29,6 +33,8 @@ uses
     FJuros: Currency;
 
   public
+     procedure ValidarCampos;
+
     Constructor Create(ACodigo:Integer;ANome:String;AParcelas:Integer;AJuros:Currency); Overload;
 
   published
@@ -63,5 +69,40 @@ implementation
     Self.FParcelas := AParcelas;
     Self.FJuros := AJuros;
   end;
+
+  //VALIDAR VALORES
+   procedure TFormasPGTO.ValidarCampos;
+   var
+   I: Integer;
+   LTelefones: TStringList;
+   LEmails: TStringList;
+   LDocumento: String;
+   LErrorCadastro: EErrorFormInput;
+   LEstado: Boolean;
+
+   begin
+    LErrorCadastro := EErrorFormInput.Create;
+    LEstado := True;
+
+    //VALIDAÇÃO NOME
+    if NOME  = '' then
+      begin
+        LErrorCadastro.FCampos.Add('Nome');
+        LErrorCadastro.FValores.Add('Nome Vazio');
+        LEstado := False;
+      end;
+
+    //VALIDAÇÃO ENDEREÇO
+    if Parcelas  <= 0 then
+    begin
+      LErrorCadastro.FCampos.Add('Parcelas');
+      LErrorCadastro.FValores.Add('Quantidade mínima de parcelas é 1');
+      LEstado := False;
+    end;
+
+    if not LEstado then
+      raise LErrorCadastro;
+
+   end;
 
 end.

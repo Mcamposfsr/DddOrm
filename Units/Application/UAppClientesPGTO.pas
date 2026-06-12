@@ -36,11 +36,13 @@ implementation
     FRepository := ARep;
   end;
 
+  //SELECT *
   Function TAppClientesPGTO.BuscarClientesPGTO:TObjectList<TClientePGTO>;
   begin
     Result := FRepository.SelectAll;
   end;
 
+  //SELECT WHERE
   Function TAppClientesPGTO.BuscarClientePGTOByID(ACodigo:Integer):TClientePGTO;
   var LID: String;
   begin
@@ -48,6 +50,7 @@ implementation
     Result := FRepository.Select(LID);
   end;
 
+  //INSERT
   procedure TAppClientesPGTO.InserirClientePGTO(
   ANome,
   AEndereco,
@@ -63,12 +66,17 @@ implementation
     LCliente := nil;
     try
      LCliente := TClientePGTO.Create(0,ANome,AEndereco,ANumero,ATelefone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito);
+
+     //VALIDAR CAMPOS INTERNOS (REGRAS NO DOMAIN DO DDD)
+     LCliente.ValidarCampos;
+
      FRepository.Insert(LCliente);
     finally
       LCliente.Free;
     end;
   end;
 
+  //UPDATE
   procedure TAppClientesPGTO.AtualizarClientePGTO(
   ACodigo:Integer;
   ANome,
@@ -89,12 +97,17 @@ implementation
     LCliente := nil;
     try
      LCliente := TClientePGTO.Create(ACodigo,ANome,AEndereco,ANumero,ATelefone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito);
+
+     //VALIDAR CAMPOS INTERNOS (REGRAS NO DOMAIN DO DDD)
+     LCliente.ValidarCampos;
+
      FRepository.Update(LCodigo,LCliente);
     finally
       LCliente.Free;
     end;
   end;
 
+  //DELETE
   procedure TAppClientesPGTO.DeletarClientePGTO(ACodigo:Integer);
   var
   LCliente: TClientePGTO;

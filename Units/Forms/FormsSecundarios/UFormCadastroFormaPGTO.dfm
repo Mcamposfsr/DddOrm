@@ -3,7 +3,7 @@ object FormCadastroPGTO: TFormCadastroPGTO
   Top = 0
   Caption = 'Cadastro de Pagamentos'
   ClientHeight = 130
-  ClientWidth = 469
+  ClientWidth = 434
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object FormCadastroPGTO: TFormCadastroPGTO
   object PanelPrincipal: TPanel
     Left = 0
     Top = 0
-    Width = 469
+    Width = 434
     Height = 130
     Align = alClient
     TabOrder = 0
@@ -36,7 +36,7 @@ object FormCadastroPGTO: TFormCadastroPGTO
       ParentFont = False
     end
     object Label3: TLabel
-      Left = 384
+      Left = 238
       Top = 16
       Width = 55
       Height = 16
@@ -49,7 +49,7 @@ object FormCadastroPGTO: TFormCadastroPGTO
       ParentFont = False
     end
     object Label7: TLabel
-      Left = 236
+      Left = 343
       Top = 16
       Width = 35
       Height = 16
@@ -69,7 +69,7 @@ object FormCadastroPGTO: TFormCadastroPGTO
       TabOrder = 0
     end
     object EditParcelas: TEdit
-      Left = 384
+      Left = 238
       Top = 38
       Width = 73
       Height = 21
@@ -78,9 +78,9 @@ object FormCadastroPGTO: TFormCadastroPGTO
       TabOrder = 2
     end
     object NumericEditJuros: TNumericEdit
-      Left = 236
+      Left = 343
       Top = 38
-      Width = 126
+      Width = 74
       Height = 21
       MaxLength = 5
       TabOrder = 1
@@ -88,8 +88,8 @@ object FormCadastroPGTO: TFormCadastroPGTO
       Format = '0.00%'
     end
     object BtnFinal: TButton
-      Left = 352
-      Top = 88
+      Left = 312
+      Top = 80
       Width = 105
       Height = 33
       TabOrder = 3

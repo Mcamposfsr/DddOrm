@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, NumericEdit, Vcl.StdCtrls,
 
-  UControllerClientesPGTO,UDomainClientesPGTO, Vcl.Buttons;
+  UControllerClientesPGTO,UDomainClientesPGTO, Vcl.Buttons,UTelefoneValidator;
 
 type
   TFormCadastroClientes = class(TForm)
@@ -53,6 +53,7 @@ type
     //MÉTODOS AUXÍLIARES
     procedure ReceberValores(ACliente:TClientePGTO);
     procedure FormControl(AEstado:Boolean);
+
 
   public
     constructor Create(
@@ -131,51 +132,61 @@ end;
 
 procedure TFormCadastroClientes.BtnFinalClick(Sender: TObject);
   begin
-    //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
-    if FOperacao = 'INSERT' then
-    begin
-      FController.CadastrarClientePGTO(
-      EditNome.Text,
-      EditEndereco.Text,
-      EditNumero.Text,
-      String.Join(';', ListBoxTelefones.Items.ToStringArray),
-      ComboBoxPessoa.Text,
-      EditDocumento.Text,
-      ComboBoxAtivo.Text,
-      String.Join(';', ListBoxEmail.Items.ToStringArray),
-      NumericEditCredito.Text
-      );
-      ShowMessage('CLIENTE CADASTRADO!');
-      Self.Close;
-    end
-    else if FOperacao = 'UPDATE' then
-    begin
-      FController.AlterarClientePGTO(
-      Self.FCODCliente,
-      EditNome.Text,
-      EditEndereco.Text,
-      EditNumero.Text,
-      String.Join(';', ListBoxTelefones.Items.ToStringArray),
-      ComboBoxPessoa.Text,
-      EditDocumento.Text,
-      ComboBoxAtivo.Text,
-      String.Join(';', ListBoxEmail.Items.ToStringArray),
-      NumericEditCredito.Text
-      );
-      ShowMessage('CLIENTE ATUALIZADO!');
-      Self.Close;
-    end
-    else if FOperacao = 'DELETE' then
-    begin
-      FController.DeletarClientePGTO(Self.FCODCliente);
-      ShowMessage('CLIENTE DELETADO!');
-      Self.Close;
+    try
+       //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
+      if FOperacao = 'INSERT' then
+      begin
+        FController.CadastrarClientePGTO(
+        EditNome.Text,
+        EditEndereco.Text,
+        EditNumero.Text,
+        String.Join(';', ListBoxTelefones.Items.ToStringArray),
+        ComboBoxPessoa.Text,
+        EditDocumento.Text,
+        ComboBoxAtivo.Text,
+        String.Join(';', ListBoxEmail.Items.ToStringArray),
+        NumericEditCredito.Text
+        );
+        ShowMessage('CLIENTE CADASTRADO!');
+        Self.Close;
+      end
+      else if FOperacao = 'UPDATE' then
+      begin
+        FController.AlterarClientePGTO(
+        Self.FCODCliente,
+        EditNome.Text,
+        EditEndereco.Text,
+        EditNumero.Text,
+        String.Join(';', ListBoxTelefones.Items.ToStringArray),
+        ComboBoxPessoa.Text,
+        EditDocumento.Text,
+        ComboBoxAtivo.Text,
+        String.Join(';', ListBoxEmail.Items.ToStringArray),
+        NumericEditCredito.Text
+        );
+        ShowMessage('CLIENTE ATUALIZADO!');
+        Self.Close;
+      end
+      else if FOperacao = 'DELETE' then
+      begin
+        FController.DeletarClientePGTO(Self.FCODCliente);
+        ShowMessage('CLIENTE DELETADO!');
+        Self.Close;
+      end;
+
+    except
+      on E: Exception do
+      begin
+        ShowMessage(E.Message);
+      end;
     end;
   end;
 
   //ADICIONAR EMAIL A LISTA
   procedure TFormCadastroClientes.BitBtnAdicionarEmailClick(Sender: TObject);
   begin
+    if Self.EditEmail.Text = '' then
+      Exit;
     ListBoxEmail.Items.Add(Self.EditEmail.Text);
     Self.EditEmail.Clear;
   end;
@@ -192,6 +203,8 @@ procedure TFormCadastroClientes.BtnFinalClick(Sender: TObject);
   //ADICIONAR TELEFONE A LISTA
   procedure TFormCadastroClientes.BitBtnAdicionarTelefoneClick(Sender: TObject);
   begin
+    if Self.EditTelefone.Text = '' then
+      Exit;
     ListBoxTelefones.Items.Add(Self.EditTelefone.Text);
     Self.EditTelefone.Clear;
   end;

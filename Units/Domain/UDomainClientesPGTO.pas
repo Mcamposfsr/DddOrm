@@ -7,12 +7,15 @@ uses
   DB,
   SysUtils,
   Generics.Collections,
+
   /// ORM
   dbcbr.mapping.attributes,
   ormbr.types.nullable,
   dbcbr.types.mapping,
   dbcbr.mapping.register,
-  ormbr.types.blob;
+  ormbr.types.blob,
+
+  UErros,UTelefoneValidator,UDocValidator, Vcl.Dialogs,UEmailValidator;
 
   type
 
@@ -34,6 +37,8 @@ uses
     FEmail:String;
 
   public
+    procedure ValidarCampos;
+
     Constructor Create(
     ACodigo:Integer;
     ANome,
@@ -88,7 +93,7 @@ uses
   end;
 
 implementation
-  //CREATE
+  //RECEBER VALORES
   Constructor TClientePGTO.Create(
     ACodigo:Integer;
     ANome,
@@ -113,4 +118,120 @@ implementation
     Self.FEmail := AEmail;
   end;
 
+
+  //VALIDAR VALORES
+   procedure TClientePGTO.ValidarCampos;
+   var
+   I: Integer;
+   LTelefones: TStringList;
+   LEmails: TStringList;
+   LDocumento: String;
+   LErrorCadastro: EErrorFormInput;
+   LEstado: Boolean;
+   begin
+    LErrorCadastro := EErrorFormInput.Create;
+    LEstado := True;
+
+    //VALIDAÇÃO NOME
+    if NOME  = '' then
+      begin
+        LErrorCadastro.FCampos.Add('Nome');
+        LErrorCadastro.FValores.Add('Nome Vazio');
+        LEstado := False;
+      end;
+
+    //VALIDAÇÃO ENDEREÇO
+    if Endereco  = '' then
+    begin
+      LErrorCadastro.FCampos.Add('Endereço');
+      LErrorCadastro.FValores.Add('Endereço Vazio');
+      LEstado := False;
+    end;
+
+    //VALIDAÇÃO NUMERO
+    if Numero  = '' then
+    begin
+      LErrorCadastro.FCampos.Add('Numero');
+      LErrorCadastro.FValores.Add('Numero Vazio');
+      LEstado := False;
+    end;
+
+    //VAIDAR TELEFONES
+    if Telefone <> '' then
+      try
+        LTelefones :=  TStringList.Create;
+        LTelefones.AddStrings(Telefone.Split([';']));
+
+        for I := 0 to LTelefones.Count -1 do
+        begin
+          if not ValidarTelefone(LTelefones[I]) then
+          begin
+            LErrorCadastro.FCampos.Add('Telefone');
+            LErrorCadastro.FValores.Add(LTelefones[I]);
+            LEstado := False;
+          end;
+        end;
+      finally
+        LTelefones.Free;
+      end;
+
+    //VAIDAR PESSOA
+    if Pessoa  = '' then
+    begin
+      LErrorCadastro.FCampos.Add('Pessoa');
+      LErrorCadastro.FValores.Add('Pessoa Vazio');
+      LEstado := False;
+    end;
+
+    //VAIDAR DOCUMENTO
+    LDocumento := TDocValidator.NormalizarDocumento(Documento);
+    if LDocumento = '' then
+    begin
+      LErrorCadastro.FCampos.Add('Documento');
+      LErrorCadastro.FValores.Add('Documento Vazio');
+      LEstado := False;
+    end
+    else if (LDocumento.Length > 14) or (LDocumento.Length < 11) then
+    begin
+      LErrorCadastro.FCampos.Add('Documento');
+      LErrorCadastro.FValores.Add(Documento);
+      LEstado := False;
+    end
+    else if not TDocValidator.ValidarDOC(LDocumento) then
+    begin
+      LErrorCadastro.FCampos.Add('Documento');
+      LErrorCadastro.FValores.Add(Documento);
+      LEstado := False;
+    end;
+
+    //VAIDAR ATIVO
+    if Ativo  = '' then
+    begin
+      LErrorCadastro.FCampos.Add('Cliente ativo');
+      LErrorCadastro.FValores.Add('Cliente Ativo Vazio');
+      LEstado := False;
+    end;
+
+    //VAIDAR EMAIL
+    if Email <> '' then
+      try
+        LEmails := TStringList.Create;
+        LEmails.AddStrings(Email.Split([';']));
+        for I := 0 to LEmails.Count -1 do
+        begin
+          if not ValidarEmail(LEmails[I]) then
+          begin
+            LErrorCadastro.FCampos.Add('Emails');
+            LErrorCadastro.FValores.Add(LEmails[I]);
+            LEstado := False;
+          end;
+        end;
+      finally
+        LEmails.Free;
+      end;
+
+    if not LEstado then
+      raise LErrorCadastro;
+
+   end;
 end.

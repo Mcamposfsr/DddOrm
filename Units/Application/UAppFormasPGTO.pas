@@ -36,11 +36,14 @@ implementation
     FRepository := ARep;
   end;
 
+
+  //SELECT
   Function TAppFormasPGTO.BuscarFormasPGTO:TObjectList<TFormasPGTO>;
   begin
     Result := FRepository.SelectAll;
   end;
 
+  //SELECT WHERE
   Function TAppFormasPGTO.BuscarFormasPGTOByID(ACodigo:Integer):TFormasPGTO;
   var LCodigo: String;
   begin
@@ -48,6 +51,7 @@ implementation
     Result := FRepository.Select(LCodigo);
   end;
 
+  //INSERT
   procedure TAppFormasPGTO.InserirFormasPGTO(ANome:String;AParcelas:Integer;AJuros:Currency);
   var LFormasPGTO: TFormasPGTO;
   begin
@@ -55,12 +59,15 @@ implementation
     try
      LFormasPGTO := TFormasPGTO.Create(0,ANome,AParcelas,AJuros);
 
+     LFormasPGTO.ValidarCampos;
+
      FRepository.Insert(LFormasPGTO);
     finally
       LFormasPGTO.Free;
     end;
   end;
 
+  //UPDATE
   procedure TAppFormasPGTO.AtualizarFormasPGTO(ACodigo:Integer;ANome:String;AParcelas:Integer;AJuros:Currency);
   var
   LFormasPGTO: TFormasPGTO;
@@ -70,12 +77,16 @@ implementation
     LFormasPGTO := nil;
     try
      LFormasPGTO := TFormasPGTO.Create(ACodigo,ANome,AParcelas,AJuros);
+
+     LFormasPGTO.ValidarCampos;
+
      FRepository.Update(LCodigo,LFormasPGTO);
     finally
       LFormasPGTO.Free;
     end;
   end;
 
+  //DELETE
   procedure TAppFormasPGTO.DeletarFormasPGTO(ACodigo:Integer);
   var
   LFormasPGTO: TFormasPGTO;

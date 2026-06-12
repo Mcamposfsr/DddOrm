@@ -22,10 +22,6 @@ object FormCadastroClientes: TFormCadastroClientes
     Height = 375
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 32
-    ExplicitTop = 24
-    ExplicitWidth = 788
-    ExplicitHeight = 348
     object Label1: TLabel
       Left = 16
       Top = 32
@@ -145,7 +141,10 @@ object FormCadastroClientes: TFormCadastroClientes
       Width = 209
       Height = 21
       MaxLength = 18
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 1
+      TextHint = 'CPF ou CNPJ com ou sem formata'#231#227'o'
     end
     object ComboBoxPessoa: TComboBox
       Left = 184
@@ -183,6 +182,7 @@ object FormCadastroClientes: TFormCadastroClientes
       Top = 328
       Width = 105
       Height = 33
+      Enabled = False
       TabOrder = 9
       OnClick = BtnFinalClick
     end
@@ -210,7 +210,10 @@ object FormCadastroClientes: TFormCadastroClientes
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 0
+        TextHint = 'xxxxxx@xxxxx.com'
       end
       object BitBtnRemoverEmail: TBitBtn
         Left = 247
@@ -337,7 +340,10 @@ object FormCadastroClientes: TFormCadastroClientes
         Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 0
+        TextHint = '(XX)XXXXX-XXXX'
       end
       object BitBtnAdicionarTelefone: TBitBtn
         Left = 279

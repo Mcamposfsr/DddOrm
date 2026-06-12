@@ -100,32 +100,40 @@ constructor TFormCadastroPGTO.Create(
 
   procedure TFormCadastroPGTO.BtnFinalClick(Sender: TObject);
   begin
-    //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
-    if FOperacao = 'INSERT' then
-    begin
-      FController.CadastrarFormaPGTO(
-      EditNome.Text,
-      EditParcelas.Text,
-      NumericEditJuros.Text
-      );
-      ShowMessage('FORMA DE PAGAMENTO CADASTRADA!');
-      Self.Close;
-    end
-    else if FOperacao = 'UPDATE' then
-    begin
-      FController.AlterarFormaPGTO(
-      Self.FCODPGTO,
-      EditNome.Text,
-      EditParcelas.Text,
-      NumericEditJuros.Text);
-      ShowMessage('FORMA DE PAGAMENTO ATUALIZADA!');
-      Self.Close;
-    end
-    else if FOperacao = 'DELETE' then
-    begin
-      FController.DeletarFormaPGTO(Self.FCODPGTO);
-      ShowMessage('FORMA DE PAGAMENTO DELETADA!');
-      Self.Close;
+    try
+      //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
+      if FOperacao = 'INSERT' then
+      begin
+        FController.CadastrarFormaPGTO(
+        EditNome.Text,
+        EditParcelas.Text,
+        NumericEditJuros.Text
+        );
+        ShowMessage('FORMA DE PAGAMENTO CADASTRADA!');
+        Self.Close;
+      end
+      else if FOperacao = 'UPDATE' then
+      begin
+        FController.AlterarFormaPGTO(
+        Self.FCODPGTO,
+        EditNome.Text,
+        EditParcelas.Text,
+        NumericEditJuros.Text);
+        ShowMessage('FORMA DE PAGAMENTO ATUALIZADA!');
+        Self.Close;
+      end
+      else if FOperacao = 'DELETE' then
+      begin
+        FController.DeletarFormaPGTO(Self.FCODPGTO);
+        ShowMessage('FORMA DE PAGAMENTO DELETADA!');
+        Self.Close;
+      end;
+    except
+      on E: Exception do
+      begin
+        ShowMessage(E.Message);
+      end;
+
     end;
   end;
 

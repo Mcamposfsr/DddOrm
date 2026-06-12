@@ -6,7 +6,7 @@ uses
   System.SysUtils,
   UDM in 'Units\DM\UDM.pas',
   UGenericRep in 'Units\Repository\UGenericRep.pas',
-  UCPFValidator in 'Units\Utils\UCPFValidator.pas',
+  UDocValidator in 'Units\Utils\UDocValidator.pas',
   UIRepository in 'Units\Interfaces\UIRepository.pas',
   UDomainFormasPGTO in 'Units\Domain\UDomainFormasPGTO.pas',
   UDomainClientesPGTO in 'Units\Domain\UDomainClientesPGTO.pas',
@@ -18,7 +18,11 @@ uses
   UFormClientesPGTO in 'Units\Forms\UFormClientesPGTO.pas' {FormClientesPGTO},
   UFormFormasPGTO in 'Units\Forms\UFormFormasPGTO.pas' {FormFormasPGTO},
   UFormCadastroClientePGTO in 'Units\Forms\FormsSecundarios\UFormCadastroClientePGTO.pas' {FormCadastroClientes},
-  UFormPrincipal in 'Units\Forms\UFormPrincipal.pas' {DDDORM};
+  UFormPrincipal in 'Units\Forms\UFormPrincipal.pas' {DDDORM},
+  UErros in 'Units\Erros\UErros.pas',
+  UTelefoneValidator in 'Units\Utils\UTelefoneValidator.pas',
+  UEmailValidator in 'Units\Utils\UEmailValidator.pas',
+  UFormatErrorText in 'Units\Utils\UFormatErrorText.pas';
 
 //VARIÁVEL DE AJUSTE PARA BANCO.
   var LLocationDB: String;
@@ -49,9 +53,9 @@ begin
     GDM.ConectarBD;
 
     Application.CreateForm(TDDDORM, DDDORM);
-    Application.CreateForm(TFormClientesPGTO, FormClientesPGTO);
-    Application.CreateForm(TFormFormasPGTO, FormFormasPGTO);
-    Application.Run;
+  Application.CreateForm(TFormClientesPGTO, FormClientesPGTO);
+  Application.CreateForm(TFormFormasPGTO, FormFormasPGTO);
+  Application.Run;
 
   finally
     GDM.Free;

@@ -2,7 +2,7 @@ unit UControllerClientesPGTO;
 
 interface
 
-uses UDomainClientesPGTO,UIRepository,UAppClientesPGTO, System.Generics.Collections,System.Classes, System.SysUtils, Vcl.Dialogs;
+uses UDomainClientesPGTO,UIRepository,UAppClientesPGTO, System.Generics.Collections,System.Classes,UFormatErrorText, System.SysUtils, Vcl.Dialogs,UErros;
 
 type IControllerClientesPGTO = interface
   function BuscarClientePGTO(ACOD:Integer):TClientePGTO;
@@ -38,7 +38,15 @@ implementation
   //BUSCAR
   function TControllerClientesPGTO.BuscarClientePGTO(ACOD:Integer):TClientePGTO;
   begin
-    Result := FApp.BuscarClientePGTOByID(ACOD);
+    try
+      Result := FApp.BuscarClientePGTOByID(ACOD);
+    except
+    //ERROS INESPERADOS
+      on E: Exception do
+      begin
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+      end;
+    end;
   end;
 
   //CADASTRAR
@@ -63,8 +71,16 @@ implementation
       Self.FApp.InserirClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,LLimiteCredito);
       Self.FRep.AtualizarDataSet;
     except
+      //ERROS VALIDAÇÃO FORMULÁRIOS
+      on E: EErrorFormInput do
+      begin
+        raise Exception.Create('Falha ao cadastrar cliente.' + FFormatErrorText(E.FCampos,E.FValores));
+      end;
+      //ERROS INESPERADOS
       on E: Exception do
-        ShowMessage('Ocorreu um erro: ' + sLineBreak + E.Message);
+      begin
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+      end;
     end;
   end;
 
@@ -88,9 +104,15 @@ implementation
       Self.FApp.AtualizarClientePGTO(ACOD,ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,LLimiteCredito);
       Self.FRep.AtualizarDataSet;
     except
+      //ERROS VALIDAÇÃO FORMULÁRIOS
+      on E: EErrorFormInput do
+      begin
+        raise Exception.Create('Falha ao cadastrar cliente.' +  FFormatErrorText(E.FCampos,E.FValores));
+      end;
+      //ERROS INESPERADOS
       on E: Exception do
       begin
-        ShowMessage('Ocorreu um erro: ' +  sLineBreak + E.Message);
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
       end;
     end;
   end;
@@ -102,9 +124,10 @@ implementation
       Self.FApp.DeletarClientePGTO(ACOD);
       Self.FRep.AtualizarDataSet;
     except
+      //ERROS INESPERADOS
       on E: Exception do
       begin
-        ShowMessage('Ocorreu um erro: ' +  sLineBreak + E.Message);
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
       end;
     end;
   end;
@@ -117,7 +140,7 @@ implementation
     except
       on E: Exception do
       begin
-        ShowMessage('Ocorreu um erro: ' +  sLineBreak + E.Message);
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
       end;
     end;
   end;
