@@ -27,12 +27,12 @@ object FormCadastroPGTO: TFormCadastroPGTO
     object Label1: TLabel
       Left = 16
       Top = 16
-      Width = 35
-      Height = 16
+      Width = 32
+      Height = 13
       Caption = 'Nome'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -40,12 +40,12 @@ object FormCadastroPGTO: TFormCadastroPGTO
     object Label3: TLabel
       Left = 238
       Top = 16
-      Width = 55
-      Height = 16
+      Width = 48
+      Height = 13
       Caption = 'Parcelas'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -53,12 +53,12 @@ object FormCadastroPGTO: TFormCadastroPGTO
     object Label7: TLabel
       Left = 343
       Top = 16
-      Width = 35
-      Height = 16
+      Width = 31
+      Height = 13
       Caption = 'Juros'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -91,21 +91,21 @@ object FormCadastroPGTO: TFormCadastroPGTO
       Format = '0.00%'
     end
     object BtnConfirmar: TButton
-      Left = 312
-      Top = 80
-      Width = 105
-      Height = 33
-      Caption = 'CONFIRMAR'
-      TabOrder = 4
-      OnClick = BtnConfirmarClick
-    end
-    object Button1: TButton
       Left = 188
       Top = 80
       Width = 105
       Height = 33
-      Caption = 'CANCELAR'
+      Caption = 'CONFIRMAR'
       TabOrder = 3
+      OnClick = BtnConfirmarClick
+    end
+    object Button1: TButton
+      Left = 312
+      Top = 80
+      Width = 105
+      Height = 33
+      Caption = 'CANCELAR'
+      TabOrder = 4
       OnClick = Button1Click
     end
   end

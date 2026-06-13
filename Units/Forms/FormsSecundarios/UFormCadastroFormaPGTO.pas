@@ -117,7 +117,6 @@ constructor TFormCadastroPGTO.Create(
         EditParcelas.Text,
         NumericEditJuros.Text
         );
-        ShowMessage('FORMA DE PAGAMENTO CADASTRADA!');
         Self.Close;
       end
       else if FOperacao = 'UPDATE' then
@@ -127,13 +126,11 @@ constructor TFormCadastroPGTO.Create(
         EditNome.Text,
         EditParcelas.Text,
         NumericEditJuros.Text);
-        ShowMessage('FORMA DE PAGAMENTO ATUALIZADA!');
         Self.Close;
       end
       else if FOperacao = 'DELETE' then
       begin
         FController.DeletarFormaPGTO(Self.FCODPGTO);
-        ShowMessage('FORMA DE PAGAMENTO DELETADA!');
         Self.Close;
       end;
     except
@@ -173,9 +170,6 @@ constructor TFormCadastroPGTO.Create(
       Key := #0;
       SelectNext(ActiveControl, True, True);
     end;
-
-      if Key = #27 then
-    Self.Close;
   end;
 
 end.

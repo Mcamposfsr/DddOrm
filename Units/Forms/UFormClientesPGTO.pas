@@ -36,16 +36,15 @@ type
     BtnDeletar: TButton;
     BtnAlterar: TButton;
     BtnCadastrar: TButton;
-    BtnBuscar: TButton;
+    BtnFechar: TButton;
     DataSource: TDataSource;
     FDMemTable: TFDMemTable;
     procedure FormCreate(Sender: TObject);
-    procedure BtnBuscarClick(Sender: TObject);
+    procedure BtnFecharClick(Sender: TObject);
     procedure BtnCadastrarClick(Sender: TObject);
     procedure BtnAlterarClick(Sender: TObject);
     procedure BtnDeletarClick(Sender: TObject);
     procedure EditFiltroNomeChange(Sender: TObject);
-    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
 
     //FERRAMENTAS
@@ -105,27 +104,12 @@ procedure TFormClientesPGTO.FormCreate(Sender: TObject);
   end;
 
   //BUSCA
-  procedure TFormClientesPGTO.BtnBuscarClick(Sender: TObject);
+  procedure TFormClientesPGTO.BtnFecharClick(Sender: TObject);
   var
   LFORMCadastroClientePGTO: TFormCadastroClientes;
   LCOD: Integer;
   begin
-    try
-      Self.VerificarSelecao;
-      LCOD := Self.FDMemTable.FieldByName('CLI_CODIGO').AsInteger;
-      try
-        LFORMCadastroClientePGTO := TFormCadastroClientes.Create(nil,FController,LCOD,'SELECT');
-        LFORMCadastroClientePGTO.ShowModal;
-      finally
-        LFORMCadastroClientePGTO.Free;
-      end;
-      
-    except
-      on E: exception do 
-      begin
-        ShowMessage(E.Message);
-      end;
-    end;
+    Self.Close;
   end;
 
   //CADASTRAR
@@ -191,12 +175,6 @@ procedure TFormClientesPGTO.FormCreate(Sender: TObject);
       ShowMessage(E.Message);
     end;
    end;
-  end;
-
-  procedure TFormClientesPGTO.FormKeyPress(Sender: TObject; var Key: Char);
-  begin
-    if Key = #27 then
-      Self.Close;
   end;
 
 

@@ -28,12 +28,12 @@ object FormCadastroClientes: TFormCadastroClientes
     object Label1: TLabel
       Left = 16
       Top = 32
-      Width = 35
-      Height = 16
+      Width = 32
+      Height = 13
       Caption = 'Nome'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -41,12 +41,12 @@ object FormCadastroClientes: TFormCadastroClientes
     object Label2: TLabel
       Left = 16
       Top = 158
-      Width = 60
-      Height = 16
+      Width = 52
+      Height = 13
       Caption = 'Endere'#231'o'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -54,12 +54,12 @@ object FormCadastroClientes: TFormCadastroClientes
     object Label3: TLabel
       Left = 16
       Top = 224
-      Width = 49
-      Height = 16
+      Width = 44
+      Height = 13
       Caption = 'Numero'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -67,12 +67,12 @@ object FormCadastroClientes: TFormCadastroClientes
     object Label5: TLabel
       Left = 184
       Top = 224
-      Width = 46
-      Height = 16
+      Width = 40
+      Height = 13
       Caption = 'Pessoa'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -80,12 +80,12 @@ object FormCadastroClientes: TFormCadastroClientes
     object Label6: TLabel
       Left = 16
       Top = 96
-      Width = 73
-      Height = 16
+      Width = 65
+      Height = 13
       Caption = 'Documento'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -93,12 +93,12 @@ object FormCadastroClientes: TFormCadastroClientes
     object Label7: TLabel
       Left = 236
       Top = 96
-      Width = 109
-      Height = 16
+      Width = 96
+      Height = 13
       Caption = 'Limite de Cr'#233'dito'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -106,12 +106,12 @@ object FormCadastroClientes: TFormCadastroClientes
     object Label8: TLabel
       Left = 304
       Top = 224
-      Width = 35
-      Height = 16
+      Width = 30
+      Height = 13
       Caption = 'Ativo'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -187,12 +187,12 @@ object FormCadastroClientes: TFormCadastroClientes
         'N')
     end
     object BtnConfirmar: TButton
-      Left = 680
+      Left = 552
       Top = 328
       Width = 105
       Height = 33
       Caption = 'CONFIRMAR'
-      TabOrder = 10
+      TabOrder = 9
       OnClick = BtnConfirmarClick
     end
     object GroupBox1: TGroupBox
@@ -203,7 +203,7 @@ object FormCadastroClientes: TFormCadastroClientes
       Caption = 'Email'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -266,7 +266,6 @@ object FormCadastroClientes: TFormCadastroClientes
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFF0000}
         TabOrder = 2
-        TabStop = False
         OnClick = BitBtnRemoverEmailClick
       end
       object ListBoxEmail: TListBox
@@ -334,7 +333,7 @@ object FormCadastroClientes: TFormCadastroClientes
       Caption = 'Telefone'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
@@ -355,7 +354,6 @@ object FormCadastroClientes: TFormCadastroClientes
         ShowHint = True
         TabOrder = 0
         TextHint = '(XX)XXXXX-XXXX'
-        OnKeyPress = EditTelefoneKeyPress
       end
       object BitBtnAdicionarTelefone: TBitBtn
         Left = 247
@@ -441,7 +439,6 @@ object FormCadastroClientes: TFormCadastroClientes
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFF0000}
         TabOrder = 2
-        TabStop = False
         OnClick = BitBtnRemoverTelefoneClick
       end
       object ListBoxTelefones: TListBox
@@ -460,12 +457,12 @@ object FormCadastroClientes: TFormCadastroClientes
       end
     end
     object ButtonCancelar: TButton
-      Left = 552
+      Left = 680
       Top = 328
       Width = 105
       Height = 33
       Caption = 'CANCELAR'
-      TabOrder = 9
+      TabOrder = 10
       OnClick = ButtonCancelarClick
     end
   end

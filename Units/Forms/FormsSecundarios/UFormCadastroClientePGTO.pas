@@ -47,7 +47,6 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure ButtonCancelarClick(Sender: TObject);
     procedure EditNomeKeyPress(Sender: TObject; var Key: Char);
-    procedure EditTelefoneKeyPress(Sender: TObject; var Key: Char);
   private
 
     //FERRAMENTAS
@@ -152,7 +151,6 @@ end;
         String.Join(';', ListBoxEmail.Items.ToStringArray),
         NumericEditCredito.Text
         );
-        ShowMessage('CLIENTE CADASTRADO!');
         Self.Close;
       end
       else if FOperacao = 'UPDATE' then
@@ -169,13 +167,11 @@ end;
         String.Join(';', ListBoxEmail.Items.ToStringArray),
         NumericEditCredito.Text
         );
-        ShowMessage('CLIENTE ATUALIZADO!');
         Self.Close;
       end
       else if FOperacao = 'DELETE' then
       begin
         FController.DeletarClientePGTO(Self.FCODCliente);
-        ShowMessage('CLIENTE DELETADO!');
         Self.Close;
       end;
 
@@ -247,14 +243,6 @@ end;
     Key := #0;
   end;
 
-  //PERMITIR APENAS DÍGITOS DE TELEFONE
-  procedure TFormCadastroClientes.EditTelefoneKeyPress(Sender: TObject;
-  var Key: Char);
-  begin
-    if not (Key in ['0'..'9', '(',')','-', #8]) then
-    Key := #0;
-  end;
-
 // ########## MÉTODOS AUXÍLIARES ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES
 
   // PASSAR VALORES DDO PARA FORM
@@ -305,18 +293,14 @@ end;
     BtnConfirmar.Enabled := AEstado;
   end;
 
- procedure TFormCadastroClientes.FormKeyPress(Sender: TObject; var Key: Char);
-begin
-   if Key = #13 then
+   procedure TFormCadastroClientes.FormKeyPress(Sender: TObject; var Key: Char);
   begin
-    Key := #0;
-    SelectNext(ActiveControl, True, True);
+     if Key = #13 then
+    begin
+      Key := #0;
+      SelectNext(ActiveControl, True, True);
+    end;
   end;
-
-  if Key = #27 then
-    Self.Close;
-
-end;
 
 
 end.

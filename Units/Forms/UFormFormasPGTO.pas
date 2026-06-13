@@ -31,7 +31,7 @@ type
     BtnDeletar: TButton;
     BtnAlterar: TButton;
     BtnCadastrar: TButton;
-    BtnBuscar: TButton;
+    BtnFechar: TButton;
     PainelPrincipal: TPanel;
     Label1: TLabel;
     DBGrid1: TDBGrid;
@@ -39,12 +39,11 @@ type
     DataSource: TDataSource;
     FDMemTable: TFDMemTable;
     procedure FormCreate(Sender: TObject);
-    procedure BtnBuscarClick(Sender: TObject);
+    procedure BtnFecharClick(Sender: TObject);
     procedure BtnCadastrarClick(Sender: TObject);
     procedure BtnAlterarClick(Sender: TObject);
     procedure BtnDeletarClick(Sender: TObject);
     procedure EditFiltroChange(Sender: TObject);
-    procedure FormKeyPress(Sender: TObject; var Key: Char);
   private
     //FERRAMENTAS
     FRepository: IRepository<TFormasPGTO>;
@@ -106,27 +105,12 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
   end;
 
   //BUSCAR
-  procedure TFormFormasPGTO.BtnBuscarClick(Sender: TObject);
+  procedure TFormFormasPGTO.BtnFecharClick(Sender: TObject);
   var
   LFORMCadastroPGTO: TFormCadastroPGTO;
   LCOD: Integer;
   begin
-    try
-      Self.VerificarSelecao;
-      LCOD := Self.FDMemTable.FieldByName('FIN_CODIGO').AsInteger;
-      try
-        LFORMCadastroPGTO := TFormCadastroPGTO.Create(nil,FController,LCOD,'SELECT');
-        LFORMCadastroPGTO.ShowModal;
-      finally
-        LFORMCadastroPGTO.Free;
-      end;
-
-    except
-      on E: Exception do
-      begin
-        ShowMessage(E.Message);
-      end;
-    end;
+    Self.Close;
   end;
 
   //CADASTRO
@@ -189,12 +173,6 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
          ShowMessage(E.Message);
       end;
     end;
-  end;
-
-  procedure TFormFormasPGTO.FormKeyPress(Sender: TObject; var Key: Char);
-  begin
-    if Key = #27 then
-      Self.Close;
   end;
 
   // ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES

@@ -14,7 +14,6 @@ object FormFormasPGTO: TFormFormasPGTO
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
-  OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
   object PainelSecundario: TPanel
@@ -32,7 +31,7 @@ object FormFormasPGTO: TFormFormasPGTO
     TabOrder = 0
     object BtnDeletar: TButton
       AlignWithMargins = True
-      Left = 553
+      Left = 369
       Top = 1
       Width = 184
       Height = 46
@@ -50,10 +49,11 @@ object FormFormasPGTO: TFormFormasPGTO
       ParentFont = False
       TabOrder = 3
       OnClick = BtnDeletarClick
+      ExplicitLeft = 553
     end
     object BtnAlterar: TButton
       AlignWithMargins = True
-      Left = 369
+      Left = 185
       Top = 1
       Width = 184
       Height = 46
@@ -71,10 +71,11 @@ object FormFormasPGTO: TFormFormasPGTO
       ParentFont = False
       TabOrder = 2
       OnClick = BtnAlterarClick
+      ExplicitLeft = 369
     end
     object BtnCadastrar: TButton
       AlignWithMargins = True
-      Left = 185
+      Left = 1
       Top = 1
       Width = 184
       Height = 46
@@ -92,10 +93,11 @@ object FormFormasPGTO: TFormFormasPGTO
       ParentFont = False
       TabOrder = 1
       OnClick = BtnCadastrarClick
+      ExplicitLeft = 185
     end
-    object BtnBuscar: TButton
+    object BtnFechar: TButton
       AlignWithMargins = True
-      Left = 1
+      Left = 553
       Top = 1
       Width = 184
       Height = 46
@@ -104,7 +106,7 @@ object FormFormasPGTO: TFormFormasPGTO
       Margins.Right = 0
       Margins.Bottom = 0
       Align = alLeft
-      Caption = 'BUSCAR'
+      Caption = 'FECHAR'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -112,7 +114,9 @@ object FormFormasPGTO: TFormFormasPGTO
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 0
-      OnClick = BtnBuscarClick
+      OnClick = BtnFecharClick
+      ExplicitLeft = 593
+      ExplicitTop = 0
     end
   end
   object PainelPrincipal: TPanel
