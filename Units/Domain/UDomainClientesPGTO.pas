@@ -15,7 +15,7 @@ uses
   dbcbr.mapping.register,
   ormbr.types.blob,
 
-  UErros,UTelefoneValidator,UDocValidator, Vcl.Dialogs,UEmailValidator;
+  UErros,UGenericValidator,UDocValidator, Vcl.Dialogs,UEmailValidator;
 
   type
 
@@ -134,11 +134,19 @@ implementation
 
     //VALIDAÇÃO NOME
     if NOME  = '' then
-      begin
-        LErrorCadastro.FCampos.Add('Nome');
-        LErrorCadastro.FValores.Add('Nome Vazio');
-        LEstado := False;
-      end;
+    begin
+      LErrorCadastro.FCampos.Add('Nome');
+      LErrorCadastro.FValores.Add('Nome Vazio');
+      LEstado := False;
+    end;
+
+    if not ValidarNome(NOME) then
+    begin
+      LErrorCadastro.FCampos.Add('Nome');
+      LErrorCadastro.FValores.Add(NOME);
+      LEstado := False;
+    end;
+
 
     //VALIDAÇÃO ENDEREÇO
     if Endereco  = '' then

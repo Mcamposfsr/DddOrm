@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, NumericEdit, Vcl.StdCtrls,
 
-  UControllerClientesPGTO,UDomainClientesPGTO, Vcl.Buttons,UTelefoneValidator, System.Character;
+  UControllerClientesPGTO,UDomainClientesPGTO, Vcl.Buttons,UGenericValidator, System.Character;
 
 type
   TFormCadastroClientes = class(TForm)
@@ -46,7 +46,6 @@ type
     procedure GroupBox2Click(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure ButtonCancelarClick(Sender: TObject);
-    procedure EditNomeKeyPress(Sender: TObject; var Key: Char);
   private
 
     //FERRAMENTAS
@@ -233,14 +232,6 @@ end;
       ListBoxTelefones.Items.Delete(ListBoxTelefones.ItemIndex)
     else
       ShowMessage('SELECIONE UM TELEFONE!');
-  end;
-
-  //PERMITIR APENAS LETRAS NO NOME
-  procedure TFormCadastroClientes.EditNomeKeyPress(Sender: TObject;
-  var Key: Char);
-  begin
-    if not (TCharacter.IsLetter(Key) or (Key = ' ') or (Key = #8)) then
-    Key := #0;
   end;
 
 // ########## MÉTODOS AUXÍLIARES ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES

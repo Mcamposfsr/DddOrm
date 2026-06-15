@@ -123,7 +123,6 @@ object FormCadastroClientes: TFormCadastroClientes
       Height = 21
       CharCase = ecUpperCase
       TabOrder = 0
-      OnKeyPress = EditNomeKeyPress
     end
     object EditEndereco: TEdit
       Left = 16

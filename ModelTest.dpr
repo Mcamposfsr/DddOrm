@@ -20,7 +20,7 @@ uses
   UFormCadastroClientePGTO in 'Units\Forms\FormsSecundarios\UFormCadastroClientePGTO.pas' {FormCadastroClientes},
   UFormPrincipal in 'Units\Forms\UFormPrincipal.pas' {DDDORM},
   UErros in 'Units\Erros\UErros.pas',
-  UTelefoneValidator in 'Units\Utils\UTelefoneValidator.pas',
+  UGenericValidator in 'Units\Utils\UGenericValidator.pas',
   UEmailValidator in 'Units\Utils\UEmailValidator.pas',
   UFormatErrorText in 'Units\Utils\UFormatErrorText.pas';
 

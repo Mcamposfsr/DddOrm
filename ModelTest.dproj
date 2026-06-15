@@ -160,7 +160,7 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Units\Erros\UErros.pas"/>
-        <DCCReference Include="Units\Utils\UTelefoneValidator.pas"/>
+        <DCCReference Include="Units\Utils\UGenericValidator.pas"/>
         <DCCReference Include="Units\Utils\UEmailValidator.pas"/>
         <DCCReference Include="Units\Utils\UFormatErrorText.pas"/>
         <BuildConfiguration Include="Release">
