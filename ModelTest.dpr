@@ -22,7 +22,8 @@ uses
   UErros in 'Units\Erros\UErros.pas',
   UGenericValidator in 'Units\Utils\UGenericValidator.pas',
   UEmailValidator in 'Units\Utils\UEmailValidator.pas',
-  UFormatErrorText in 'Units\Utils\UFormatErrorText.pas';
+  UFormatErrorText in 'Units\Utils\UFormatErrorText.pas',
+  URepManager in 'Units\Repository\URepManager.pas';
 
 //VARIÁVEL DE AJUSTE PARA BANCO.
   var LLocationDB: String;

@@ -163,6 +163,7 @@
         <DCCReference Include="Units\Utils\UGenericValidator.pas"/>
         <DCCReference Include="Units\Utils\UEmailValidator.pas"/>
         <DCCReference Include="Units\Utils\UFormatErrorText.pas"/>
+        <DCCReference Include="Units\Repository\URepManager.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
