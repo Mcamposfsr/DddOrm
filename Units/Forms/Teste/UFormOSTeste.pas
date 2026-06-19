@@ -1,4 +1,4 @@
-unit UFormOS;
+unit UFormOSTeste;
 
 interface
 
@@ -7,10 +7,10 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.Grids,
   Vcl.DBGrids, Vcl.ExtCtrls, Vcl.ComCtrls,
 
-  UDM,UIRepository,UAppOrdemServico,UDomainOS,UGenericRep,UControllerOS,
+  UDM,UIRepository,UAppOrdemServicoTeste,UDomainOSTeste,UGenericRep,UControllerOSTeste,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Comp.DataSet, FireDAC.Comp.Client,UDomainClientes
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client,UDomainClientesTeste,URepManager,UDomainFormasPGTO
   ;
 
 type
@@ -41,8 +41,7 @@ type
     procedure EditValorKeyPress(Sender: TObject; var Key: Char);
   private
     //FERRAMENTAS
-    FRepOS: IRepository<TOrdemServico>;
-    FRepCliente: IRepository<TCliente>;
+    FRep: TRepositoryManager;
     FApp: IAppOrdemServico;
     FController: IControllerOrdemServico;
     FIDCurrentOS: Integer;
@@ -55,9 +54,10 @@ type
     //RECEBER ID CLIENTE ATUAL + REPOSITÓRIO CLIENTE PARA REGRAS DE FLUXO NO APP O.S
     constructor Create(
     AOWner:TComponent;
-    AIDCliente:Integer;
-    ARepCliente:IRepository<TCliente>
+    ARep:TRepositoryManager
     ); Reintroduce;
+
+    procedure Open(AID:Integer);
   end;
 
 
@@ -68,35 +68,43 @@ implementation
 
 {$R *.dfm}
 
-  constructor TFormOS.Create(AOWner:TComponent;AIDCliente:Integer;ARepCliente:IRepository<TCliente>);
+  constructor TFormOS.Create(AOWner:TComponent;ARep:TRepositoryManager);
   var LLocationDB: String;
   begin
     inherited Create(AOwner);
-    FIDCliente := AIDCliente;
-    FRepCliente := ARepCliente;
+    //RECEBER REPOSITÓRIO CRIADO NO FORM CLIENTES O.S
+    FRep := ARep;
 
-    LLocationDB := ExtractFilePath(ParamStr(0)) + '\..\..\DataBase\TESTE.FDB';
-    //AJUSTAR CLIENTE - SERÁ RECEBIDO NO CREATE DO FORM
+    //PASSAR DOMAIN O.S
+    FRep.AddDomain<TOrdemServico>;
+
+    //PASSAR DATASET PARA LIGAR AO ORM
+    FRep.ReceberDataSet<TOrdemServico>(Self.FDMemTable);
+
+    //CRIAR APPLICATION
+    FApp := TAppOrdemServico.Create(Self.FRep);
+
+    //CONTROLLER
+    FController := TControllerOrdemServico.Create(FApp,FRep);
+
+
+  end;
+
+  procedure TFormOS.Open(AID:Integer);
+  begin
+    FRep.AtualizarDataSetWhere<TOrdemServico>('ID_CLIENTE',FIDCliente);
+    FIDCliente := AID;
+
+    //INICIALIZAÇÃO CONTROLADA
     FIDCurrentOS := -1;
 
     //INICIAR SEM CLIENTE MARCADO
     FOperacao := '';
 
-    //CRIAR REPOSITORY
-    FRepOS := TRepository<TOrdemServico>.Create(GDM.GetConnection);
+    FRep.AtualizarDataSetWhere<TOrdemServico>('ID_CLIENTE',FIDCliente);
 
-    //PASSAR DATASET PARA LIGAR AO ORM
-    FRepOS.ReceberDataSet(Self.FDMemTable);
-
-    //CRIAR APPLICATION
-    FApp := TAppOrdemServico.Create(Self.FRepOS,Self.FRepCliente);
-
-    //CONTROLLER
-    FController := TControllerOrdemServico.Create(FApp,FRepOS);
-
-    FRepOS.AtualizarDataSetWhere('ID_CLIENTE',FIDCliente);
+    Self.ShowModal;
   end;
-
 
   //BUSCAR O.S
   procedure TFormOS.ButtonBuscarClick(Sender: TObject);

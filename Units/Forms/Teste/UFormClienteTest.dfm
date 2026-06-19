@@ -1,8 +1,8 @@
-object FormOS: TFormOS
+object FormClienteTest: TFormClienteTest
   Left = 0
   Top = 0
-  Caption = 'FormOS'
-  ClientHeight = 493
+  Caption = 'FormClienteTest'
+  ClientHeight = 531
   ClientWidth = 684
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -10,21 +10,25 @@ object FormOS: TFormOS
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OldCreateOrder = True
   Position = poScreenCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
   TextHeight = 15
   object Panel1: TPanel
     Left = 0
     Top = 0
     Width = 684
-    Height = 493
+    Height = 531
     Align = alClient
     TabOrder = 0
     object Label1: TLabel
       Left = 16
       Top = 355
-      Width = 36
+      Width = 48
       Height = 21
-      Caption = 'Valor'
+      Caption = 'Cliente'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -16
@@ -33,11 +37,11 @@ object FormOS: TFormOS
       ParentFont = False
     end
     object Label2: TLabel
-      Left = 259
+      Left = 504
       Top = 355
-      Width = 57
+      Width = 27
       Height = 21
-      Caption = 'Data OS'
+      Caption = 'CPF'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -16
@@ -46,11 +50,11 @@ object FormOS: TFormOS
       ParentFont = False
     end
     object Label3: TLabel
-      Left = 530
-      Top = 355
-      Width = 84
+      Left = 16
+      Top = 419
+      Width = 111
       Height = 21
-      Caption = 'Situa'#231#227'o OS'
+      Caption = 'Situa'#231#227'o Cliente'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -16
@@ -65,35 +69,42 @@ object FormOS: TFormOS
       Height = 272
       Align = alTop
       DataSource = DataSource
-      TabOrder = 3
+      TabOrder = 4
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -12
       TitleFont.Name = 'Segoe UI'
       TitleFont.Style = []
     end
-    object EditValor: TEdit
+    object EditCPF: TEdit
+      Left = 504
+      Top = 382
+      Width = 161
+      Height = 23
+      Enabled = False
+      TabOrder = 1
+    end
+    object EditNome: TEdit
       Left = 16
       Top = 382
-      Width = 153
+      Width = 457
       Height = 23
       Enabled = False
       TabOrder = 0
-      OnKeyPress = EditValorKeyPress
     end
     object Panel2: TPanel
       Left = 1
       Top = 296
       Width = 683
       Height = 41
-      TabOrder = 4
+      TabOrder = 5
       object ButtonDeletar: TButton
         AlignWithMargins = True
         Left = 570
         Top = 1
         Width = 112
         Height = 39
-        Margins.Left = 80
+        Margins.Left = 30
         Margins.Top = 0
         Margins.Right = 0
         Margins.Bottom = 0
@@ -110,13 +121,13 @@ object FormOS: TFormOS
       end
       object ButtonCadastrar: TButton
         AlignWithMargins = True
-        Left = 193
+        Left = 285
         Top = 1
         Width = 112
         Height = 39
         Margins.Left = 0
         Margins.Top = 0
-        Margins.Right = 80
+        Margins.Right = 30
         Margins.Bottom = 0
         Align = alLeft
         Caption = 'CADASTRAR'
@@ -137,7 +148,7 @@ object FormOS: TFormOS
         Height = 39
         Margins.Left = 0
         Margins.Top = 0
-        Margins.Right = 80
+        Margins.Right = 30
         Margins.Bottom = 0
         Align = alLeft
         Caption = 'BUSCAR'
@@ -152,11 +163,11 @@ object FormOS: TFormOS
       end
       object ButtonAlterar: TButton
         AlignWithMargins = True
-        Left = 378
+        Left = 428
         Top = 1
         Width = 112
         Height = 39
-        Margins.Left = 80
+        Margins.Left = 30
         Margins.Top = 0
         Margins.Right = 0
         Margins.Bottom = 0
@@ -171,12 +182,33 @@ object FormOS: TFormOS
         TabOrder = 2
         OnClick = ButtonAlterarClick
       end
+      object ButtonOS: TButton
+        AlignWithMargins = True
+        Left = 143
+        Top = 1
+        Width = 112
+        Height = 39
+        Margins.Left = 0
+        Margins.Top = 0
+        Margins.Right = 30
+        Margins.Bottom = 0
+        Align = alLeft
+        Caption = 'BUSCAR O.S'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 4
+        OnClick = ButtonOSClick
+      end
     end
     object ButtonCancel: TButton
-      Left = 411
-      Top = 451
+      Left = 425
+      Top = 482
       Width = 112
-      Height = 34
+      Height = 31
       Caption = 'CANCELAR'
       Enabled = False
       Font.Charset = DEFAULT_CHARSET
@@ -185,14 +217,14 @@ object FormOS: TFormOS
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 2
       OnClick = ButtonCancelClick
     end
     object ButtonSalvar: TButton
-      Left = 546
-      Top = 451
-      Width = 129
-      Height = 34
+      Left = 553
+      Top = 482
+      Width = 112
+      Height = 31
       Caption = 'SALVAR'
       Enabled = False
       Font.Charset = DEFAULT_CHARSET
@@ -201,36 +233,26 @@ object FormOS: TFormOS
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 3
       OnClick = ButtonSalvarClick
     end
     object ComboBoxSituacao: TComboBox
-      Left = 530
-      Top = 382
+      Left = 16
+      Top = 446
       Width = 145
       Height = 23
       Style = csDropDownList
       Enabled = False
-      TabOrder = 5
-      Items.Strings = (
-        'P'
-        'F')
-    end
-    object DateTimePickerOS: TDateTimePicker
-      Left = 259
-      Top = 382
-      Width = 152
-      Height = 23
-      Date = 46157.000000000000000000
-      Time = 0.476318831017124500
-      Enabled = False
       TabOrder = 6
+      Items.Strings = (
+        'R'
+        'I')
     end
   end
   object DataSource: TDataSource
     DataSet = FDMemTable
-    Left = 32
-    Top = 424
+    Left = 24
+    Top = 488
   end
   object FDMemTable: TFDMemTable
     FetchOptions.AssignedValues = [evMode]
@@ -240,7 +262,7 @@ object FormOS: TFormOS
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 112
-    Top = 424
+    Left = 88
+    Top = 488
   end
 end

@@ -9,18 +9,11 @@ uses
   dbebr.factory.firedac, ormbr.dml.generator.firebird,
   ormbr.container.fdmemtable, ormbr.container.dataset.interfaces,
 
+  //INTERFACE DM
+  UIDM,
 
   //OBJECT SET
   ormbr.container.objectset.interfaces, ormbr.container.objectset;
-
-  //INTERFACE DM
-type
-  IDM = interface
-    function GetConnection: TFDConnection;
-    procedure ConectarBD;
-    procedure DesconectarBd;
-    procedure ConnectionTest;
-  end;
 
 type
   TRepository<T: class, constructor> = class(TInterFacedObject, IRepository<T>)
@@ -130,19 +123,6 @@ begin
   FObjectContainer.Delete(AClass);
 end;
 
-procedure TRepository<T>.FiltrarDataSet(AColumn,AFilter:String);
-begin
-  if AFilter = '' then
-  begin
-   Self.FContainerDataSet.DataSet.Filtered := False;
-   Self.FContainerDataSet.DataSet.Filter := '';
-   Exit
-  end;
-  Self.FContainerDataSet.DataSet.FilterOptions := [foCaseInsensitive];
-  Self.FContainerDataSet.DataSet.Filter := Format('%s like ''%%%s%%''', [AColumn, AFilter]);
-  Self.FContainerDataSet.DataSet.Filtered := True;
-end;
-
 function TRepository<T>.GetConexaoAtual: IDBConnection;
 begin
   result := FConn;
@@ -158,6 +138,20 @@ begin
 end;
 
   //################# DATASET ################# DATASET ################# DATASET ################# DATASET ################# DATASET
+
+  //FILTRAR DATASET
+procedure TRepository<T>.FiltrarDataSet(AColumn,AFilter:String);
+begin
+  if AFilter = '' then
+  begin
+   Self.FContainerDataSet.DataSet.Filtered := False;
+   Self.FContainerDataSet.DataSet.Filter := '';
+   Exit
+  end;
+  Self.FContainerDataSet.DataSet.FilterOptions := [foCaseInsensitive];
+  Self.FContainerDataSet.DataSet.Filter := Format('%s like ''%%%s%%''', [AColumn, AFilter]);
+  Self.FContainerDataSet.DataSet.Filtered := True;
+end;
 
   //PASSAR CONTROLE DO DATA-SET PARA ORM REPOSITORY
 procedure TRepository<T>.ReceberDataSet(ADataSet: TDataSet);

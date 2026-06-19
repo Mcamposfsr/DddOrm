@@ -1,8 +1,8 @@
-unit UControllerOS;
+unit UControllerOSTeste;
 
 interface
 
-uses UDomainOS,UIRepository,UAppOrdemServico, System.Generics.Collections,System.Classes, System.SysUtils, Vcl.Dialogs;
+uses UDomainOSTeste,URepManager,UAppOrdemServicoTeste, System.Generics.Collections,System.Classes, System.SysUtils, Vcl.Dialogs;
 
 type IControllerOrdemServico = interface
   function BuscarOS(AID:Integer):TOrdemServico;
@@ -19,15 +19,15 @@ type TControllerOrdemServico = class(TInterfacedObject,IControllerOrdemServico)
     procedure AlterarOS(AID,AIDCliente:Integer;ADataOS:TDate;AValor,AEstado:String);
     procedure DeletarOS(AID,AIDCliente:Integer);
 
-    constructor Create(AApp:IAppOrdemServico;ARep:IRepository<TOrdemServico>);
+    constructor Create(AApp:IAppOrdemServico;ARep:TRepositoryManager);
   private
     FApp: IAppOrdemServico;
-    FRep: IRepository<TOrdemServico>;
+    FRep: TRepositoryManager;
 end;
 
 implementation
 
-  constructor TControllerOrdemServico.Create(AApp:IAppOrdemServico;ARep:IRepository<TOrdemServico>);
+  constructor TControllerOrdemServico.Create(AApp:IAppOrdemServico;ARep:TRepositoryManager);
   begin
     Self.FApp := AApp;
     Self.FRep := ARep;
@@ -50,7 +50,7 @@ implementation
         LValor := StrToCurr(AValor);
 
       Self.FApp.InserirOS(AIDCliente,ADataOS,LValor,AEstado);
-      Self.FRep.AtualizarDataSetWhere('ID_CLIENTE',AIDCliente);
+      Self.FRep.AtualizarDataSetWhere<TOrdemServico>('ID_CLIENTE',AIDCliente);
     except
       on E: Exception do
       begin
@@ -70,7 +70,7 @@ implementation
         LValor := StrToCurr(AValor);
 
       Self.FApp.AtualizarOS(AID,AIDCliente,ADataOS,LValor,AEstado);
-      Self.FRep.AtualizarDataSetWhere('ID_CLIENTE',AIDCliente);
+      Self.FRep.AtualizarDataSetWhere<TOrdemServico>('ID_CLIENTE',AIDCliente);
     except
       on E: Exception do
       begin
@@ -85,7 +85,7 @@ implementation
     try
       Self.FApp.DeletarOS(AID);
       //ID CLIENTE PARA ATUALIZAR DATASET
-      Self.FRep.AtualizarDataSetWhere('ID_CLIENTE',AIDCliente);
+      Self.FRep.AtualizarDataSetWhere<TOrdemServico>('ID_CLIENTE',AIDCliente);
     except
       on E: Exception do
       begin

@@ -1,4 +1,4 @@
-unit FormModelTest;
+unit UFormClienteTest;
 
 interface
 
@@ -10,11 +10,11 @@ uses
   FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.FB,
   FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Comp.Client,FireDAC.Stan.Param, FireDAC.DatS,
-  FireDAC.DApt.Intf, FireDAC.Comp.DataSet,UFormOS,
+  FireDAC.DApt.Intf, FireDAC.Comp.DataSet,UFormOSTeste,
 
   System.Generics.Collections,
   //CLASSE MODELO ORM
-  UDomainClientes,UDM,UGenericRep,UAppClientes,UControllerClientes,UIRepository,
+  UDomainClientesTeste,UDM,UGenericRep,UAppClientesTeste,UControllerClientesTeste,URepManager,UDomainOSTeste,
 
   dbebr.factory.interfaces,
   dbebr.factory.firedac,
@@ -29,7 +29,7 @@ uses
   ;
 
 type
-  TFormPrincipal = class(TForm)
+  TFormClienteTest = class(TForm)
     Panel1: TPanel;
     DataSource: TDataSource;
     DBGrid1: TDBGrid;
@@ -56,11 +56,15 @@ type
     procedure ButtonAlterarClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
     procedure ButtonOSClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     //FERRAMENTAS
-    FRepository: IRepository<TCliente>;
+    FRepository: TRepositoryManager;
     FApp: IAppClientes;
     FController: IController;
+
+    //
+    FFormOS: TFormOS;
 
     //CONTROLE FORM
     FOperacao: String;
@@ -68,32 +72,33 @@ type
     procedure FormControl(AState:Boolean);
 
 
-
-
   public
 
   end;
 
 var
-  FormPrincipal: TFormPrincipal;
+  FormClienteTest: TFormClienteTest;
 
 implementation
 
 {$R *.dfm}
 
   // INCIALIZAR FERRAMENTAS
-  procedure TFormPrincipal.FormCreate(Sender: TObject);
+  procedure TFormClienteTest.FormCreate(Sender: TObject);
   var LLocationDB: String;
   begin
-
     FIDCurrentClient := -1;
     //INICIAR SEM CLIENTE MARCADO
     FOperacao := '';
 
     //CRIAR REPOSITORY
-    FRepository := TRepository<TCliente>.Create(GDM.GetConnection);
+    FRepository := TRepositoryManager.Create(GDM.GetConnection);
+
+    //PASSAR DOMAIN CLIENTES
+    FRepository.AddDomain<TCliente>;
+
     //PASSAR DATASET PARA LIGAR AO ORM
-    FRepository.ReceberDataSet(Self.FDMemTable);
+    FRepository.ReceberDataSet<TCliente>(Self.FDMemTable);
 
     //CRIAR APPLICATION
     FApp := TAppClientes.Create(FRepository);
@@ -101,13 +106,22 @@ implementation
     //CONTROLLER
     FController := TController.Create(FRepository,FApp);
 
-    FRepository.AtualizarDataSet;
+    FRepository.AtualizarDataSet<TCliente>;
+
+    //CRIAR FORM O.S
+    FFormOS := TFormOS.Create(nil,Self.FRepository);
+  end;
+
+  //DESTRUCTOR
+  procedure TFormClienteTest.FormDestroy(Sender: TObject);
+  begin
+    Self.FFormOS.Free;
   end;
 
 // ##################### EVENTOS BTN ##################### EVENTOS BTN ##################### EVENTOS BTN ##################### EVENTOS BTN
 
   //BUSCAR DADOS DO CLIENTE SELECIONADO
-  procedure TFormPrincipal.ButtonBuscarClick(Sender: TObject);
+  procedure TFormClienteTest.ButtonBuscarClick(Sender: TObject);
   var
   LCLiente: TCliente;
   begin
@@ -134,24 +148,18 @@ implementation
     end;
   end;
 
-  procedure TFormPrincipal.ButtonOSClick(Sender: TObject);
+  procedure TFormClienteTest.ButtonOSClick(Sender: TObject);
   var
-  LForm: TFormOS;
   LID: Integer;
   begin
     LID := Self.FDMemTable.FieldByName('ID_CLIENTE').AsInteger;
-    LForm := nil;
-    try
-      LForm := TFormOS.Create(nil,LID,Self.FRepository);
-      LForm.ShowModal;
-    finally
-      LForm.Free;
-    end;
+    //ABRIR FORM O.S
+    FFormOS.Open(LID);
   end;
 
 
   //CADASTRO
-  procedure TFormPrincipal.ButtonCadastrarClick(Sender: TObject);
+  procedure TFormClienteTest.ButtonCadastrarClick(Sender: TObject);
   begin
     FIDCurrentClient := -1;
     Self.FormControl(True);
@@ -162,7 +170,7 @@ implementation
   end;
 
 //ALTERAR CLIENTE
-  procedure TFormPrincipal.ButtonAlterarClick(Sender: TObject);
+  procedure TFormClienteTest.ButtonAlterarClick(Sender: TObject);
   var LID: Integer;
   begin
     if FIDCurrentClient <> -1 then
@@ -176,7 +184,7 @@ implementation
 
 
   //DELETAR
-  procedure TFormPrincipal.ButtonDeletarClick(Sender: TObject);
+  procedure TFormClienteTest.ButtonDeletarClick(Sender: TObject);
   begin
     if FIDCurrentClient <> -1 then
     begin
@@ -196,7 +204,7 @@ implementation
 // ############ CANCEL / SAVE ############ CANCEL / SAVE ############ CANCEL / SAVE ############ CANCEL / SAVE ############ CANCEL / SAVE
 
   //SALVAR
-  procedure TFormPrincipal.ButtonSalvarClick(Sender: TObject);
+  procedure TFormClienteTest.ButtonSalvarClick(Sender: TObject);
   begin
     if Self.FOperacao = 'INSERT' then
       begin
@@ -220,7 +228,7 @@ implementation
   end;
 
   //RESETAR ESTADO FORM
-  procedure TFormPrincipal.ButtonCancelClick(Sender: TObject);
+  procedure TFormClienteTest.ButtonCancelClick(Sender: TObject);
   begin
     Self.FormControl(False);
   end;
@@ -230,7 +238,7 @@ implementation
 
 
   //CONTROLE ESTADO FORM
-  procedure TFormPrincipal.FormControl(AState:Boolean);
+  procedure TFormClienteTest.FormControl(AState:Boolean);
   begin
     if AState then
     begin

@@ -2,7 +2,7 @@ object DDDORM: TDDDORM
   Left = 0
   Top = 0
   Caption = 'DDDORM'
-  ClientHeight = 653
+  ClientHeight = 633
   ClientWidth = 1072
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -25,8 +25,6 @@ object DDDORM: TDDDORM
     Color = clBtnShadow
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = 40
-    ExplicitTop = 8
     object BitBtnCadastrarCliente: TBitBtn
       Left = 1
       Top = 1
@@ -499,12 +497,30 @@ object DDDORM: TDDDORM
       TabOrder = 1
       OnClick = BitBtnCadastrarPagamentoClick
     end
+    object BitBtn1: TBitBtn
+      Left = 201
+      Top = 1
+      Width = 100
+      Height = 98
+      Align = alLeft
+      Caption = 'CLIENTE - TESTE'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      Layout = blGlyphTop
+      ParentFont = False
+      TabOrder = 2
+      OnClick = BitBtn1Click
+      ExplicitLeft = 261
+    end
   end
   object Panel2: TPanel
     Left = 0
     Top = 100
     Width = 1072
-    Height = 553
+    Height = 533
     Align = alClient
     Caption = 'DDORM'
     Font.Charset = ANSI_CHARSET

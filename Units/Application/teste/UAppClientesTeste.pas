@@ -1,7 +1,7 @@
-unit UAppClientes;
+unit UAppClientesTeste;
 
 interface
- uses System.Generics.Collections,UDomainClientes, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository;
+ uses System.Generics.Collections,UDomainClientesTeste, System.SysUtils, Data.DB, Vcl.Dialogs,URepManager;
 
   type IAppClientes = Interface
     Function BuscarClientes:TObjectList<TCliente>;
@@ -20,31 +20,31 @@ interface
       procedure AtualizarCliente(AID:Integer;ANome,ACPF,AEstado:String);
       procedure DeletarCliente(AID:Integer);
 
-      constructor Create(ARep:IRepository<TCliente>);
+      constructor Create(ARep:TRepositoryManager);
     private
 
-      FRepository: IRepository<TCliente>;
+      FRepository: TRepositoryManager;
 
   end;
 
 implementation
 
   //RECEBER REPOSITORY
-  constructor TAppClientes.Create(ARep:IRepository<TCliente>);
+  constructor TAppClientes.Create(ARep:TRepositoryManager);
   begin
     FRepository := ARep;
   end;
 
   Function TAppClientes.BuscarClientes:TObjectList<TCliente>;
   begin
-    Result := FRepository.SelectAll;
+    Result := FRepository.SelectAll<TCliente>;
   end;
 
   Function TAppClientes.BuscarClienteByID(AID:Integer):TCliente;
   var LID: String;
   begin
     LID := IntToStr(AID);
-    Result := FRepository.Select(LID);
+    Result := FRepository.Select<TCliente>(LID);
   end;
 
   procedure TAppClientes.InserirCliente(ANome,ACPF,AEstado:String);
@@ -57,7 +57,7 @@ implementation
       //REGRA DE NEGÓCIO - VALIDAR DOMÍNIO CLIENTE
      LCliente.Validar;
 
-     FRepository.Insert(LCliente);
+     FRepository.Insert<TCliente>(LCliente);
     finally
       LCliente.Free;
     end;
@@ -76,7 +76,7 @@ implementation
      //REGRA DE NEGÓCIO - VALIDAR DOMÍNIO CLIENTE
      LCliente.Validar;
 
-     FRepository.Update(LID,LCliente);
+     FRepository.Update<TCliente>(LID,LCliente);
     finally
       LCliente.Free;
     end;
@@ -92,7 +92,7 @@ implementation
     try
       //CLASSE MÍNIMA APENAS PARA DELETE
      LCliente := TCliente.Create(AID,'','','');
-     FRepository.Delete(LCliente);
+     FRepository.Delete<TCliente>(LCliente);
     finally
       LCliente.Free;
     end;

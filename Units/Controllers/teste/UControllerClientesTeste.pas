@@ -1,8 +1,8 @@
-unit UControllerClientes;
+unit UControllerClientesTeste;
 
 interface
 
-uses UAppClientes, System.Generics.Collections, System.Classes, UDomainClientes, System.SysUtils,Vcl.Dialogs,UIRepository;
+uses UAppClientesTeste, System.Generics.Collections, System.Classes, UDomainClientesTeste, System.SysUtils,Vcl.Dialogs,URepManager;
 
 type IController = interface
   function BuscarCliente(AID:Integer):TCliente;
@@ -20,10 +20,10 @@ type TController = class(TInterfacedObject,IController)
     procedure AlterarCLiente(AID:Integer;ANome,ACPF,AEstado:String);
     procedure DeletarCliente(AID:Integer);
 
-    constructor Create(ARep:IRepository<TCliente>;AApp:IAppClientes);
+    constructor Create(ARep:TRepositoryManager;AApp:IAppClientes);
   private
     //REPOSITÓRIO QUE ENGLOBA ORM(PARA ATUALIZAR DATASET).
-    FRep: IRepository<TCliente>;
+    FRep: TRepositoryManager;
 
     //APLICATION - CONTROLE DE FLUXO.
     FApp: IAppClientes;
@@ -31,7 +31,7 @@ end;
 
 implementation
   //CONSTRUCTOR
-  constructor TController.Create(ARep:IRepository<TCliente>;AApp:IAppClientes);
+  constructor TController.Create(ARep:TRepositoryManager;AApp:IAppClientes);
   begin
     FRep := ARep;
     FApp := AApp;
@@ -48,7 +48,7 @@ implementation
   begin
     try
       FApp.InserirCliente(ANome,ACPF,AEstado);
-      FRep.AtualizarDataSet;
+      FRep.AtualizarDataSet<TCliente>;
       ShowMessage('Cliente Cadastrado!');
     except
      on E: Exception do
@@ -61,7 +61,7 @@ implementation
   begin
     try
       FApp.AtualizarCliente(AID,ANome,ACPF,AEstado);
-      FRep.AtualizarDataSet;
+      FRep.AtualizarDataSet<TCliente>;
       ShowMessage('Cliente Alterado!');
     except
      on E: Exception do
@@ -74,7 +74,7 @@ implementation
   procedure TController.DeletarCliente(AID:Integer);
   begin
     FApp.DeletarCliente(AID);
-    FRep.AtualizarDataSet;
+    FRep.AtualizarDataSet<TCliente>;
   end;
 
 end.

@@ -164,6 +164,21 @@
         <DCCReference Include="Units\Utils\UEmailValidator.pas"/>
         <DCCReference Include="Units\Utils\UFormatErrorText.pas"/>
         <DCCReference Include="Units\Repository\URepManager.pas"/>
+        <DCCReference Include="Units\Domain\teste\UDomainOSTeste.pas"/>
+        <DCCReference Include="Units\Domain\teste\UDomainClientesTeste.pas"/>
+        <DCCReference Include="Units\Controllers\teste\UControllerClientesTeste.pas"/>
+        <DCCReference Include="Units\Controllers\teste\UControllerOSTeste.pas"/>
+        <DCCReference Include="Units\Application\teste\UAppClientesTeste.pas"/>
+        <DCCReference Include="Units\Application\teste\UAppOrdemServicoTeste.pas"/>
+        <DCCReference Include="Units\Interfaces\UIDM.pas"/>
+        <DCCReference Include="Units\Forms\Teste\UFormClienteTest.pas">
+            <Form>FormClienteTest</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Forms\Teste\UFormOSTeste.pas">
+            <Form>FormOS</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

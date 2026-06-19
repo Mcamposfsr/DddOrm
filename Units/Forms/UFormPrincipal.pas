@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons,
 
-  UFormFormasPGTO,UFormClientesPGTO;
+  UFormFormasPGTO,UFormClientesPGTO,UFormClienteTest;
 
 type
   TDDDORM = class(TForm)
@@ -19,11 +19,13 @@ type
     PAGAMENTOS1: TMenuItem;
     BitBtnCadastrarCliente: TBitBtn;
     BitBtnCadastrarPagamento: TBitBtn;
+    BitBtn1: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure BitBtnCadastrarClienteClick(Sender: TObject);
     procedure CLIENTES1Click(Sender: TObject);
     procedure BitBtnCadastrarPagamentoClick(Sender: TObject);
     procedure PAGAMENTOS1Click(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -48,7 +50,8 @@ procedure TDDDORM.FormCreate(Sender: TObject);
 // ############### EVENTOS
 
   //ABERTURA CADASTRO CLIENTES
-  procedure TDDDORM.BitBtnCadastrarClienteClick(Sender: TObject);
+
+procedure TDDDORM.BitBtnCadastrarClienteClick(Sender: TObject);
   begin
     FormClientesPGTO.Show;
   end;
@@ -67,6 +70,12 @@ procedure TDDDORM.FormCreate(Sender: TObject);
   procedure TDDDORM.PAGAMENTOS1Click(Sender: TObject);
   begin
     FormFormasPGTO.Show;
+  end;
+
+  //FORM TESTE
+  procedure TDDDORM.BitBtn1Click(Sender: TObject);
+  begin
+     FormClienteTest.Show;
   end;
 
 

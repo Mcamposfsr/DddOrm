@@ -4,7 +4,7 @@ interface
 
   Uses Data.DB, System.Generics.Collections, dbebr.factory.interfaces;
 
- //ABSTRAÇÃO REPOSITÓRIO
+ //ABSTRAÇÃO REPOSITÓRIO GENÉRICO
   type IRepository<T: class, constructor> = interface
     //CRUD REPOSITORY
       function GetConexaoAtual : IDBConnection;

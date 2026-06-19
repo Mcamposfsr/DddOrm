@@ -1,10 +1,10 @@
-unit UDomainClientes;
+unit UDomainClientesTeste;
 
 interface
 
 uses
   // VALIDADOR
-  UCPFValidator,
+  UDocValidator,
 
   Classes,
   DB,
@@ -82,7 +82,7 @@ implementation
     if Self.Estado = '' then
       Raise Exception.Create('ESTADO NÃO PODE SER VAZIO');
 
-    if not TCPFValidator.Validate(Self.FCPF) then
+    if not TDocValidator.ValidarCPF(Self.FCPF) then
       Raise Exception.Create('CPF INVÁLIDO');
   end;
 

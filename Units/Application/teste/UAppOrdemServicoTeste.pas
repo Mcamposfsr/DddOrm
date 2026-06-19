@@ -1,8 +1,8 @@
-unit UAppOrdemServico;
+unit UAppOrdemServicoTeste;
 
 interface
 
-uses UDomainOS, System.Generics.Collections, UIRepository, System.SysUtils,VCL.Dialogs,UDomainClientes;
+uses UDomainOSTeste, System.Generics.Collections, URepManager, System.SysUtils,VCL.Dialogs,UDomainClientesTeste;
 
 type IAppOrdemServico = Interface
 //    Function BuscarOS(AIDCliente:Integer):TObjectList<TOrdemServico>;
@@ -21,21 +21,18 @@ type IAppOrdemServico = Interface
       procedure AtualizarOS(AID,AIDCliente:Integer;ADataOS:TDate;AValor:Currency;AEstado:String);
       procedure DeletarOS(AID:Integer);
 
-      constructor Create(ARepOS:IRepository<TOrdemServico>;ARepCliente:IRepository<TCliente>);
+      constructor Create(ARep:TRepositoryManager);
     private
 
-      FRepOS: IRepository<TOrdemServico>;
-      FRepCliente: IRepository<TCliente>;
-
+      FRep: TRepositoryManager;
   end;
 
 implementation
 
   //RECEBER REPOSITORY
-  constructor TAppOrdemServico.Create(ARepOS:IRepository<TOrdemServico>;ARepCliente:IRepository<TCliente>);
+  constructor TAppOrdemServico.Create(ARep:TRepositoryManager);
   begin
-    FRepOS := ARepOS;
-    FRepCliente := ARepCliente;
+    FRep := ARep;
   end;
 
   //BUSCAR ORDEM DE SERVIÇO
@@ -43,10 +40,12 @@ implementation
   var LID: String;
   begin
     LID := IntToStr(AID);
-    Result := FRepOS.Select(LID);
+
+    Result := FRep.Select<TOrdemServico>(LID);
   end;
 
-
+//     <TOrdemServico>
+//     <TCliente>
 
   //CADASTRAR OS
   procedure TAppOrdemServico.InserirOS(AIDCliente:Integer;ADataOS:TDate;AValor:Currency;AEstado:String);
@@ -59,7 +58,7 @@ implementation
     LOS := nil;
     LCliente := nil;
     try
-      LCliente := FRepCliente.Select(LID);
+      LCliente := FRep.Select<TCliente>(LID);
 
       //REGRA DE FLUXO UTILIZANDO REPOSITORY CLIENTES
       LCliente.VerificarEstado;
@@ -74,7 +73,7 @@ implementation
 
       LOS.Validar;
 
-      FRepOS.Insert(LOS);
+      FRep.Insert<TOrdemServico>(LOS);
     finally
       LCliente.Free;
       LOS.Free;
@@ -100,7 +99,7 @@ implementation
 
       LOS.Validar;
 
-      FRepOS.Update(LID,LOS);
+      FRep.Update<TOrdemServico>(LID,LOS);
     finally
       LOS.Free;
     end;
@@ -122,7 +121,7 @@ implementation
       ''
       );
 
-      FRepOS.Delete(LOS);
+      FRep.Delete<TOrdemServico>(LOS);
     finally
       LOS.Free;
     end;
