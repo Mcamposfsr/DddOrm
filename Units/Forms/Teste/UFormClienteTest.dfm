@@ -69,7 +69,7 @@ object FormClienteTest: TFormClienteTest
       Height = 272
       Align = alTop
       DataSource = DataSource
-      TabOrder = 4
+      TabOrder = 5
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -12
@@ -97,7 +97,7 @@ object FormClienteTest: TFormClienteTest
       Top = 296
       Width = 683
       Height = 41
-      TabOrder = 5
+      TabOrder = 6
       object ButtonDeletar: TButton
         AlignWithMargins = True
         Left = 570
@@ -205,7 +205,7 @@ object FormClienteTest: TFormClienteTest
       end
     end
     object ButtonCancel: TButton
-      Left = 425
+      Left = 553
       Top = 482
       Width = 112
       Height = 31
@@ -217,11 +217,11 @@ object FormClienteTest: TFormClienteTest
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 4
       OnClick = ButtonCancelClick
     end
     object ButtonSalvar: TButton
-      Left = 553
+      Left = 419
       Top = 482
       Width = 112
       Height = 31
@@ -243,7 +243,7 @@ object FormClienteTest: TFormClienteTest
       Height = 23
       Style = csDropDownList
       Enabled = False
-      TabOrder = 6
+      TabOrder = 2
       Items.Strings = (
         'R'
         'I')

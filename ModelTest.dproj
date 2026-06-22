@@ -179,6 +179,9 @@
             <Form>FormOS</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="Units\Domain\UDomainProdutosECF.pas"/>
+        <DCCReference Include="Units\Application\UAppProdutosECF.pas"/>
+        <DCCReference Include="Units\Controllers\UControllerProdutosECF.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

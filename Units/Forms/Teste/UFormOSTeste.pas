@@ -90,6 +90,7 @@ implementation
 
   end;
 
+  //ABRIR O FORM CONFIGURADO
   procedure TFormOS.Open(AID:Integer);
   begin
     FRep.AtualizarDataSetWhere<TOrdemServico>('ID_CLIENTE',FIDCliente);

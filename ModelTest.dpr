@@ -32,7 +32,10 @@ uses
   UAppOrdemServicoTeste in 'Units\Application\teste\UAppOrdemServicoTeste.pas',
   UIDM in 'Units\Interfaces\UIDM.pas',
   UFormClienteTest in 'Units\Forms\Teste\UFormClienteTest.pas' {FormClienteTest},
-  UFormOSTeste in 'Units\Forms\Teste\UFormOSTeste.pas' {FormOS};
+  UFormOSTeste in 'Units\Forms\Teste\UFormOSTeste.pas' {FormOS},
+  UDomainProdutosECF in 'Units\Domain\UDomainProdutosECF.pas',
+  UAppProdutosECF in 'Units\Application\UAppProdutosECF.pas',
+  UControllerProdutosECF in 'Units\Controllers\UControllerProdutosECF.pas';
 
 //VARIÁVEL DE AJUSTE PARA BANCO.
   var LLocationDB: String;

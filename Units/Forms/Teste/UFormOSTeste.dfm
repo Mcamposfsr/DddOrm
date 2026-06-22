@@ -67,7 +67,7 @@ object FormOS: TFormOS
       Height = 272
       Align = alTop
       DataSource = DataSource
-      TabOrder = 3
+      TabOrder = 5
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -12
@@ -88,7 +88,7 @@ object FormOS: TFormOS
       Top = 296
       Width = 683
       Height = 41
-      TabOrder = 4
+      TabOrder = 6
       object ButtonDeletar: TButton
         AlignWithMargins = True
         Left = 570
@@ -175,8 +175,8 @@ object FormOS: TFormOS
       end
     end
     object ButtonCancel: TButton
-      Left = 411
-      Top = 451
+      Left = 563
+      Top = 443
       Width = 112
       Height = 34
       Caption = 'CANCELAR'
@@ -187,12 +187,12 @@ object FormOS: TFormOS
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 1
+      TabOrder = 4
       OnClick = ButtonCancelClick
     end
     object ButtonSalvar: TButton
-      Left = 546
-      Top = 451
+      Left = 418
+      Top = 443
       Width = 129
       Height = 34
       Caption = 'SALVAR'
@@ -203,7 +203,7 @@ object FormOS: TFormOS
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 2
+      TabOrder = 3
       OnClick = ButtonSalvarClick
     end
     object ComboBoxSituacao: TComboBox
@@ -213,7 +213,7 @@ object FormOS: TFormOS
       Height = 23
       Style = csDropDownList
       Enabled = False
-      TabOrder = 5
+      TabOrder = 2
       Items.Strings = (
         'P'
         'F')
@@ -223,10 +223,10 @@ object FormOS: TFormOS
       Top = 382
       Width = 152
       Height = 23
-      Date = 46157.476318831020000000
-      Time = 46157.476318831020000000
+      Date = 46157.476318831010000000
+      Time = 46157.476318831010000000
       Enabled = False
-      TabOrder = 6
+      TabOrder = 1
     end
   end
   object DataSource: TDataSource
