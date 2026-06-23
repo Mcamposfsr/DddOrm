@@ -164,16 +164,6 @@ object FormCadastroClientes: TFormCadastroClientes
         'J'
         'F')
     end
-    object NumericEditCredito: TNumericEdit
-      Left = 236
-      Top = 118
-      Width = 157
-      Height = 21
-      CharCase = ecUpperCase
-      TabOrder = 2
-      Text = '0,00'
-      Format = ',0.00'
-    end
     object ComboBoxAtivo: TComboBox
       Left = 304
       Top = 246
@@ -463,6 +453,14 @@ object FormCadastroClientes: TFormCadastroClientes
       Caption = 'CANCELAR'
       TabOrder = 10
       OnClick = ButtonCancelarClick
+    end
+    object EditLimiteCredito: TEdit
+      Left = 236
+      Top = 118
+      Width = 157
+      Height = 21
+      NumbersOnly = True
+      TabOrder = 2
     end
   end
 end

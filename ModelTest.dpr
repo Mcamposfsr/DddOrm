@@ -35,7 +35,9 @@ uses
   UFormOSTeste in 'Units\Forms\Teste\UFormOSTeste.pas' {FormOS},
   UDomainProdutosECF in 'Units\Domain\UDomainProdutosECF.pas',
   UAppProdutosECF in 'Units\Application\UAppProdutosECF.pas',
-  UControllerProdutosECF in 'Units\Controllers\UControllerProdutosECF.pas';
+  UControllerProdutosECF in 'Units\Controllers\UControllerProdutosECF.pas',
+  UFormProdutosEFC in 'Units\Forms\UFormProdutosEFC.pas' {FormProdutosEFC},
+  UFormCadastroProdutosEFC in 'Units\Forms\FormsSecundarios\UFormCadastroProdutosEFC.pas' {FormCadastroProdutosEFC};
 
 //VARIÁVEL DE AJUSTE PARA BANCO.
   var LLocationDB: String;
@@ -67,6 +69,7 @@ begin
 
 
   Application.CreateForm(TDDDORM, DDDORM);
+  Application.CreateForm(TFormProdutosEFC, FormProdutosEFC);
   Application.CreateForm(TFormClientesPGTO, FormClientesPGTO);
   Application.CreateForm(TFormFormasPGTO, FormFormasPGTO);
   Application.CreateForm(TFormClienteTest, FormClienteTest);

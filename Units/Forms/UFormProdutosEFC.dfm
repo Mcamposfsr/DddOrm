@@ -1,25 +1,69 @@
-object FormFormasPGTO: TFormFormasPGTO
+object FormProdutosEFC: TFormProdutosEFC
   Left = 0
   Top = 0
-  Caption = 'Formas de Pagamento'
+  Caption = 'Produtos EFC'
   ClientHeight = 468
-  ClientWidth = 740
+  ClientWidth = 738
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  object PainelPrincipal: TPanel
+    Left = 0
+    Top = 0
+    Width = 738
+    Height = 417
+    Align = alTop
+    Color = clSilver
+    ParentBackground = False
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 24
+      Top = 24
+      Width = 73
+      Height = 19
+      Caption = 'Produtos'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object DBGrid1: TDBGrid
+      Left = 24
+      Top = 95
+      Width = 689
+      Height = 305
+      DataSource = DataSource
+      TabOrder = 1
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+    end
+    object EditFiltro: TEdit
+      Left = 24
+      Top = 56
+      Width = 689
+      Height = 21
+      TabOrder = 0
+      TextHint = 'Filtrar Produtos'
+      OnChange = EditFiltroChange
+    end
+  end
   object PainelSecundario: TPanel
     Left = 0
     Top = 420
-    Width = 740
+    Width = 738
     Height = 48
     Margins.Left = 20
     Margins.Top = 0
@@ -28,7 +72,7 @@ object FormFormasPGTO: TFormFormasPGTO
     Align = alBottom
     Color = clGrayText
     ParentBackground = False
-    TabOrder = 0
+    TabOrder = 1
     object BtnDeletar: TButton
       AlignWithMargins = True
       Left = 369
@@ -114,54 +158,9 @@ object FormFormasPGTO: TFormFormasPGTO
       OnClick = BtnFecharClick
     end
   end
-  object PainelPrincipal: TPanel
-    Left = 0
-    Top = 0
-    Width = 740
-    Height = 417
-    Align = alTop
-    Color = clSilver
-    ParentBackground = False
-    TabOrder = 1
-    object Label1: TLabel
-      Left = 24
-      Top = 24
-      Width = 182
-      Height = 19
-      Caption = 'Formas de Pagamento'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -16
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-    end
-    object DBGrid1: TDBGrid
-      Left = 24
-      Top = 95
-      Width = 689
-      Height = 305
-      DataSource = DataSource
-      TabOrder = 1
-      TitleFont.Charset = DEFAULT_CHARSET
-      TitleFont.Color = clWindowText
-      TitleFont.Height = -11
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Style = []
-    end
-    object EditFiltro: TEdit
-      Left = 24
-      Top = 56
-      Width = 689
-      Height = 21
-      TabOrder = 0
-      TextHint = 'Filtrar Forma de Pagamento'
-      OnChange = EditFiltroChange
-    end
-  end
   object DataSource: TDataSource
     DataSet = FDMemTable
-    Left = 624
+    Left = 616
     Top = 16
   end
   object FDMemTable: TFDMemTable
@@ -172,7 +171,7 @@ object FormFormasPGTO: TFormFormasPGTO
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 688
+    Left = 680
     Top = 16
   end
 end

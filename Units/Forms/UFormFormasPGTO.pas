@@ -50,10 +50,6 @@ type
     FApp: IAppFormasPGTO;
     FController: IControllerFormasPGTO;
 
-    //CONTROLE FORM
-    FOperacao: String;
-    FIDCurrentClient: Integer;
-
     procedure VerificarSelecao;
   public
     { Public declarations }
@@ -67,15 +63,8 @@ implementation
 {$R *.dfm}
 
 
-
-
-
 procedure TFormFormasPGTO.FormCreate(Sender: TObject);
  begin
-    FIDCurrentClient := -1;
-    //INICIAR SEM CLIENTE MARCADO
-    FOperacao := '';
-
     //CRIAR REPOSITORY
     FRepository := TRepository<TFormasPGTO>.Create(GDM.GetConnection);
     //PASSAR DATASET PARA LIGAR AO ORM
@@ -104,11 +93,8 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
     Self.FController.FiltrarClientesPGTO(EditFiltro.Text);
   end;
 
-  //BUSCAR
+  //FECHAR
   procedure TFormFormasPGTO.BtnFecharClick(Sender: TObject);
-  var
-  LFORMCadastroPGTO: TFormCadastroPGTO;
-  LCOD: Integer;
   begin
     Self.Close;
   end;

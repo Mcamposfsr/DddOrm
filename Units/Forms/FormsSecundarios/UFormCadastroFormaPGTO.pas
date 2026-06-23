@@ -17,9 +17,9 @@ type
     EditParcelas: TEdit;
     Label3: TLabel;
     Label7: TLabel;
-    NumericEditJuros: TNumericEdit;
     BtnConfirmar: TButton;
     Button1: TButton;
+    EditJuros: TEdit;
     procedure FormShow(Sender: TObject);
     procedure BtnConfirmarClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -115,7 +115,7 @@ constructor TFormCadastroPGTO.Create(
         FController.CadastrarFormaPGTO(
         EditNome.Text,
         EditParcelas.Text,
-        NumericEditJuros.Text
+        EditJuros.Text
         );
         Self.Close;
       end
@@ -125,7 +125,7 @@ constructor TFormCadastroPGTO.Create(
         Self.FCODPGTO,
         EditNome.Text,
         EditParcelas.Text,
-        NumericEditJuros.Text);
+        EditJuros.Text);
         Self.Close;
       end
       else if FOperacao = 'DELETE' then
@@ -150,7 +150,7 @@ constructor TFormCadastroPGTO.Create(
   begin
     EditNome.Text := APag.Nome;
     EditParcelas.Text := IntToStr(APag.Parcelas);
-    NumericEditJuros.Text := CurrToStr(APag.Juros);
+    EditJuros.Text := CurrToStr(APag.Juros);
   end;
 
   // ATIVAR/DESATIVAR ELEMENTOS
@@ -158,7 +158,7 @@ constructor TFormCadastroPGTO.Create(
   begin
     EditNome.Enabled := AEstado;
     EditParcelas.Enabled := AEstado;
-    NumericEditJuros.Enabled := AEstado;
+    EditJuros.Enabled := AEstado;
     BtnConfirmar.Enabled := AEstado;
   end;
 

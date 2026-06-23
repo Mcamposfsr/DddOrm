@@ -2,44 +2,44 @@ unit UControllerProdutosECF;
 
 interface
 
-uses UDomainClientesPGTO,UIRepository,UAppClientesPGTO, System.Generics.Collections,System.Classes,UFormatErrorText, System.SysUtils, Vcl.Dialogs,UErros;
+uses UDomainProdutosECF,UIRepository,UAppProdutosECF, System.Generics.Collections,System.Classes,UFormatErrorText, System.SysUtils, Vcl.Dialogs,UErros;
 
 type IControllerProdutosECF = interface
-  function BuscarClientePGTO(ACOD:Integer):TClientePGTO;
-  procedure CadastrarClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
-  procedure AlterarClientePGTO(ACOD:Integer;ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
-  procedure DeletarClientePGTO(ACOD:Integer);
-  procedure FiltrarClientesPGTO(ANome:String);
+  function BuscarProdutoECF(ACOD:Integer):TProdutosECF;
+  procedure CadastrarProdutoECF(ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof:String);
+  procedure AlterarProdutoECF(ACOD:Integer;ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof:String);
+  procedure DeletarProdutoECF(ACOD:Integer);
+  procedure FiltrarProdutoECF(AFiltro:String);
 end;
 
 //CONTROLLER FORM CLIENTES PAGAMENTO
-type TControllerProdutosECF = class(TInterfacedObject,IControllerClientesPGTO)
+type TControllerProdutosECF = class(TInterfacedObject,IControllerProdutosECF)
   public
-    function BuscarClientePGTO(ACOD:Integer):TClientePGTO;
-    procedure CadastrarClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
-    procedure AlterarClientePGTO(ACOD:Integer;ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
-    procedure DeletarClientePGTO(ACOD:Integer);
-    procedure FiltrarClientesPGTO(ANome:String);
+    function BuscarProdutoECF(ACOD:Integer):TProdutosECF;
+    procedure CadastrarProdutoECF(ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof:String);
+    procedure AlterarProdutoECF(ACOD:Integer;ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof:String);
+    procedure DeletarProdutoECF(ACOD:Integer);
+    procedure FiltrarProdutoECF(AFiltro:String);
 
-    constructor Create(AApp:IAppClientesPGTO;ARep:IRepository<TClientePGTO>);
+    constructor Create(AApp:IAppProdutosECF;ARep:IRepository<TProdutosECF>);
   private
-    FApp: IAppClientesPGTO;
-    FRep: IRepository<TClientePGTO>;
+    FApp: IAppProdutosECF;
+    FRep: IRepository<TProdutosECF>;
 end;
 
 implementation
 
-  constructor TControllerClientesPGTO.Create(AApp:IAppClientesPGTO;ARep:IRepository<TClientePGTO>);
+  constructor TControllerProdutosECF.Create(AApp:IAppProdutosECF;ARep:IRepository<TProdutosECF>);
   begin
     Self.FApp := AApp;
     Self.FRep := ARep;
   end;
 
   //BUSCAR
-  function TControllerClientesPGTO.BuscarClientePGTO(ACOD:Integer):TClientePGTO;
+  function TControllerProdutosECF.BuscarProdutoECF(ACOD:Integer):TProdutosECF;
   begin
     try
-      Result := FApp.BuscarClientePGTOByID(ACOD);
+      Result := FApp.BuscarProdutoECFByID(ACOD);
     except
     //ERROS INESPERADOS
       on E: Exception do
@@ -50,65 +50,78 @@ implementation
   end;
 
   //CADASTRAR
-  procedure TControllerClientesPGTO.CadastrarClientePGTO(
+  procedure TControllerProdutosECF.CadastrarProdutoECF(
+  ACodBarras,
   ANome,
-  AEndereco,
-  ANum,
-  AFone,
-  APessoa,
-  ADocumento,
-  AAtivo,
-  AEmail,
-  ALimiteCredito: String
+  AUniSigla,
+  ASitVenda,
+  AEstoque,
+  APrecoVenda,
+  AALIQPis,
+  AALIQCof:String
   );
   var
-  LLimiteCredito: Currency;
-
+  LEstoque: Double;
+  LPrecoVenda: Currency;
+  LAliqPis: Currency;
+  LAliqCofins: Currency;
   begin
     try
-      //RETIRAR O '.' ANTES DA CONVERSÃO PARA EVITAR ERROS DE CONVERSÃO
-      LLimiteCredito := StrToFloat(StringReplace(ALimiteCredito, '.', '', [rfReplaceAll]));
-      Self.FApp.InserirClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,LLimiteCredito);
+      //CONVERSÕES
+      LEstoque := StrToFloat(StringReplace(AEstoque, '.', '', [rfReplaceAll]));
+      LPrecoVenda := StrToFloat(StringReplace(APrecoVenda, '.', '', [rfReplaceAll]));
+      LAliqPis := StrToFloat(StringReplace(AALIQPis, '.', '', [rfReplaceAll]));
+      LAliqCofins := StrToFloat(StringReplace(AALIQCof, '.', '', [rfReplaceAll]));
+
+      Self.FApp.InserirProdutoECF(ACodBarras,ANome,AUniSigla,ASitVenda,LEstoque,LPrecoVenda,LAliqPis,LAliqCofins);
       Self.FRep.AtualizarDataSet;
     except
       //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao cadastrar cliente.' + FFormatErrorText(E.FCampos,E.FValores));
-      end;
+//      on E: EErrorFormInput do
+//      begin
+//        raise Exception.Create('Falha ao cadastrar produto.' + FFormatErrorText(E.FCampos,E.FValores));
+//      end;
       //ERROS INESPERADOS
       on E: Exception do
       begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+        raise Exception.Create('Ocorreu um erro produto: ' +  sLineBreak + E.Message);
       end;
     end;
   end;
 
   //ALTERAR
-  procedure TControllerClientesPGTO.AlterarClientePGTO(
+  procedure TControllerProdutosECF.AlterarProdutoECF(
   ACOD:Integer;
+  ACodBarras,
   ANome,
-  AEndereco,
-  ANum,
-  AFone,
-  APessoa,
-  ADocumento,
-  AAtivo,
-  AEmail,
-  ALimiteCredito:String
+  AUniSigla,
+  ASitVenda,
+  AEstoque,
+  APrecoVenda,
+  AALIQPis,
+  AALIQCof:String
   );
-  var LLimiteCredito: Currency;
+  var
+  LEstoque: Double;
+  LPrecoVenda: Currency;
+  LAliqPis: Currency;
+  LAliqCofins: Currency;
   begin
     try
-      LLimiteCredito := StrToFloat(StringReplace(ALimiteCredito, '.', '', [rfReplaceAll]));
-      Self.FApp.AtualizarClientePGTO(ACOD,ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,LLimiteCredito);
+      //CONVERSÕES
+      LEstoque := StrToFloat(StringReplace(AEstoque, '.', '', [rfReplaceAll]));
+      LPrecoVenda := StrToFloat(StringReplace(APrecoVenda, '.', '', [rfReplaceAll]));
+      LAliqPis := StrToFloat(StringReplace(AALIQPis, '.', '', [rfReplaceAll]));
+      LAliqCofins := StrToFloat(StringReplace(AALIQCof, '.', '', [rfReplaceAll]));
+
+      Self.FApp.AtualizarProdutoECF(ACOD,ACodBarras,ANome,AUniSigla,ASitVenda,LEstoque,LPrecoVenda,LAliqPis,LAliqCofins);
       Self.FRep.AtualizarDataSet;
     except
       //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao cadastrar cliente.' +  FFormatErrorText(E.FCampos,E.FValores));
-      end;
+//      on E: EErrorFormInput do
+//      begin
+//        raise Exception.Create('Falha ao cadastrar cliente.' +  FFormatErrorText(E.FCampos,E.FValores));
+//      end;
       //ERROS INESPERADOS
       on E: Exception do
       begin
@@ -118,10 +131,10 @@ implementation
   end;
 
   //DELETAR
-  procedure TControllerClientesPGTO.DeletarClientePGTO(ACOD:Integer);
+  procedure TControllerProdutosECF.DeletarProdutoECF(ACOD:Integer);
   begin
     try
-      Self.FApp.DeletarClientePGTO(ACOD);
+      Self.FApp.DeletarProdutoECF(ACOD);
       Self.FRep.AtualizarDataSet;
     except
       //ERROS INESPERADOS
@@ -133,10 +146,10 @@ implementation
   end;
 
   //FILTRAR
-  procedure TControllerClientesPGTO.FiltrarClientesPGTO(ANome:String);
+  procedure TControllerProdutosECF.FiltrarProdutoECF(AFiltro:String);
   begin
     try
-      Self.FRep.FiltrarDataSet('CLI_NOME',ANome);
+      Self.FRep.FiltrarDataSet('CLI_NOME',AFiltro);
     except
       on E: Exception do
       begin

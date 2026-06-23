@@ -31,7 +31,7 @@ uses
     FUniSigla: String;
     FSitPermiteVenda: String;
     FEstoque: Double;
-    FPrecoVenda: Currency;
+    FPrecoVenda: Double;
     FAliqPis: Currency;
     FAliqCofins: Currency;
   public
@@ -43,7 +43,7 @@ uses
     AUniSigla: String;
     ASitPermiteVenda: String;
     AEstoque: Double;
-    APrecoVenda: Currency;
+    APrecoVenda: Double;
     AAliqPis: Currency;
     AAliqCofins: Currency); Overload;
 
@@ -74,8 +74,8 @@ uses
     property Estoque: Double Read FEstoque Write FEstoque;
 
     //PRECO DE VENDA
-    [Column('PRO_PRECO_VENDA',ftFMTBcd)]
-    property PrecoVenda: Currency Read FPrecoVenda Write FPrecoVenda;
+    [Column('PRO_PRECO_VENDA',ftFloat)]
+    property PrecoVenda: Double Read FPrecoVenda Write FPrecoVenda;
 
     //ALIQ PIS
     [Column('ALIQ_PIS',ftCurrency)]
@@ -95,7 +95,7 @@ implementation
     AUniSigla: String;
     ASitPermiteVenda: String;
     AEstoque: Double;
-    APrecoVenda: Currency;
+    APrecoVenda: Double;
     AAliqPis: Currency;
     AAliqCofins: Currency);
   begin

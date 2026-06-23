@@ -2,7 +2,7 @@ object FormClientesPGTO: TFormClientesPGTO
   Left = 0
   Top = 0
   AutoSize = True
-  Caption = 'Formul'#225'rio Clientes'
+  Caption = 'Clientes'
   ClientHeight = 468
   ClientWidth = 740
   Color = clBtnFace
@@ -95,7 +95,6 @@ object FormClientesPGTO: TFormClientesPGTO
       ParentFont = False
       TabOrder = 3
       OnClick = BtnDeletarClick
-      ExplicitLeft = 553
     end
     object BtnAlterar: TButton
       AlignWithMargins = True
@@ -117,7 +116,6 @@ object FormClientesPGTO: TFormClientesPGTO
       ParentFont = False
       TabOrder = 2
       OnClick = BtnAlterarClick
-      ExplicitLeft = 369
     end
     object BtnCadastrar: TButton
       AlignWithMargins = True
@@ -139,7 +137,6 @@ object FormClientesPGTO: TFormClientesPGTO
       ParentFont = False
       TabOrder = 1
       OnClick = BtnCadastrarClick
-      ExplicitLeft = 185
     end
     object BtnFechar: TButton
       AlignWithMargins = True
@@ -161,8 +158,6 @@ object FormClientesPGTO: TFormClientesPGTO
       ParentFont = False
       TabOrder = 0
       OnClick = BtnFecharClick
-      ExplicitLeft = 585
-      ExplicitTop = 0
     end
   end
   object DataSource: TDataSource

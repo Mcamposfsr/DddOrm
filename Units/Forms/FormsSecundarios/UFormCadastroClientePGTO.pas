@@ -22,7 +22,6 @@ type
     Label6: TLabel;
     Label7: TLabel;
     ComboBoxPessoa: TComboBox;
-    NumericEditCredito: TNumericEdit;
     Label8: TLabel;
     ComboBoxAtivo: TComboBox;
     BtnConfirmar: TButton;
@@ -37,6 +36,7 @@ type
     BitBtnRemoverTelefone: TBitBtn;
     ListBoxTelefones: TListBox;
     ButtonCancelar: TButton;
+    EditLimiteCredito: TEdit;
     procedure FormShow(Sender: TObject);
     procedure BtnConfirmarClick(Sender: TObject);
     procedure BitBtnAdicionarEmailClick(Sender: TObject);
@@ -148,7 +148,7 @@ end;
         EditDocumento.Text,
         ComboBoxAtivo.Text,
         String.Join(';', ListBoxEmail.Items.ToStringArray),
-        NumericEditCredito.Text
+        EditLimiteCredito.Text
         );
         Self.Close;
       end
@@ -164,7 +164,7 @@ end;
         EditDocumento.Text,
         ComboBoxAtivo.Text,
         String.Join(';', ListBoxEmail.Items.ToStringArray),
-        NumericEditCredito.Text
+        EditLimiteCredito.Text
         );
         Self.Close;
       end
@@ -249,7 +249,7 @@ end;
     ListBoxTelefones.Items.DelimitedText := ACliente.Telefone;
 
     ComboBoxPessoa.ItemIndex := ComboBoxPessoa.Items.IndexOf(ACliente.Pessoa);
-    NumericEditCredito.Value := ACliente.LimiteCredito;
+    EditLimiteCredito.Text := CurrToStr(ACliente.LimiteCredito);
 
     ComboBoxAtivo.ItemIndex :=  ComboBoxAtivo.Items.IndexOf(ACliente.Ativo);
 
@@ -267,7 +267,7 @@ end;
     EditDocumento.Enabled := AEstado;
 
     ComboBoxPessoa.Enabled := AEstado;
-    NumericEditCredito.Enabled := AEstado;
+    EditLimiteCredito.Enabled := AEstado;
     ComboBoxAtivo.Enabled := AEstado;
 
 

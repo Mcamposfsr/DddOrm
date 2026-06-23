@@ -9,7 +9,7 @@ type IControllerClientesPGTO = interface
   procedure CadastrarClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
   procedure AlterarClientePGTO(ACOD:Integer;ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
   procedure DeletarClientePGTO(ACOD:Integer);
-  procedure FiltrarClientesPGTO(ANome:String);
+  procedure FiltrarClientesPGTO(AFiltro:String);
 end;
 
 //CONTROLLER FORM CLIENTES PAGAMENTO
@@ -19,7 +19,7 @@ type TControllerClientesPGTO = class(TInterfacedObject,IControllerClientesPGTO)
     procedure CadastrarClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
     procedure AlterarClientePGTO(ACOD:Integer;ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
     procedure DeletarClientePGTO(ACOD:Integer);
-    procedure FiltrarClientesPGTO(ANome:String);
+    procedure FiltrarClientesPGTO(AFiltro:String);
 
     constructor Create(AApp:IAppClientesPGTO;ARep:IRepository<TClientePGTO>);
   private
@@ -133,10 +133,10 @@ implementation
   end;
 
   //FILTRAR
-  procedure TControllerClientesPGTO.FiltrarClientesPGTO(ANome:String);
+  procedure TControllerClientesPGTO.FiltrarClientesPGTO(AFiltro:String);
   begin
     try
-      Self.FRep.FiltrarDataSet('CLI_NOME',ANome);
+      Self.FRep.FiltrarDataSet('CLI_NOME',AFiltro);
     except
       on E: Exception do
       begin

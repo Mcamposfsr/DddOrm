@@ -10,7 +10,7 @@ type IControllerFormasPGTO = interface
     procedure CadastrarFormaPGTO(ANome,AParcelas,AJuros:String);
     procedure AlterarFormaPGTO(ACOD:Integer;ANome,AParcelas,AJuros:String);
     procedure DeletarFormaPGTO(ACOD:Integer);
-    procedure FiltrarClientesPGTO(ANome:String);
+    procedure FiltrarClientesPGTO(AFiltro:String);
 end;
 
 //CONTROLLER FORM CLIENTES PAGAMENTO
@@ -20,7 +20,7 @@ type TControllerFormasPGTO = class(TInterfacedObject,IControllerFormasPGTO)
     procedure CadastrarFormaPGTO(ANome,AParcelas,AJuros:String);
     procedure AlterarFormaPGTO(ACOD:Integer;ANome,AParcelas,AJuros:String);
     procedure DeletarFormaPGTO(ACOD:Integer);
-    procedure FiltrarClientesPGTO(ANome:String);
+    procedure FiltrarClientesPGTO(AFiltro:String);
 
     constructor Create(AApp:IAppFormasPGTO;ARep:IRepository<TFormasPGTO>);
   private
@@ -110,10 +110,10 @@ implementation
   end;
 
   //FILTRAR
-  procedure TControllerFormasPGTO.FiltrarClientesPGTO(ANome:String);
+  procedure TControllerFormasPGTO.FiltrarClientesPGTO(AFiltro:String);
   begin
     try
-      Self.FRep.FiltrarDataSet('FIN_NOME',ANome);
+      Self.FRep.FiltrarDataSet('FIN_NOME',AFiltro);
     except
       on E: Exception do
       begin

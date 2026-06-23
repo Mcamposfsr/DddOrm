@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons,
 
-  UFormFormasPGTO,UFormClientesPGTO,UFormClienteTest;
+  UFormFormasPGTO,UFormClientesPGTO,UFormClienteTest,UFormProdutosEFC;
 
 type
   TDDDORM = class(TForm)
@@ -20,12 +20,14 @@ type
     BitBtnCadastrarCliente: TBitBtn;
     BitBtnCadastrarPagamento: TBitBtn;
     BitBtn1: TBitBtn;
+    BitBtnCadastrarProduto: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure BitBtnCadastrarClienteClick(Sender: TObject);
     procedure CLIENTES1Click(Sender: TObject);
     procedure BitBtnCadastrarPagamentoClick(Sender: TObject);
     procedure PAGAMENTOS1Click(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
+    procedure BitBtnCadastrarProdutoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -56,7 +58,8 @@ procedure TDDDORM.BitBtnCadastrarClienteClick(Sender: TObject);
     FormClientesPGTO.Show;
   end;
 
-  procedure TDDDORM.CLIENTES1Click(Sender: TObject);
+
+procedure TDDDORM.CLIENTES1Click(Sender: TObject);
   begin
     FormClientesPGTO.Show;
   end;
@@ -67,7 +70,10 @@ procedure TDDDORM.BitBtnCadastrarClienteClick(Sender: TObject);
     FormFormasPGTO.Show;
   end;
 
-  procedure TDDDORM.PAGAMENTOS1Click(Sender: TObject);
+
+
+
+procedure TDDDORM.PAGAMENTOS1Click(Sender: TObject);
   begin
     FormFormasPGTO.Show;
   end;
@@ -78,5 +84,10 @@ procedure TDDDORM.BitBtnCadastrarClienteClick(Sender: TObject);
      FormClienteTest.Show;
   end;
 
+  //ABERTURA CADASTRO PRODUTOS
+  procedure TDDDORM.BitBtnCadastrarProdutoClick(Sender: TObject);
+  begin
+    FormProdutosEFC.Show;
+  end;
 
   end.

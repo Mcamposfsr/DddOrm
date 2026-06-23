@@ -8,7 +8,7 @@ interface
     Function BuscarProdutoECF:TObjectList<TProdutosECF>;
     Function BuscarProdutoECFByID(ACodigo:Integer):TProdutosECF;
     procedure InserirProdutoECF(
-    ACodigo: Integer;ACodigoDeBarras,
+    ACodigoDeBarras,
     ANome,
     AUniSigla,
     ASitPermiteVenda:String;
@@ -36,7 +36,7 @@ interface
     Function BuscarProdutoECF:TObjectList<TProdutosECF>;
     Function BuscarProdutoECFByID(ACodigo:Integer):TProdutosECF;
     procedure InserirProdutoECF(
-    ACodigo: Integer;ACodigoDeBarras,
+    ACodigoDeBarras,
     ANome,
     AUniSigla,
     ASitPermiteVenda:String;
@@ -89,7 +89,6 @@ implementation
 
   //INSERT
   procedure TAppProdutosECF.InserirProdutoECF(
-    ACodigo: Integer;
     ACodigoDeBarras,
     ANome,
     AUniSigla,
