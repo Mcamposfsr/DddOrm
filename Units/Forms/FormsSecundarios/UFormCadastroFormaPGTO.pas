@@ -24,6 +24,7 @@ type
     procedure BtnConfirmarClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure Button1Click(Sender: TObject);
+    procedure EditJurosKeyPress(Sender: TObject; var Key: Char);
   private
 
     //FERRAMENTAS
@@ -69,7 +70,13 @@ constructor TFormCadastroPGTO.Create(
     FOperacao :=  AOperacao;
   end;
 
-  //INICIALIZAÇÃO VISUAL
+  procedure TFormCadastroPGTO.EditJurosKeyPress(Sender: TObject; var Key: Char);
+  begin
+    if not (Key in ['0'..'9', ',', '.', #8]) then
+    Key := #0;
+  end;
+
+//INICIALIZAÇÃO VISUAL
   procedure TFormCadastroPGTO.FormShow(Sender: TObject);
   var LFormaPagamento: TFormasPGTO;
   begin

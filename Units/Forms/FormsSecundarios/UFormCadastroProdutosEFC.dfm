@@ -2,14 +2,15 @@ object FormCadastroProdutosEFC: TFormCadastroProdutosEFC
   Left = 0
   Top = 0
   Caption = 'FormCadastroProdutosEFC'
-  ClientHeight = 246
-  ClientWidth = 486
+  ClientHeight = 250
+  ClientWidth = 572
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
   OnKeyPress = FormKeyPress
@@ -19,14 +20,12 @@ object FormCadastroProdutosEFC: TFormCadastroProdutosEFC
   object PanelPrincipal: TPanel
     Left = 0
     Top = 0
-    Width = 486
-    Height = 246
+    Width = 572
+    Height = 250
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = -169
-    ExplicitTop = -77
-    ExplicitWidth = 804
-    ExplicitHeight = 376
+    ExplicitWidth = 486
+    ExplicitHeight = 246
     object Label1: TLabel
       Left = 16
       Top = 16
@@ -41,7 +40,7 @@ object FormCadastroProdutosEFC: TFormCadastroProdutosEFC
       ParentFont = False
     end
     object Label3: TLabel
-      Left = 128
+      Left = 148
       Top = 127
       Width = 45
       Height = 13
@@ -54,7 +53,7 @@ object FormCadastroProdutosEFC: TFormCadastroProdutosEFC
       ParentFont = False
     end
     object Label5: TLabel
-      Left = 208
+      Left = 176
       Top = 73
       Width = 93
       Height = 13
@@ -80,7 +79,7 @@ object FormCadastroProdutosEFC: TFormCadastroProdutosEFC
       ParentFont = False
     end
     object Label7: TLabel
-      Left = 336
+      Left = 304
       Top = 73
       Width = 87
       Height = 13
@@ -106,7 +105,7 @@ object FormCadastroProdutosEFC: TFormCadastroProdutosEFC
       ParentFont = False
     end
     object Label4: TLabel
-      Left = 267
+      Left = 313
       Top = 127
       Width = 69
       Height = 13
@@ -119,7 +118,7 @@ object FormCadastroProdutosEFC: TFormCadastroProdutosEFC
       ParentFont = False
     end
     object Label9: TLabel
-      Left = 377
+      Left = 462
       Top = 127
       Width = 90
       Height = 13
@@ -131,42 +130,55 @@ object FormCadastroProdutosEFC: TFormCadastroProdutosEFC
       Font.Style = [fsBold]
       ParentFont = False
     end
+    object Label2: TLabel
+      Left = 448
+      Top = 73
+      Width = 104
+      Height = 13
+      Caption = 'Desconto M'#225'ximo '
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
     object EditNome: TEdit
       Left = 16
       Top = 38
-      Width = 457
+      Width = 536
       Height = 21
       CharCase = ecUpperCase
       TabOrder = 0
     end
     object EditEstoque: TEdit
-      Left = 128
+      Left = 148
       Top = 146
       Width = 121
       Height = 21
       CharCase = ecUpperCase
-      NumbersOnly = True
-      TabOrder = 3
+      TabOrder = 6
+      OnKeyPress = FiltrarCaracteres
     end
     object EditCodigoBarras: TEdit
       Left = 17
       Top = 92
-      Width = 161
+      Width = 136
       Height = 21
       CharCase = ecUpperCase
-      MaxLength = 18
+      MaxLength = 14
       NumbersOnly = True
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1
     end
     object ComboBoxVendaPermitida: TComboBox
-      Left = 208
+      Left = 176
       Top = 92
       Width = 105
       Height = 21
       Style = csDropDownList
-      TabOrder = 4
+      TabOrder = 2
       Items.Strings = (
         'S'
         'N')
@@ -186,45 +198,56 @@ object FormCadastroProdutosEFC: TFormCadastroProdutosEFC
         'CX')
     end
     object BtnConfirmar: TButton
-      Left = 240
-      Top = 200
+      Left = 320
+      Top = 201
       Width = 105
       Height = 33
       Caption = 'CONFIRMAR'
-      TabOrder = 6
+      TabOrder = 9
       OnClick = BtnConfirmarClick
     end
     object ButtonCancelar: TButton
-      Left = 368
-      Top = 200
+      Left = 447
+      Top = 201
       Width = 105
       Height = 33
       Caption = 'CANCELAR'
-      TabOrder = 7
+      TabOrder = 10
       OnClick = ButtonCancelarClick
     end
     object EditPrecoDeVenda: TEdit
-      Left = 336
+      Left = 304
       Top = 92
-      Width = 137
+      Width = 121
       Height = 21
-      TabOrder = 2
+      TabOrder = 3
+      OnKeyPress = FiltrarCaracteres
     end
     object EditPIS: TEdit
-      Left = 267
+      Left = 313
       Top = 146
       Width = 96
       Height = 21
-      NumbersOnly = True
-      TabOrder = 8
+      MaxLength = 5
+      TabOrder = 7
+      OnKeyPress = FiltrarCaracteres
     end
     object EditCOFINS: TEdit
-      Left = 369
+      Left = 456
       Top = 146
       Width = 96
       Height = 21
-      NumbersOnly = True
-      TabOrder = 9
+      MaxLength = 5
+      TabOrder = 8
+      OnKeyPress = FiltrarCaracteres
+    end
+    object EditDescontoMax: TEdit
+      Left = 448
+      Top = 92
+      Width = 104
+      Height = 21
+      TabOrder = 4
+      OnKeyPress = FiltrarCaracteres
     end
   end
 end

@@ -46,6 +46,7 @@ procedure TDDDORM.FormCreate(Sender: TObject);
   begin
     Self.BitBtnCadastrarCliente.Caption := 'Cadastrar' + sLineBreak + 'Cliente';
     Self.BitBtnCadastrarPagamento.Caption := 'Cadastrar' + sLineBreak + 'Pagamento';
+    Self.BitBtnCadastrarProduto.Caption := 'Cadastrar' + sLineBreak + 'Produto';
   end;
 
 

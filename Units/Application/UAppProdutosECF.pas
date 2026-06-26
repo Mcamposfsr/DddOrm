@@ -14,8 +14,10 @@ interface
     ASitPermiteVenda:String;
     AEstoque:Double;
     APrecoVenda:Currency;
-    AAliqPis:Currency;
-    AAliqCofins: Currency);
+    AAliqPis:Double;
+    AAliqCofins: Double;
+    ADescontoMax: Double);
+
     procedure AtualizarProdutoECF(
     ACodigo:Integer;
     ACodigoDeBarras,
@@ -24,8 +26,9 @@ interface
     ASitPermiteVenda:String;
     AEstoque:Double;
     APrecoVenda:Currency;
-    AAliqPis:Currency;
-    AAliqCofins: Currency
+    AAliqPis:Double;
+    AAliqCofins: Double;
+    ADescontoMax: Double
     );
     procedure DeletarProdutoECF(ACodigo:Integer);
 
@@ -42,8 +45,10 @@ interface
     ASitPermiteVenda:String;
     AEstoque:Double;
     APrecoVenda:Currency;
-    AAliqPis:Currency;
-    AAliqCofins: Currency);
+    AAliqPis:Double;
+    AAliqCofins: Double;
+    ADescontoMax: Double
+    );
 
     procedure AtualizarProdutoECF(
     ACodigo:Integer;
@@ -53,8 +58,9 @@ interface
     ASitPermiteVenda:String;
     AEstoque:Double;
     APrecoVenda:Currency;
-    AAliqPis:Currency;
-    AAliqCofins: Currency
+    AAliqPis:Double;
+    AAliqCofins: Double;
+    ADescontoMax: Double
     );
     procedure DeletarProdutoECF(ACodigo:Integer);
 
@@ -95,13 +101,27 @@ implementation
     ASitPermiteVenda:String;
     AEstoque:Double;
     APrecoVenda:Currency;
-    AAliqPis:Currency;
-    AAliqCofins: Currency);
+    AAliqPis:Double;
+    AAliqCofins: Double;
+    ADescontoMax: Double);
   var LProduto: TProdutosECF;
   begin
     LProduto := nil;
     try
-     LProduto := TProdutosECF.Create(0,ACodigoDeBarras,ANome,AUniSigla,ASitPermiteVenda,AEstoque,APrecoVenda,AAliqPis,AAliqCofins);
+     LProduto := TProdutosECF.Create(
+       0,
+       ACodigoDeBarras,
+       ANome,
+       AUniSigla,
+       ASitPermiteVenda,
+       AEstoque,
+       APrecoVenda,
+       AAliqPis,
+       AAliqCofins,
+       ADescontoMax
+     );
+
+     LProduto.Validar;
 
      FRepository.Insert(LProduto);
     finally
@@ -118,9 +138,10 @@ implementation
     ASitPermiteVenda:String;
     AEstoque:Double;
     APrecoVenda:Currency;
-    AAliqPis:Currency;
-    AAliqCofins: Currency
-    );
+    AAliqPis:Double;
+    AAliqCofins: Double;
+    ADescontoMax: Double
+  );
   var
   LProduto: TProdutosECF;
   LCodigo: String;
@@ -128,7 +149,20 @@ implementation
     LCodigo := IntToStr(ACodigo);
     LProduto := nil;
     try
-     LProduto := TProdutosECF.Create(ACodigo,ACodigoDeBarras,ANome,AUniSigla,ASitPermiteVenda,AEstoque,APrecoVenda,AAliqPis,AAliqCofins);
+     LProduto := TProdutosECF.Create(
+     ACodigo,
+     ACodigoDeBarras,
+     ANome,
+     AUniSigla,
+     ASitPermiteVenda,
+     AEstoque,
+     APrecoVenda,
+     AAliqPis,
+     AAliqCofins,
+     ADescontoMax
+     );
+
+     LProduto.Validar;
 
      FRepository.Update(LCodigo,LProduto);
     finally
@@ -146,7 +180,7 @@ implementation
     LProduto := nil;
     try
       //CLASSE MÍNIMA APENAS PARA DELETE
-     LProduto := TProdutosECF.Create(ACodigo,'','','','',0,0,0,0);
+     LProduto := TProdutosECF.Create(ACodigo,'','','','',0,0,0,0,0);
      FRepository.Delete(LProduto);
     finally
       LProduto.Free;

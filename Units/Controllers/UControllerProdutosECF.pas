@@ -6,8 +6,8 @@ uses UDomainProdutosECF,UIRepository,UAppProdutosECF, System.Generics.Collection
 
 type IControllerProdutosECF = interface
   function BuscarProdutoECF(ACOD:Integer):TProdutosECF;
-  procedure CadastrarProdutoECF(ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof:String);
-  procedure AlterarProdutoECF(ACOD:Integer;ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof:String);
+  procedure CadastrarProdutoECF(ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof,ADescontoMax:String);
+  procedure AlterarProdutoECF(ACOD:Integer;ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof,ADescontoMax:String);
   procedure DeletarProdutoECF(ACOD:Integer);
   procedure FiltrarProdutoECF(AFiltro:String);
 end;
@@ -16,8 +16,8 @@ end;
 type TControllerProdutosECF = class(TInterfacedObject,IControllerProdutosECF)
   public
     function BuscarProdutoECF(ACOD:Integer):TProdutosECF;
-    procedure CadastrarProdutoECF(ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof:String);
-    procedure AlterarProdutoECF(ACOD:Integer;ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof:String);
+    procedure CadastrarProdutoECF(ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof,ADescontoMax:String);
+    procedure AlterarProdutoECF(ACOD:Integer;ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof,ADescontoMax:String);
     procedure DeletarProdutoECF(ACOD:Integer);
     procedure FiltrarProdutoECF(AFiltro:String);
 
@@ -58,33 +58,36 @@ implementation
   AEstoque,
   APrecoVenda,
   AALIQPis,
-  AALIQCof:String
+  AALIQCof,
+  ADescontoMax:String
   );
   var
   LEstoque: Double;
   LPrecoVenda: Currency;
-  LAliqPis: Currency;
-  LAliqCofins: Currency;
+  LAliqPis: Double;
+  LAliqCofins: Double;
+  LDescontoMax: Double;
   begin
     try
       //CONVERSÕES
-      LEstoque := StrToFloat(StringReplace(AEstoque, '.', '', [rfReplaceAll]));
-      LPrecoVenda := StrToFloat(StringReplace(APrecoVenda, '.', '', [rfReplaceAll]));
-      LAliqPis := StrToFloat(StringReplace(AALIQPis, '.', '', [rfReplaceAll]));
-      LAliqCofins := StrToFloat(StringReplace(AALIQCof, '.', '', [rfReplaceAll]));
+      LEstoque := StrToFloatDef(StringReplace(AEstoque, '.', ',', [rfReplaceAll]),0);
+      LPrecoVenda := StrToFloatDef(StringReplace(APrecoVenda, '.', ',', [rfReplaceAll]),0);
+      LAliqPis := StrToFloatDef(StringReplace(AALIQPis, '.', ',', [rfReplaceAll]),0);
+      LAliqCofins := StrToFloatDef(StringReplace(AALIQCof, '.', ',', [rfReplaceAll]),0);
+      LDescontoMax := StrToFloatDef(StringReplace(ADescontoMax, '.', ',', [rfReplaceAll]),0);
 
-      Self.FApp.InserirProdutoECF(ACodBarras,ANome,AUniSigla,ASitVenda,LEstoque,LPrecoVenda,LAliqPis,LAliqCofins);
+      Self.FApp.InserirProdutoECF(ACodBarras,ANome,AUniSigla,ASitVenda,LEstoque,LPrecoVenda,LAliqPis,LAliqCofins,LDescontoMax);
       Self.FRep.AtualizarDataSet;
     except
       //ERROS VALIDAÇÃO FORMULÁRIOS
-//      on E: EErrorFormInput do
-//      begin
-//        raise Exception.Create('Falha ao cadastrar produto.' + FFormatErrorText(E.FCampos,E.FValores));
-//      end;
-      //ERROS INESPERADOS
+      on E: EErrorFormInput do
+      begin
+        raise Exception.Create('Falha ao cadastrar produto.' + FFormatErrorText(E.FCampos,E.FValores));
+      end;
+//      ERROS INESPERADOS
       on E: Exception do
       begin
-        raise Exception.Create('Ocorreu um erro produto: ' +  sLineBreak + E.Message);
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
       end;
     end;
   end;
@@ -99,13 +102,15 @@ implementation
   AEstoque,
   APrecoVenda,
   AALIQPis,
-  AALIQCof:String
+  AALIQCof,
+  ADescontoMax:String
   );
   var
   LEstoque: Double;
   LPrecoVenda: Currency;
-  LAliqPis: Currency;
-  LAliqCofins: Currency;
+  LAliqPis: Double;
+  LAliqCofins: Double;
+  LDescontoMax: Double;
   begin
     try
       //CONVERSÕES
@@ -113,15 +118,16 @@ implementation
       LPrecoVenda := StrToFloat(StringReplace(APrecoVenda, '.', '', [rfReplaceAll]));
       LAliqPis := StrToFloat(StringReplace(AALIQPis, '.', '', [rfReplaceAll]));
       LAliqCofins := StrToFloat(StringReplace(AALIQCof, '.', '', [rfReplaceAll]));
+      LDescontoMax := StrToFloatDef(StringReplace(ADescontoMax, '.', ',', [rfReplaceAll]),0);
 
-      Self.FApp.AtualizarProdutoECF(ACOD,ACodBarras,ANome,AUniSigla,ASitVenda,LEstoque,LPrecoVenda,LAliqPis,LAliqCofins);
+      Self.FApp.AtualizarProdutoECF(ACOD,ACodBarras,ANome,AUniSigla,ASitVenda,LEstoque,LPrecoVenda,LAliqPis,LAliqCofins,LDescontoMax);
       Self.FRep.AtualizarDataSet;
     except
       //ERROS VALIDAÇÃO FORMULÁRIOS
-//      on E: EErrorFormInput do
-//      begin
-//        raise Exception.Create('Falha ao cadastrar cliente.' +  FFormatErrorText(E.FCampos,E.FValores));
-//      end;
+      on E: EErrorFormInput do
+      begin
+        raise Exception.Create('Falha ao cadastrar cliente.' +  FFormatErrorText(E.FCampos,E.FValores));
+      end;
       //ERROS INESPERADOS
       on E: Exception do
       begin
@@ -149,7 +155,7 @@ implementation
   procedure TControllerProdutosECF.FiltrarProdutoECF(AFiltro:String);
   begin
     try
-      Self.FRep.FiltrarDataSet('CLI_NOME',AFiltro);
+      Self.FRep.FiltrarDataSet('PRO_NOME',AFiltro);
     except
       on E: Exception do
       begin

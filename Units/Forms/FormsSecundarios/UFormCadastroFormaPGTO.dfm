@@ -24,7 +24,6 @@ object FormCadastroPGTO: TFormCadastroPGTO
     Height = 130
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 434
     object Label1: TLabel
       Left = 16
       Top = 16
@@ -104,8 +103,9 @@ object FormCadastroPGTO: TFormCadastroPGTO
       Top = 35
       Width = 74
       Height = 21
-      NumbersOnly = True
+      MaxLength = 5
       TabOrder = 2
+      OnKeyPress = EditJurosKeyPress
     end
   end
 end

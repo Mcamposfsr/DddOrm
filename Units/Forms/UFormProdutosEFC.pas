@@ -65,7 +65,9 @@ procedure TFormProdutosEFC.FormCreate(Sender: TObject);
     FController := TControllerProdutosECF.Create(FApp,FRepository);
 
     //CONFIGURAR FORMATO CAMPO DATASET
-//    TFloatField(FDMemTable.FieldByName('FIN_JUROS')).DisplayFormat := '0.0 %';
+    TFloatField(FDMemTable.FieldByName('ALIQ_PIS')).DisplayFormat := '0.0 %';
+    TFloatField(FDMemTable.FieldByName('ALIQ_COFINS')).DisplayFormat := '0.0 %';
+    TFloatField(FDMemTable.FieldByName('DESCONTO_MAX')).DisplayFormat := '0.0 %';
 
     FRepository.AtualizarDataSet;
 

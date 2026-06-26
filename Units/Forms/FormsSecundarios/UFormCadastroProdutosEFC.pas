@@ -29,10 +29,15 @@ type
     Label4: TLabel;
     EditCOFINS: TEdit;
     Label9: TLabel;
+    EditDescontoMax: TEdit;
+    Label2: TLabel;
     procedure FormShow(Sender: TObject);
     procedure ButtonCancelarClick(Sender: TObject);
     procedure BtnConfirmarClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
+
+    //FILTRAGEM DE CARACTERES
+    procedure FiltrarCaracteres(Sender: TObject; var Key: Char);
   private
     //FERRAMENTAS
     FController: IControllerProdutosECF;
@@ -42,6 +47,8 @@ type
     //MÉTODOS AUXÍLIARES
     procedure ReceberValores(AProdutos:TProdutosECF);
     procedure FormControl(AEstado:Boolean);
+
+
 
 
   public
@@ -77,7 +84,16 @@ implementation
     FOperacao :=  AOperacao;
   end;
 
-  //INICIALIZAÇÃO VISUAL
+
+//FILTRAR CARACTERES
+  procedure TFormCadastroProdutosEFC.FiltrarCaracteres(Sender: TObject;
+  var Key: Char);
+  begin
+    if not (Key in ['0'..'9', ',', '.', #8]) then
+    Key := #0;
+  end;
+
+//INICIALIZAÇÃO VISUAL
 
 
   procedure TFormCadastroProdutosEFC.FormShow(Sender: TObject);
@@ -132,8 +148,8 @@ procedure TFormCadastroProdutosEFC.ButtonCancelarClick(Sender: TObject);
         EditEstoque.Text,
         EditPrecoDeVenda.Text,
         EditPIS.Text,
-        EditCOFINS.Text
-        );
+        EditCOFINS.Text,
+        EditDescontoMax.Text);
         Self.Close;
       end
       else if FOperacao = 'UPDATE' then
@@ -147,7 +163,8 @@ procedure TFormCadastroProdutosEFC.ButtonCancelarClick(Sender: TObject);
         EditEstoque.Text,
         EditPrecoDeVenda.Text,
         EditPIS.Text,
-        EditCOFINS.Text
+        EditCOFINS.Text,
+        EditDescontoMax.Text
         );
         Self.Close;
       end
