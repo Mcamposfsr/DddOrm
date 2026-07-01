@@ -1,0 +1,246 @@
+object FormCadastroPedido: TFormCadastroPedido
+  Left = 0
+  Top = 0
+  Caption = 'Cadastrar Pedido'
+  ClientHeight = 254
+  ClientWidth = 438
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnKeyDown = FormKeyDown
+  PixelsPerInch = 96
+  TextHeight = 13
+  object TPanel: TPanel
+    Left = 0
+    Top = 0
+    Width = 438
+    Height = 254
+    Align = alClient
+    TabOrder = 0
+    object Label6: TLabel
+      Left = 16
+      Top = 197
+      Width = 68
+      Height = 13
+      Caption = 'Data Pedido'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object GroupBox3: TGroupBox
+      Left = 16
+      Top = 16
+      Width = 409
+      Height = 161
+      Caption = 'Cliente'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      object Label1: TLabel
+        Left = 16
+        Top = 38
+        Width = 32
+        Height = 13
+        Caption = 'Nome'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label9: TLabel
+        Left = 16
+        Top = 92
+        Width = 65
+        Height = 13
+        Caption = 'Documento'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label10: TLabel
+        Left = 251
+        Top = 92
+        Width = 30
+        Height = 13
+        Caption = 'Ativo'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object BitBtnCancelCliente: TBitBtn
+        Left = 367
+        Top = 16
+        Width = 26
+        Height = 21
+        Glyph.Data = {
+          26040000424D2604000000000000360000002800000012000000120000000100
+          180000000000F0030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFCFCFCFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB7B7
+          B7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFCFD0
+          CF0000009F9F9FFFFFFFFFFFFFFFFFFFFFFFFF8F8F8F000000B8B8B8FFFFFFFF
+          FFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA09F9F0000019F
+          A09FFFFFFFFFFFFF8F8F8F010000888888FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF9F9FA0000100A09F9F8F8F8F
+          000100898888FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF9F9F9F000000000000888988FFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFF8F8F8F0100000000019FA09FFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8F8F8F00
+          01008888889F9F9F0001009F9F9FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF908F8F000000888988FFFFFFFFFFFF
+          9F9F9F0100009F9FA0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFF
+          FFFFFFFFFFFFB7B7B7010000888889FFFFFFFFFFFFFFFFFFFFFFFF9F9F9F0000
+          00C7C8C7FFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFB8B8B8FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC7C7C7FFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFF0000}
+        TabOrder = 0
+      end
+      object BitBtnBuscarCliente: TBitBtn
+        Left = 335
+        Top = 16
+        Width = 26
+        Height = 21
+        Glyph.Data = {
+          36030000424D3603000000000000360000002800000010000000100000000100
+          18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB7B7
+          B7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFB7B7B7000000B7B7B8FFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFB8B8B7000000B7B7
+          B7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFE0DFB9B9B8FF
+          FFFFFFFFFFB7B8B8000000B7B7B7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFF7F7F7000000010101010000000000090909000000B7B8B7FFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000100606160FFFFFFFFFFFFFF
+          FFFF181818111110FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          A8A8A8000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF010000FFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF585858484948FFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFF000000BFBFC0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          888889010000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFF010000EFF0F0FFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF010000AFAFAFFFFFFFFFFFFFFF
+          FFFF606061000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFC8C8C7000100000000383838000000000100EFEFEFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF8080805050519F
+          A09FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+          FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+        TabOrder = 1
+        OnClick = BitBtnBuscarClienteClick
+      end
+      object EditNomeCliente: TEdit
+        Left = 16
+        Top = 57
+        Width = 377
+        Height = 21
+        CharCase = ecUpperCase
+        Enabled = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 2
+      end
+      object EditDocumentoCliente: TEdit
+        Left = 16
+        Top = 111
+        Width = 209
+        Height = 21
+        CharCase = ecUpperCase
+        Enabled = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        MaxLength = 18
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+      end
+      object EditClienteAtivo: TEdit
+        Left = 248
+        Top = 111
+        Width = 145
+        Height = 21
+        CharCase = ecUpperCase
+        Enabled = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        NumbersOnly = True
+        ParentFont = False
+        TabOrder = 4
+      end
+    end
+    object EditDataPedido: TEdit
+      Left = 16
+      Top = 216
+      Width = 137
+      Height = 21
+      CharCase = ecUpperCase
+      Enabled = False
+      NumbersOnly = True
+      TabOrder = 1
+    end
+    object ButtonCancelar: TButton
+      Left = 320
+      Top = 210
+      Width = 105
+      Height = 33
+      Caption = 'CANCELAR'
+      TabOrder = 2
+      OnClick = ButtonCancelarClick
+    end
+    object ButtonConfirmar: TButton
+      Left = 192
+      Top = 210
+      Width = 105
+      Height = 33
+      Caption = 'CONFIRMAR'
+      TabOrder = 3
+      OnClick = ButtonConfirmarClick
+    end
+  end
+end

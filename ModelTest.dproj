@@ -139,20 +139,12 @@
         <DCCReference Include="Units\Application\UAppFormasPGTO.pas"/>
         <DCCReference Include="Units\Controllers\UControllerClientesPGTO.pas"/>
         <DCCReference Include="Units\Controllers\UControllerFormasPGTO.pas"/>
-        <DCCReference Include="Units\Forms\FormsSecundarios\UFormCadastroFormaPGTO.pas">
-            <Form>FormCadastroPGTO</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="Units\Forms\UFormClientesPGTO.pas">
             <Form>FormClientesPGTO</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Units\Forms\UFormFormasPGTO.pas">
             <Form>FormFormasPGTO</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="Units\Forms\FormsSecundarios\UFormCadastroClientePGTO.pas">
-            <Form>FormCadastroClientes</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Units\Forms\UFormPrincipal.pas">
@@ -186,7 +178,36 @@
             <Form>FormProdutosEFC</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="Units\Forms\FormsSecundarios\UFormCadastroProdutosEFC.pas">
+        <DCCReference Include="Units\Domain\UDomainPedidos.pas"/>
+        <DCCReference Include="Units\Domain\UDomainItensPedidos.pas"/>
+        <DCCReference Include="Units\Application\UAppPedidos.pas"/>
+        <DCCReference Include="Units\Application\UAppItensPedidos.pas"/>
+        <DCCReference Include="Units\Controllers\UControllerPedidos.pas"/>
+        <DCCReference Include="Units\Forms\UFormPedidos.pas">
+            <Form>FormPedidos</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Forms\FormsSecundarios\Busca\UFormBuscarClientePGTO.pas">
+            <Form>FormBuscarClientePGTO</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Forms\FormsSecundarios\Busca\UFormBuscarPedido.pas">
+            <Form>FormBuscarPedido</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Forms\FormsSecundarios\Cadastro\UFormCadastroClientePGTO.pas">
+            <Form>FormCadastroClientes</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Forms\FormsSecundarios\Cadastro\UFormCadastroFormaPGTO.pas">
+            <Form>FormCadastroPGTO</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Forms\FormsSecundarios\Cadastro\UFormCadastroPedido.pas">
+            <Form>FormCadastroPedido</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Forms\FormsSecundarios\Cadastro\UFormCadastroProdutosEFC.pas">
             <Form>FormCadastroProdutosEFC</Form>
             <FormType>dfm</FormType>
         </DCCReference>

@@ -52,7 +52,7 @@ uses
     ALimiteCredito:Currency); Overload;
 
   published
-    [Restrictions([NotNull,NoUpdate,NoInsert])] //CONTROLE DA CHAVE PRIMÁRIA
+    [Restrictions([NotNull,NoUpdate,NoInsert,Hidden])] //CONTROLE DA CHAVE PRIMÁRIA
     [Column('CLI_CODIGO', ftInteger)]
     property Codigo: Integer Read FCodigo Write FCodigo;
 

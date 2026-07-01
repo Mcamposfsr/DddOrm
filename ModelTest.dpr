@@ -14,10 +14,8 @@ uses
   UAppFormasPGTO in 'Units\Application\UAppFormasPGTO.pas',
   UControllerClientesPGTO in 'Units\Controllers\UControllerClientesPGTO.pas',
   UControllerFormasPGTO in 'Units\Controllers\UControllerFormasPGTO.pas',
-  UFormCadastroFormaPGTO in 'Units\Forms\FormsSecundarios\UFormCadastroFormaPGTO.pas' {FormCadastroPGTO},
   UFormClientesPGTO in 'Units\Forms\UFormClientesPGTO.pas' {FormClientesPGTO},
   UFormFormasPGTO in 'Units\Forms\UFormFormasPGTO.pas' {FormFormasPGTO},
-  UFormCadastroClientePGTO in 'Units\Forms\FormsSecundarios\UFormCadastroClientePGTO.pas' {FormCadastroClientes},
   UFormPrincipal in 'Units\Forms\UFormPrincipal.pas' {DDDORM},
   UErros in 'Units\Erros\UErros.pas',
   UGenericValidator in 'Units\Utils\UGenericValidator.pas',
@@ -37,7 +35,18 @@ uses
   UAppProdutosECF in 'Units\Application\UAppProdutosECF.pas',
   UControllerProdutosECF in 'Units\Controllers\UControllerProdutosECF.pas',
   UFormProdutosEFC in 'Units\Forms\UFormProdutosEFC.pas' {FormProdutosEFC},
-  UFormCadastroProdutosEFC in 'Units\Forms\FormsSecundarios\UFormCadastroProdutosEFC.pas' {FormCadastroProdutosEFC};
+  UDomainPedidos in 'Units\Domain\UDomainPedidos.pas',
+  UDomainItensPedidos in 'Units\Domain\UDomainItensPedidos.pas',
+  UAppPedidos in 'Units\Application\UAppPedidos.pas',
+  UAppItensPedidos in 'Units\Application\UAppItensPedidos.pas',
+  UControllerPedidos in 'Units\Controllers\UControllerPedidos.pas',
+  UFormPedidos in 'Units\Forms\UFormPedidos.pas' {FormPedidos},
+  UFormBuscarClientePGTO in 'Units\Forms\FormsSecundarios\Busca\UFormBuscarClientePGTO.pas' {FormBuscarClientePGTO},
+  UFormBuscarPedido in 'Units\Forms\FormsSecundarios\Busca\UFormBuscarPedido.pas' {FormBuscarPedido},
+  UFormCadastroClientePGTO in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroClientePGTO.pas' {FormCadastroClientes},
+  UFormCadastroFormaPGTO in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroFormaPGTO.pas' {FormCadastroPGTO},
+  UFormCadastroPedido in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroPedido.pas' {FormCadastroPedido},
+  UFormCadastroProdutosEFC in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroProdutosEFC.pas' {FormCadastroProdutosEFC};
 
 //VARIÁVEL DE AJUSTE PARA BANCO.
   var LLocationDB: String;
@@ -68,12 +77,20 @@ begin
     GDM.ConectarBD;
 
 
+  Application.CreateForm(TFormPedidos, FormPedidos);
   Application.CreateForm(TDDDORM, DDDORM);
   Application.CreateForm(TFormProdutosEFC, FormProdutosEFC);
   Application.CreateForm(TFormClientesPGTO, FormClientesPGTO);
   Application.CreateForm(TFormFormasPGTO, FormFormasPGTO);
   Application.CreateForm(TFormClienteTest, FormClienteTest);
   Application.CreateForm(TFormOS, FormOS);
+  Application.CreateForm(TFormBuscarPedido, FormBuscarPedido);
+  Application.CreateForm(TFormBuscarClientePGTO, FormBuscarClientePGTO);
+  Application.CreateForm(TFormBuscarPedido, FormBuscarPedido);
+  Application.CreateForm(TFormCadastroClientes, FormCadastroClientes);
+  Application.CreateForm(TFormCadastroPGTO, FormCadastroPGTO);
+  Application.CreateForm(TFormCadastroPedido, FormCadastroPedido);
+  Application.CreateForm(TFormCadastroProdutosEFC, FormCadastroProdutosEFC);
   Application.Run;
 
   finally

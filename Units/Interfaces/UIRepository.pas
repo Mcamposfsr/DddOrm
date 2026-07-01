@@ -19,6 +19,7 @@ interface
       procedure ReceberDataSet(ADataSet: TDataSet);
       procedure AtualizarDataSet; Overload;
       procedure AtualizarDataSetWhere(AColumn:String;AValue:Integer); Overload;
+      function ExecutarSQL(ASQL:String): IDBResultSet;
       //
       property ConexaoAtual : IDBConnection read GetConexaoAtual;
   end;
