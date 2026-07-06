@@ -21,7 +21,7 @@ uses
 
   [Entity]
   [Table('PEDIDOS','')]
-  [PrimaryKey('ID_PEDIDO',AutoInc,NoSort,False,'Chave Primária')]
+  [PrimaryKey('ID_PEDIDO',NotInc,NoSort,False,'Chave Primária')]
   TPedidos = class
 
   private
@@ -47,7 +47,7 @@ uses
 
   published
     //PK
-    [Restrictions([NotNull])] //CONTROLE DA CHAVE PRIMÁRIA
+    [Restrictions([NotNull,NoInsert,NoUpdate])] //CONTROLE DA CHAVE PRIMÁRIA
     [Column('ID_PEDIDO', ftInteger)]
     [Dictionary('CODIGO PEDIDO','','','','')]
     property ID: Integer Read FID Write FID;

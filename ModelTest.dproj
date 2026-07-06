@@ -148,7 +148,7 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Units\Forms\UFormPrincipal.pas">
-            <Form>DDDORM</Form>
+            <Form>FormPrincipal</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Units\Erros\UErros.pas"/>
@@ -156,21 +156,7 @@
         <DCCReference Include="Units\Utils\UEmailValidator.pas"/>
         <DCCReference Include="Units\Utils\UFormatErrorText.pas"/>
         <DCCReference Include="Units\Repository\URepManager.pas"/>
-        <DCCReference Include="Units\Domain\teste\UDomainOSTeste.pas"/>
-        <DCCReference Include="Units\Domain\teste\UDomainClientesTeste.pas"/>
-        <DCCReference Include="Units\Controllers\teste\UControllerClientesTeste.pas"/>
-        <DCCReference Include="Units\Controllers\teste\UControllerOSTeste.pas"/>
-        <DCCReference Include="Units\Application\teste\UAppClientesTeste.pas"/>
-        <DCCReference Include="Units\Application\teste\UAppOrdemServicoTeste.pas"/>
         <DCCReference Include="Units\Interfaces\UIDM.pas"/>
-        <DCCReference Include="Units\Forms\Teste\UFormClienteTest.pas">
-            <Form>FormClienteTest</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="Units\Forms\Teste\UFormOSTeste.pas">
-            <Form>FormOS</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="Units\Domain\UDomainProdutosECF.pas"/>
         <DCCReference Include="Units\Application\UAppProdutosECF.pas"/>
         <DCCReference Include="Units\Controllers\UControllerProdutosECF.pas"/>
@@ -211,6 +197,15 @@
             <Form>FormCadastroProdutosEFC</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="Units\Forms\FormsSecundarios\Cadastro\UFormCadastroItemPedido.pas">
+            <Form>FormInserirItem</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Forms\FormsSecundarios\Busca\UFormBuscarProdutos.pas">
+            <Form>FormBuscarProdutos</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Utils\UDataSetColumnSum.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

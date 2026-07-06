@@ -132,7 +132,7 @@ implementation
     LCodigo := IntToStr(FID);
     LItemPedido := nil;
     try
-     LItemPedido := LItemPedido.Create(
+     LItemPedido := TItensPedidos.Create(
       FID,
       FIDPedido,
       FIDProduto,
@@ -158,8 +158,10 @@ implementation
     LCodigo := IntToStr(AID);
     LItemPedido := nil;
     try
+
       //CLASSE MÍNIMA APENAS PARA DELETE
-     LItemPedido := LItemPedido.Create(AID,0,0,0,0,0,0,0);
+     LItemPedido := TItensPedidos.Create(AID,0,0,0,0,0,0,0);
+//     ShowMessage(IntToStr(LItemPedido.ID));
      FRepository.Delete(LItemPedido);
     finally
       LItemPedido.Free;

@@ -7,10 +7,10 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons,
 
-  UFormFormasPGTO,UFormClientesPGTO,UFormClienteTest,UFormProdutosEFC;
+  UFormFormasPGTO,UFormClientesPGTO,UFormPedidos,UFormProdutosEFC;
 
 type
-  TDDDORM = class(TForm)
+  TFormPrincipal = class(TForm)
     Panel1: TPanel;
     Panel2: TPanel;
     MainMenu1: TMainMenu;
@@ -19,15 +19,17 @@ type
     PAGAMENTOS1: TMenuItem;
     BitBtnCadastrarCliente: TBitBtn;
     BitBtnCadastrarPagamento: TBitBtn;
-    BitBtn1: TBitBtn;
     BitBtnCadastrarProduto: TBitBtn;
+    BitBtnCadastrarPedido: TBitBtn;
+    PRODUTOS1: TMenuItem;
+    PEDIDOS1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure BitBtnCadastrarClienteClick(Sender: TObject);
     procedure CLIENTES1Click(Sender: TObject);
     procedure BitBtnCadastrarPagamentoClick(Sender: TObject);
     procedure PAGAMENTOS1Click(Sender: TObject);
-    procedure BitBtn1Click(Sender: TObject);
     procedure BitBtnCadastrarProdutoClick(Sender: TObject);
+    procedure BitBtnCadastrarPedidoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -35,18 +37,19 @@ type
   end;
 
 var
-  DDDORM: TDDDORM;
+  FormPrincipal: TFormPrincipal;
 
 implementation
 
 {$R *.dfm}
 
 
-procedure TDDDORM.FormCreate(Sender: TObject);
+procedure TFormPrincipal.FormCreate(Sender: TObject);
   begin
     Self.BitBtnCadastrarCliente.Caption := 'Cadastrar' + sLineBreak + 'Cliente';
     Self.BitBtnCadastrarPagamento.Caption := 'Cadastrar' + sLineBreak + 'Pagamento';
     Self.BitBtnCadastrarProduto.Caption := 'Cadastrar' + sLineBreak + 'Produto';
+    Self.BitBtnCadastrarPedido.Caption := 'Novo' + sLineBreak + 'Pedido';
   end;
 
 
@@ -54,39 +57,35 @@ procedure TDDDORM.FormCreate(Sender: TObject);
 
   //ABERTURA CADASTRO CLIENTES
 
-procedure TDDDORM.BitBtnCadastrarClienteClick(Sender: TObject);
+procedure TFormPrincipal.BitBtnCadastrarClienteClick(Sender: TObject);
   begin
     FormClientesPGTO.Show;
   end;
 
 
-procedure TDDDORM.CLIENTES1Click(Sender: TObject);
+procedure TFormPrincipal.CLIENTES1Click(Sender: TObject);
   begin
     FormClientesPGTO.Show;
   end;
 
   //ABERTURA CADASTRO FORMAS PAGAMENTO
-  procedure TDDDORM.BitBtnCadastrarPagamentoClick(Sender: TObject);
+  procedure TFormPrincipal.BitBtnCadastrarPagamentoClick(Sender: TObject);
   begin
     FormFormasPGTO.Show;
   end;
 
-
-
-
-procedure TDDDORM.PAGAMENTOS1Click(Sender: TObject);
+  procedure TFormPrincipal.BitBtnCadastrarPedidoClick(Sender: TObject);
   begin
-    FormFormasPGTO.Show;
+    FormPedidos.Show;
   end;
 
-  //FORM TESTE
-  procedure TDDDORM.BitBtn1Click(Sender: TObject);
+procedure TFormPrincipal.PAGAMENTOS1Click(Sender: TObject);
   begin
-     FormClienteTest.Show;
+    FormFormasPGTO.Show;
   end;
 
   //ABERTURA CADASTRO PRODUTOS
-  procedure TDDDORM.BitBtnCadastrarProdutoClick(Sender: TObject);
+  procedure TFormPrincipal.BitBtnCadastrarProdutoClick(Sender: TObject);
   begin
     FormProdutosEFC.Show;
   end;

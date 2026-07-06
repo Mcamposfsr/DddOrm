@@ -136,7 +136,7 @@ implementation
       AEstado := False;
     end
     //TAMANHO CORRETO
-    else if not (FCodigoDeBarras.Length in [8,12,14]) then
+    else if not (FCodigoDeBarras.Length in [8,12,13,14]) then
     begin
       AError.FCampos.Add('Codigo de Barras');
       AError.FValores.Add(FCodigoDeBarras);

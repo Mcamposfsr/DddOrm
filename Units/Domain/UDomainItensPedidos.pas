@@ -28,14 +28,13 @@ uses
     FID: Integer;
     FIDPedido: Integer;
     FIDProduto: Integer;
+    FNomeProduto: String;
     FQuantidade: Double;
     FPrecoUnit: Currency;
     FDescontoPercent: Double;
     FDescontoValor: Currency;
     FTotal: Currency;
   public
-
-//    procedure Validar;
 
     Constructor Create(
       AID: Integer;
@@ -50,17 +49,26 @@ uses
 
   published
     //PK
-    [Restrictions([NotNull,NoUpdate,NoInsert])] //CONTROLE DA CHAVE PRIMÁRIA
+    [Restrictions([NotNull,NoUpdate,NoInsert,Hidden])] //CONTROLE DA CHAVE PRIMÁRIA
     [Column('ID_ITEM', ftInteger)]
     property ID: Integer Read FID Write FID;
 
     //FK - ID_PEDIDO
+    [Restrictions([Hidden])]
     [Column('ID_PEDIDO',ftInteger)]
     property IDPedido: Integer Read FIDPedido Write FIDPedido;
 
     //FK - ID_PEDIDO
+    [Restrictions([Hidden])]
     [Column('ID_PRODUTO',ftInteger)]
     property IDProduto: Integer Read FIDProduto Write FIDProduto;
+
+    //NOME PRODUTO - JOIN
+    [Restrictions([noInsert,NoUpdate])]
+    [Column('PRO_NOME',ftString,50)]
+    [Dictionary('NOME PRODUTO','','','','')]
+    [JoinColumn('ID_PRODUTO','PRODUTOS_ECF','PRO_CODIGO','PRO_NOME')]
+    property NomeProduto: String Read FNomeProduto Write FNomeProduto;
 
     //QUANTIDADE
     [Column('QUANTIDADE',ftFloat)]
@@ -108,8 +116,5 @@ implementation
 
   // ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES
 
-//  procedure TProdutosECF.Validar;
-//  begin
-//  end;
 
 end.

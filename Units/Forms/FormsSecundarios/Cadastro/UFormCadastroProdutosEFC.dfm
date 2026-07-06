@@ -24,8 +24,6 @@ object FormCadastroProdutosEFC: TFormCadastroProdutosEFC
     Height = 250
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 486
-    ExplicitHeight = 246
     object Label1: TLabel
       Left = 16
       Top = 16

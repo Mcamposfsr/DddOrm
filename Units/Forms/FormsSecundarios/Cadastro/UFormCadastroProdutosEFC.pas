@@ -208,6 +208,7 @@ procedure TFormCadastroProdutosEFC.ButtonCancelarClick(Sender: TObject);
     EditEstoque.Enabled := AEstado;
     EditPIS.Enabled := AEstado;
     EditCOFINS.Enabled := AEstado;
+    EditDescontoMax.Enabled := AEstado;
   end;
 
   procedure TFormCadastroProdutosEFC.FormKeyPress(Sender: TObject; var Key: Char);

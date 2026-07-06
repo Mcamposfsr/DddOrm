@@ -2,8 +2,8 @@ object FormPedidos: TFormPedidos
   Left = 0
   Top = 0
   Caption = 'Pedidos'
-  ClientHeight = 614
-  ClientWidth = 505
+  ClientHeight = 613
+  ClientWidth = 792
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,7 +18,7 @@ object FormPedidos: TFormPedidos
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 505
+    Width = 792
     Height = 137
     Align = alTop
     TabOrder = 0
@@ -36,53 +36,53 @@ object FormPedidos: TFormPedidos
       ParentFont = False
     end
     object Label2: TLabel
-      Left = 16
-      Top = 75
+      Left = 590
+      Top = 76
       Width = 47
       Height = 13
       Caption = 'N'#186' Pedido'
     end
     object Label3: TLabel
-      Left = 111
-      Top = 75
+      Left = 15
+      Top = 76
       Width = 33
       Height = 13
       Caption = 'Cliente'
     end
     object Label4: TLabel
-      Left = 422
-      Top = 72
+      Left = 697
+      Top = 76
       Width = 58
       Height = 13
       Caption = 'Data Pedido'
     end
     object EditNumeroPedido: TEdit
-      Left = 16
-      Top = 94
-      Width = 67
+      Left = 590
+      Top = 95
+      Width = 80
       Height = 21
       Enabled = False
       TabOrder = 0
     end
     object EditNomeCliente: TEdit
-      Left = 111
-      Top = 94
-      Width = 297
+      Left = 15
+      Top = 95
+      Width = 546
       Height = 21
       Enabled = False
       TabOrder = 1
     end
     object EditDataPedido: TEdit
-      Left = 422
-      Top = 91
-      Width = 67
+      Left = 697
+      Top = 95
+      Width = 80
       Height = 21
       Enabled = False
       TabOrder = 2
     end
     object GroupBox1: TGroupBox
-      Left = 341
-      Top = 17
+      Left = 629
+      Top = 16
       Width = 148
       Height = 49
       Caption = 'A'#199#213'ES'
@@ -211,7 +211,7 @@ object FormPedidos: TFormPedidos
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFF0000}
-        TabOrder = 2
+        TabOrder = 3
         OnClick = BitBtnRemoverPedidoClick
       end
       object BitBtnCancelCliente: TBitBtn
@@ -254,18 +254,19 @@ object FormPedidos: TFormPedidos
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFF0000}
-        TabOrder = 3
+        TabOrder = 2
         OnClick = BitBtnCancelClienteClick
       end
     end
   end
   object Panel2: TPanel
     Left = 0
-    Top = 143
-    Width = 505
-    Height = 471
+    Top = 140
+    Width = 792
+    Height = 473
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 178
     object Label5: TLabel
       Left = 16
       Top = 16
@@ -280,7 +281,7 @@ object FormPedidos: TFormPedidos
       ParentFont = False
     end
     object Label6: TLabel
-      Left = 368
+      Left = 656
       Top = 421
       Width = 78
       Height = 13
@@ -293,7 +294,7 @@ object FormPedidos: TFormPedidos
       ParentFont = False
     end
     object GroupBox2: TGroupBox
-      Left = 367
+      Left = 655
       Top = 16
       Width = 122
       Height = 49
@@ -337,7 +338,8 @@ object FormPedidos: TFormPedidos
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
-        TabOrder = 0
+        TabOrder = 1
+        OnClick = BitBtnAlterarItemClick
       end
       object BitBtnAdicionarItem: TBitBtn
         Left = 15
@@ -379,7 +381,8 @@ object FormPedidos: TFormPedidos
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFF0000}
-        TabOrder = 1
+        TabOrder = 0
+        OnClick = BitBtnAdicionarItemClick
       end
       object BitBtnExcluirItem: TBitBtn
         Left = 79
@@ -422,13 +425,15 @@ object FormPedidos: TFormPedidos
           FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           FFFFFFFFFFFFFFFF0000}
         TabOrder = 2
+        OnClick = BitBtnExcluirItemClick
       end
     end
     object DBGrid1: TDBGrid
-      Left = 15
-      Top = 81
-      Width = 474
+      Left = 16
+      Top = 85
+      Width = 761
       Height = 322
+      DataSource = DataSource
       TabOrder = 1
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
@@ -436,12 +441,30 @@ object FormPedidos: TFormPedidos
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
     end
-    object Edit4: TEdit
-      Left = 368
+    object EditTotalLiquido: TEdit
+      Left = 656
       Top = 440
       Width = 121
       Height = 21
+      Enabled = False
       TabOrder = 2
     end
+  end
+  object DataSource: TDataSource
+    DataSet = FDMemTable
+    Left = 104
+    Top = 560
+  end
+  object FDMemTable: TFDMemTable
+    AfterRefresh = FDMemTableAfterRefresh
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 32
+    Top = 560
   end
 end

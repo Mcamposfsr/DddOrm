@@ -39,6 +39,7 @@ interface
       ADataEmissao: TDate;
       ATotalLiquido: Currency
     );
+//    procedure AtualizarTotalPedido(AID: Integer;ATotal:Currency);
     procedure DeletarPedido(ACodigo:Integer);
 
       constructor Create(ARep:IRepository<TPedidos>);
@@ -81,13 +82,12 @@ implementation
     LPedido := nil;
     try
      LPedido := TPedidos.Create(
-       0,
+       -1,
        AIDCliente,
        ADataEmissao,
        ATotalLiquido
      );
      FRepository.Insert(LPedido);
-     ShowMessage(IntToStr(LPedido.ID));
     finally
       LPedido.Free;
     end;
@@ -134,6 +134,12 @@ implementation
     finally
       LPedido.Free;
     end;
+  end;
+
+  //UPDATETOTAL
+  procedure AtualizarTotalPedido(AID: Integer;ATotal:Currency);
+  begin
+
   end;
 
 end.

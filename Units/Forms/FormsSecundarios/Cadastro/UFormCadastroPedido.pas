@@ -13,12 +13,9 @@ uses
 type
   TFormCadastroPedido = class(TForm)
     GroupBox3: TGroupBox;
-    BitBtnCancelCliente: TBitBtn;
     BitBtnBuscarCliente: TBitBtn;
     Label1: TLabel;
     EditNomeCliente: TEdit;
-    Label9: TLabel;
-    EditDocumentoCliente: TEdit;
     EditClienteAtivo: TEdit;
     Label10: TLabel;
     EditDataPedido: TEdit;
@@ -26,6 +23,8 @@ type
     ButtonCancelar: TButton;
     ButtonConfirmar: TButton;
     TPanel: TPanel;
+    Label9: TLabel;
+    EditDocumentoCliente: TEdit;
     procedure BitBtnBuscarClienteClick(Sender: TObject);
     procedure ButtonConfirmarClick(Sender: TObject);
     procedure ButtonCancelarClick(Sender: TObject);
@@ -107,7 +106,6 @@ constructor TFormCadastroPedido.Create(
 
   //CONFIRMAR
   procedure TFormCadastroPedido.ButtonConfirmarClick(Sender: TObject);
-  var LClientes: TObjectList<TClientePGTO>;
   begin
     Self.FControllerPedidos.CadastrarPedido(
     Self.FClienteAtual.Codigo,

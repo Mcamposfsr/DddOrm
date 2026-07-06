@@ -45,6 +45,7 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
     procedure AlterarPedido(AID,AIDCliente:Integer;ADataEmissao,ATotalLiquido:String);
     procedure DeletarPedido(AID:Integer);
     procedure FiltrarPedido(AFiltro:String);
+//    procedure AlterarTotalPedido(AID:Integer;AValorTotal);
 
 
     //ITENS PEDIDOS
@@ -199,7 +200,6 @@ implementation
     Result := Self.FRepPedidos.ExecutarSQL(LSQL);
   end;
 
-
   // ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS
 
   //BUSCAR
@@ -251,7 +251,7 @@ implementation
       LTotal
       );
 
-      Self.FRepItensPedidos.AtualizarDataSet;
+//      Self.FRepItensPedidos.AtualizarDataSet;
     except
       //ERROS VALIDAÇÃO FORMULÁRIOS
       on E: EErrorFormInput do
@@ -285,7 +285,6 @@ implementation
   LTotal: Currency;
   begin
     try
-      //RETIRAR O '.' ANTES DA CONVERSÃO PARA EVITAR ERROS DE CONVERSÃO
       LQuantidade := StrToFloatDef(StringReplace(AQuantidade, '.', '', [rfReplaceAll]),0);
       LPrecoUnit := StrToFloatDef(StringReplace(APrecoUnit, '.', '', [rfReplaceAll]),0);
       LDescontoPercent := StrToFloatDef(StringReplace(ADescontoPercent, '.', '', [rfReplaceAll]),0);
@@ -323,7 +322,7 @@ implementation
   begin
     try
       Self.FAppItensPedidos.DeletarItemPedido(AID);
-      Self.FRepItensPedidos.AtualizarDataSet;
+//      Self.FRepItensPedidos.AtualizarDataSet;
     except
       //ERROS INESPERADOS
       on E: Exception do
