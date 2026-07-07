@@ -6,6 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,System.Generics.Collections,
 
+  dbebr.factory.interfaces,
+
   UDomainPedidos,UDomainClientesPGTO,UControllerPedidos,UIRepository,UControllerClientesPGTO,
 
   UFormBuscarClientePGTO;
@@ -25,6 +27,8 @@ type
     TPanel: TPanel;
     Label9: TLabel;
     EditDocumentoCliente: TEdit;
+    EditNumeroPedido: TEdit;
+    Label2: TLabel;
     procedure BitBtnBuscarClienteClick(Sender: TObject);
     procedure ButtonConfirmarClick(Sender: TObject);
     procedure ButtonCancelarClick(Sender: TObject);
@@ -42,7 +46,7 @@ type
   public
     //VAR CONTROLE
     FClienteAtual: TClientePGTO;
-    FPedidoAtual: TPedidos;
+    FCodigoPedido: String;
 
     constructor Create(
     AOwner: TComponent;
@@ -68,6 +72,7 @@ constructor TFormCadastroPedido.Create(
     ARepositoryClientes: IRepository<TClientePGTO>;
     AControllerClientes: IControllerClientesPGTO
     );
+    var LTESTE: IDBResultSet;
     begin
       Inherited Create(AOwner);
       FRepositoryPedidos := ARepositoryPedidos;
@@ -78,11 +83,8 @@ constructor TFormCadastroPedido.Create(
 
       //PASSAR DATA ATUAL PARA EDIT
       Self.EditDataPedido.Text := FormatDateTime('dd/mm/yyyy',now);
+      Self.EditNumeroPedido.Text := Self.FControllerPedidos.GerarCodPedido;
     end;
-
-
-
-
 
 
 // ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS
@@ -110,7 +112,12 @@ constructor TFormCadastroPedido.Create(
     Self.FControllerPedidos.CadastrarPedido(
     Self.FClienteAtual.Codigo,
     Self.EditDataPedido.Text,
-    '');
+    //TOTAL COMEÇA VAZIO
+    '',
+    Self.EditNumeroPedido.Text);
+
+    //PASSAR CÓDIGO PEDIDO PARA ACESSO EXTERNO
+    FCodigoPedido := Self.EditNumeroPedido.Text;
     ModalResult := mrOk
   end;
 

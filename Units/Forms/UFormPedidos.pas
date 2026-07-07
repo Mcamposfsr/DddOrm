@@ -21,7 +21,7 @@ type
   TFormPedidos = class(TForm)
     Panel1: TPanel;
     Label1: TLabel;
-    EditNumeroPedido: TEdit;
+    EditCodigoPedido: TEdit;
     Label2: TLabel;
     EditNomeCliente: TEdit;
     Label3: TLabel;
@@ -144,15 +144,21 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
   procedure TFormPedidos.BitBtnCriarPedidoClick(Sender: TObject);
   var 
   LFORM: TFormCadastroPedido;
+  LPedido: TPedidos;
   begin
+    LPedido := nil;
     LFORM := nil;
     try
       LFORM := TFormCadastroPedido.Create(nil,FRepositoryPedidos,FControllerPedidos,FRepositoryClientesPGTO,FControllerClientes);
       if LFORM.ShowModal = mrOk then
       begin
-        Self.BitBtnBuscarPedidoClick(nil);
+//        Self.BitBtnBuscarPedidoClick(nil);
+        LPedido := Self.FControllerPedidos.BuscarPedidoPeloCodigo(LForm.FCodigoPedido);
+
+        Self.PreencherPedido(LPedido);
       end;
     finally
+      LPedido.Free;
       LFORM.Free;
     end;
   end;
@@ -251,7 +257,7 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
   begin
     Self.EditNomeCliente.Text := APedido.NomeCliente;
     Self.EditDataPedido.Text := FormatDateTime('dd/mm/yyyy',APedido.DataEmissao);
-    Self.EditNumeroPedido.Text := IntToStr(APedido.ID);
+    Self.EditCodigoPedido.Text := APedido.CodPedido;
   end;
 
   //LIMPAR PEDIDOS
@@ -259,7 +265,7 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
   begin
      Self.EditNomeCliente.Clear;
      Self.EditDataPedido.Clear;
-     Self.EditNumeroPedido.Clear;
+     Self.EditCodigoPedido.Clear;
      Self.FPedidoAtual := niL;
 
     Self.AtualizarDataSet;

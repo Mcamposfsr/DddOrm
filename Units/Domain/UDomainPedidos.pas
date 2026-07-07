@@ -27,8 +27,10 @@ uses
   private
     FID: Integer;
     FIDCliente: Integer;
+
     FDataEmissao: TDate;
     FTotalLiquido: Currency;
+    FCodPedido: String;
     //JOIN
     FNomeCliente: String;
     FCPFCliente: String;
@@ -42,12 +44,33 @@ uses
       AID:Integer;
       AIDCliente: Integer;
       ADataEmissao: TDate;
-      ATotalLiquido: Currency
+      ATotalLiquido: Currency;
+      ACodPedido: String
       ); Overload;
 
   published
+
+    //CÓDIGO PEDIDO
+    [Restrictions([NotNull])]
+    [Column('NUMERO_PEDIDO',ftString,13)]
+    [Dictionary('NUMERO PEDIDO','','','','')]
+    property CodPedido: String Read  FCodPedido Write FCodPedido;
+
+     //JOINS:
+    [Restrictions([NoInsert,NoUpdate])]
+    [Column('CLI_NOME',ftString,50)]
+    [Dictionary('NOME CLIENTE','','','','')]
+    [JoinColumn('ID_CLIENTE','CLIENTES_PGTO','CLI_CODIGO','CLI_NOME')]
+    property NomeCliente: String Read FNomeCliente Write FNomeCliente;
+
+    [Restrictions([NoInsert,NoUpdate])]
+    [Column('CLI_DOCUMENTO',ftString,18)]
+    [Dictionary('DOCUMENTO CLIENTE','','','','')]
+    [JoinCOlumn('ID_CLIENTE','CLIENTES_PGTO','CLI_CODIGO','CLI_DOCUMENTO')]
+    property CpfCliente: String Read FCPFCliente Write FCPFCliente;
+
     //PK
-    [Restrictions([NotNull,NoInsert,NoUpdate])] //CONTROLE DA CHAVE PRIMÁRIA
+    [Restrictions([NotNull,NoInsert,NoUpdate,HIDDEN])] //CONTROLE DA CHAVE PRIMÁRIA
     [Column('ID_PEDIDO', ftInteger)]
     [Dictionary('CODIGO PEDIDO','','','','')]
     property ID: Integer Read FID Write FID;
@@ -67,19 +90,6 @@ uses
     [Dictionary('VALOR LÍQUIDO','','','','')]
     property TotalLiquido: Currency Read FTotalLiquido Write FTotalLiquido;
 
-    //JOINS:
-    [Restrictions([NoInsert,NoUpdate])]
-    [Column('CLI_NOME',ftString,50)]
-    [Dictionary('NOME CLIENTE','','','','')]
-    [JoinColumn('ID_CLIENTE','CLIENTES_PGTO','CLI_CODIGO','CLI_NOME')]
-    property NomeCliente: String Read FNomeCliente Write FNomeCliente;
-
-    [Restrictions([NoInsert,NoUpdate])]
-    [Column('CLI_DOCUMENTO',ftString,18)]
-    [Dictionary('DOCUMENTO CLIENTE','','','','')]
-    [JoinCOlumn('ID_CLIENTE','CLIENTES_PGTO','CLI_CODIGO','CLI_DOCUMENTO')]
-    property CpfCliente: String Read FCPFCliente Write FCPFCliente;
-
   end;
 
 implementation
@@ -88,12 +98,15 @@ implementation
       AID:Integer;
       AIDCliente: Integer;
       ADataEmissao: TDate;
-      ATotalLiquido: Currency);
+      ATotalLiquido: Currency;
+      ACodPedido: String
+       );
   begin
     FID := AID;
     FIDCliente := AIDCliente;
     FDataEmissao := ADataEmissao;
     FTotalLiquido := ATotalLiquido;
+    FCodPedido := ACodPedido;
   end;
 
   // ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES

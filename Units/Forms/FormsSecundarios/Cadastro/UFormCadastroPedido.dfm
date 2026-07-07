@@ -2,8 +2,8 @@ object FormCadastroPedido: TFormCadastroPedido
   Left = 0
   Top = 0
   Caption = 'Cadastrar Pedido'
-  ClientHeight = 254
-  ClientWidth = 438
+  ClientHeight = 327
+  ClientWidth = 441
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,16 +18,32 @@ object FormCadastroPedido: TFormCadastroPedido
   object TPanel: TPanel
     Left = 0
     Top = 0
-    Width = 438
-    Height = 254
+    Width = 441
+    Height = 327
     Align = alClient
     TabOrder = 0
+    ExplicitTop = -8
+    ExplicitWidth = 443
+    ExplicitHeight = 402
     object Label6: TLabel
       Left = 16
       Top = 197
       Width = 68
       Height = 13
       Caption = 'Data Pedido'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Label2: TLabel
+      Left = 184
+      Top = 197
+      Width = 85
+      Height = 13
+      Caption = 'Numero Pedido'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -184,7 +200,7 @@ object FormCadastroPedido: TFormCadastroPedido
     end
     object ButtonCancelar: TButton
       Left = 320
-      Top = 210
+      Top = 282
       Width = 105
       Height = 33
       Caption = 'CANCELAR'
@@ -193,12 +209,22 @@ object FormCadastroPedido: TFormCadastroPedido
     end
     object ButtonConfirmar: TButton
       Left = 192
-      Top = 210
+      Top = 282
       Width = 105
       Height = 33
       Caption = 'CONFIRMAR'
       TabOrder = 2
       OnClick = ButtonConfirmarClick
+    end
+    object EditNumeroPedido: TEdit
+      Left = 184
+      Top = 216
+      Width = 137
+      Height = 21
+      CharCase = ecUpperCase
+      Enabled = False
+      NumbersOnly = True
+      TabOrder = 4
     end
   end
 end

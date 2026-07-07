@@ -2,22 +2,25 @@ unit UAppPedidos;
 
 
 interface
- uses System.Generics.Collections,UDomainPedidos, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository;
+ uses System.Generics.Collections,UDomainPedidos, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository,dbebr.factory.interfaces;
 
   type IAppPedidos = Interface
     Function BuscarPedido:TObjectList<TPedidos>;
+    Function BuscarPedidoPeloCodigo(ACod:String): TPedidos;
     Function BuscarPedidoByID(ACodigo:Integer):TPedidos;
     procedure InserirPedido(
     AIDCliente: Integer;
     ADataEmissao: TDate;
-    ATotalLiquido: Currency
+    ATotalLiquido: Currency;
+    ACodPedido: String
     );
 
     procedure AtualizarPedido(
       AID:Integer;
       AIDCliente: Integer;
       ADataEmissao: TDate;
-      ATotalLiquido: Currency
+      ATotalLiquido: Currency;
+      ACodPedido: String
     );
     procedure DeletarPedido(ACodigo:Integer);
 
@@ -26,22 +29,25 @@ interface
   type TAppPedidos = class(TInterfacedObject,IAppPedidos)
     public
     Function BuscarPedido:TObjectList<TPedidos>;
+    Function BuscarPedidoPeloCodigo(ACod:String): TPedidos;
     Function BuscarPedidoByID(ACodigo:Integer):TPedidos;
     procedure InserirPedido(
     AIDCliente: Integer;
     ADataEmissao: TDate;
-    ATotalLiquido: Currency
+    ATotalLiquido: Currency;
+    ACodPedido: String
     );
 
     procedure AtualizarPedido(
       AID:Integer;
       AIDCliente: Integer;
       ADataEmissao: TDate;
-      ATotalLiquido: Currency
+      ATotalLiquido: Currency;
+      ACodPedido: String
     );
-//    procedure AtualizarTotalPedido(AID: Integer;ATotal:Currency);
-    procedure DeletarPedido(ACodigo:Integer);
 
+    procedure DeletarPedido(ACodigo:Integer);
+    //    procedure AtualizarTotalPedido(AID: Integer;ATotal:Currency);
       constructor Create(ARep:IRepository<TPedidos>);
     private
 
@@ -75,7 +81,8 @@ implementation
   procedure TAppPedidos.InserirPedido(
     AIDCliente: Integer;
     ADataEmissao: TDate;
-    ATotalLiquido: Currency
+    ATotalLiquido: Currency;
+    ACodPedido: String
     );
   var LPedido: TPedidos;
   begin
@@ -85,7 +92,8 @@ implementation
        -1,
        AIDCliente,
        ADataEmissao,
-       ATotalLiquido
+       ATotalLiquido,
+       ACodPedido
      );
      FRepository.Insert(LPedido);
     finally
@@ -98,7 +106,8 @@ implementation
       AID:Integer;
       AIDCliente: Integer;
       ADataEmissao: TDate;
-      ATotalLiquido: Currency
+      ATotalLiquido: Currency;
+      ACodPedido: String
     );
   var LPedido: TPedidos;
   LCodigo: String;
@@ -111,6 +120,7 @@ implementation
       AIDCliente,
       ADataEmissao,
       ATotalLiquido
+      ,ACodPedido
      );
 
      FRepository.Update(LCodigo,LPedido);
@@ -129,17 +139,31 @@ implementation
     LPedido := nil;
     try
       //CLASSE MÍNIMA APENAS PARA DELETE
-     LPedido := TPedidos.Create(ACodigo,0,0,0);
+     LPedido := TPedidos.Create(ACodigo,0,0,0,'');
      FRepository.Delete(LPedido);
     finally
       LPedido.Free;
     end;
   end;
 
-  //UPDATETOTAL
-  procedure AtualizarTotalPedido(AID: Integer;ATotal:Currency);
+  //BUSCAR PEDIDO PELO CÓDIGO DO PEDIDO
+  Function TAppPedidos.BuscarPedidoPeloCodigo(ACod:String): TPedidos;
+  var
+  LResultSet: IDBResultSet;
+  LPedido: TPedidos;
+  LID: Integer;
   begin
+    LResultSet := FRepository.ExecutarSQL('SELECT * FROM PEDIDOS WHERE NUMERO_PEDIDO = ''' + ACod + '''');
+    LID := LResultSet.DataSet.FieldByName('ID_PEDIDO').AsInteger;
+    LPedido := Self.BuscarPedidoByID(LID);
 
+     Result := LPedido;
   end;
+
+  //UPDATETOTAL
+//  procedure TAppPedidos(AID: Integer;ATotal:Currency);
+//  begin
+//
+//  end;
 
 end.

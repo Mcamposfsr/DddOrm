@@ -20,10 +20,12 @@ dbebr.factory.interfaces
 type IControllerPedidos = interface
   //PEDIDOS
   function BuscarPedido(AID:Integer):TPedidos;
-  procedure CadastrarPedido(AIDCliente:Integer;ADataEmissao,ATotalLiquido:String);
-  procedure AlterarPedido(AID,AIDCliente:Integer;ADataEmissao,ATotalLiquido:String);
+  function BuscarPedidoPeloCodigo(ACod:String):TPedidos;
+  procedure CadastrarPedido(AIDCliente:Integer;ADataEmissao,ATotalLiquido,ACodPedido:String);
+  procedure AlterarPedido(AID,AIDCliente:Integer;ADataEmissao,ATotalLiquido,ACodPedido:String);
   procedure DeletarPedido(AID:Integer);
   procedure FiltrarPedido(AFiltro:String);
+  function GerarCodPedido:String;
 
 
   //ITENS PEDIDOS
@@ -41,11 +43,12 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
   public
     //PEDIDOS
     function BuscarPedido(AID:Integer):TPedidos;
-    procedure CadastrarPedido(AIDCliente:Integer;ADataEmissao,ATotalLiquido:String);
-    procedure AlterarPedido(AID,AIDCliente:Integer;ADataEmissao,ATotalLiquido:String);
+    function BuscarPedidoPeloCodigo(ACod:String):TPedidos;
+    procedure CadastrarPedido(AIDCliente:Integer;ADataEmissao,ATotalLiquido,ACodPedido:String);
+    procedure AlterarPedido(AID,AIDCliente:Integer;ADataEmissao,ATotalLiquido,ACodPedido:String);
     procedure DeletarPedido(AID:Integer);
     procedure FiltrarPedido(AFiltro:String);
-//    procedure AlterarTotalPedido(AID:Integer;AValorTotal);
+    function GerarCodPedido:String;
 
 
     //ITENS PEDIDOS
@@ -105,11 +108,25 @@ implementation
     end;
   end;
 
+  function TControllerPedidos.BuscarPedidoPeloCodigo(ACod:String):TPedidos;
+  begin
+    try
+      Result := FAppPedidos.BuscarPedidoPeloCodigo(ACod);
+    except
+    //ERROS INESPERADOS
+      on E: Exception do
+      begin
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+      end;
+    end;
+  end;
+
   //CADASTRAR
   procedure TControllerPedidos.CadastrarPedido(
   AIDCliente:Integer;
   ADataEmissao,
-  ATotalLiquido:String
+  ATotalLiquido,
+  ACodPedido:String
   );
   var
   LTotalLiquido: Currency;
@@ -121,7 +138,7 @@ implementation
 
       LDataEmissao := StrToDate(ADataEmissao);
 
-      Self.FAppPedidos.InserirPedido(AIDCliente,LDataEmissao,LTotalLiquido);
+      Self.FAppPedidos.InserirPedido(AIDCliente,LDataEmissao,LTotalLiquido,ACodPedido);
 //      Self.FRepPedidos.AtualizarDataSet;
     except
       //ERROS VALIDAÇÃO FORMULÁRIOS
@@ -139,7 +156,13 @@ implementation
 
 
   //ALTERAR
-  procedure TControllerPedidos.AlterarPedido(AID,AIDCliente:Integer;ADataEmissao,ATotalLiquido:String);
+  procedure TControllerPedidos.AlterarPedido(
+  AID,
+  AIDCliente:Integer;
+  ADataEmissao,
+  ATotalLiquido,
+  ACodPedido:String
+  );
   var
   LTotalLiquido: Currency;
   LDataEmissao: TDate;
@@ -147,7 +170,7 @@ implementation
     try
       LTotalLiquido := StrToFloatDef(StringReplace(ATotalLiquido, '.', '', [rfReplaceAll]),0);
       LDataEmissao := StrToDate(ADataEmissao);
-      Self.FAppPedidos.AtualizarPedido(AID,AIDCliente,LDataEmissao,LTotalLiquido);
+      Self.FAppPedidos.AtualizarPedido(AID,AIDCliente,LDataEmissao,LTotalLiquido,ACodPedido);
       Self.FRepPedidos.AtualizarDataSet;
     except
       //ERROS VALIDAÇÃO FORMULÁRIOS
@@ -198,6 +221,36 @@ implementation
     'FROM CLIENTES C JOIN PEDIDOS P ON ' +
     'C.id_cliente = P.id_cliente';
     Result := Self.FRepPedidos.ExecutarSQL(LSQL);
+  end;
+
+  //GERAR CÓDIGO PEDIDO
+  function TControllerPedidos.GerarCodPedido:String;
+  var
+  LResultSet: IDBResultSet;
+  LIDPedido: String;
+  LDataPedido:String;
+  LTemp: String;
+  begin
+    try
+      LResultSet := Self.FRepPedidos.ExecutarSQL('SELECT GEN_ID(GEN_COD_PEDIDO,1) AS COD FROM RDB$DATABASE;');
+      LIDPedido := LResultSet.DataSet.FieldByName('COD').AsString;
+
+      //COLOCAR '0' NA FRENTE
+      while Length(LIDPedido) < 6 do
+      begin
+        LTemp :=  LIDPedido;
+        LIDPedido := '0' + LTemp;
+      end;
+
+      LDataPedido := FormatDateTime('ddmmyy',now);
+      Result := LDataPedido + '-' +LIDPedido;
+    except
+      //ERROS INESPERADOS
+      on E: Exception do
+      begin
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+      end;
+    end;
   end;
 
   // ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS

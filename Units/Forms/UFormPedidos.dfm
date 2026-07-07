@@ -36,11 +36,11 @@ object FormPedidos: TFormPedidos
       ParentFont = False
     end
     object Label2: TLabel
-      Left = 590
+      Left = 535
       Top = 76
-      Width = 47
+      Width = 68
       Height = 13
-      Caption = 'N'#186' Pedido'
+      Caption = 'C'#243'digo Pedido'
     end
     object Label3: TLabel
       Left = 15
@@ -56,10 +56,10 @@ object FormPedidos: TFormPedidos
       Height = 13
       Caption = 'Data Pedido'
     end
-    object EditNumeroPedido: TEdit
-      Left = 590
+    object EditCodigoPedido: TEdit
+      Left = 535
       Top = 95
-      Width = 80
+      Width = 135
       Height = 21
       Enabled = False
       TabOrder = 0
@@ -67,7 +67,7 @@ object FormPedidos: TFormPedidos
     object EditNomeCliente: TEdit
       Left = 15
       Top = 95
-      Width = 546
+      Width = 490
       Height = 21
       Enabled = False
       TabOrder = 1
@@ -266,7 +266,6 @@ object FormPedidos: TFormPedidos
     Height = 473
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 178
     object Label5: TLabel
       Left = 16
       Top = 16
