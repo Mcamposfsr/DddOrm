@@ -81,6 +81,7 @@ type
     procedure PreencherPedido(APedido:TPedidos);
     procedure LimparPedidos;
     procedure AtualizarDataSet;
+    procedure PassarValorTotal;
   public
     { Public declarations }
   end;
@@ -144,21 +145,17 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
   procedure TFormPedidos.BitBtnCriarPedidoClick(Sender: TObject);
   var 
   LFORM: TFormCadastroPedido;
-  LPedido: TPedidos;
   begin
-    LPedido := nil;
     LFORM := nil;
     try
       LFORM := TFormCadastroPedido.Create(nil,FRepositoryPedidos,FControllerPedidos,FRepositoryClientesPGTO,FControllerClientes);
       if LFORM.ShowModal = mrOk then
       begin
-//        Self.BitBtnBuscarPedidoClick(nil);
-        LPedido := Self.FControllerPedidos.BuscarPedidoPeloCodigo(LForm.FCodigoPedido);
+        Self.FPedidoAtual := Self.FControllerPedidos.BuscarPedidoPeloCodigo(LForm.FCodigoPedido);
 
-        Self.PreencherPedido(LPedido);
+        Self.PreencherPedido(Self.FPedidoAtual);
       end;
     finally
-      LPedido.Free;
       LFORM.Free;
     end;
   end;
@@ -197,6 +194,7 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
       if LFORM.ShowModal = mrOk then
       begin
         Self.AtualizarDataSet;
+        Self.PassarValorTotal;
       end;
     finally
       LFORM.Free;
@@ -225,6 +223,7 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
       if LFORM.ShowModal = mrOk then
       begin
         Self.AtualizarDataSet;
+        Self.PassarValorTotal;
       end;
     finally
       LFORM.Free;
@@ -239,6 +238,7 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
     Self.FControllerPedidos.DeletarItemPedido(LID);
     
     Self.AtualizarDataSet;
+    Self.PassarValorTotal;
   end;
 
 
@@ -284,4 +284,14 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
     Self.FDMemTable.Refresh;
   end;
 
+  //ATUALIZAR VALOR TOTAL DO REGISTRO DE PEDIDOS
+  procedure TFormPedidos.PassarValorTotal;
+  begin
+    Self.FControllerPedidos.AtualizarValorTotalPedido(
+      Self.FPedidoAtual.ID,
+      Self.EditTotalLiquido.Text
+    );
+  end;
+
 end.
+

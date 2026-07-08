@@ -26,6 +26,7 @@ type IControllerPedidos = interface
   procedure DeletarPedido(AID:Integer);
   procedure FiltrarPedido(AFiltro:String);
   function GerarCodPedido:String;
+  procedure AtualizarValorTotalPedido(AID:Integer;AValorTotal:String);
 
 
   //ITENS PEDIDOS
@@ -49,7 +50,7 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
     procedure DeletarPedido(AID:Integer);
     procedure FiltrarPedido(AFiltro:String);
     function GerarCodPedido:String;
-
+    procedure AtualizarValorTotalPedido(AID:Integer;AValorTotal:String);
 
     //ITENS PEDIDOS
     function BuscarItemPedido(AID:Integer):TItensPedidos;
@@ -220,7 +221,7 @@ implementation
     LSQL := 'SELECT P.ID_PEDIDO,C.NOME_CLIENTE,C.CPF_CLIENTE,P.DATA_EMISSAO ' +
     'FROM CLIENTES C JOIN PEDIDOS P ON ' +
     'C.id_cliente = P.id_cliente';
-    Result := Self.FRepPedidos.ExecutarSQL(LSQL);
+    Result := Self.FRepPedidos.Open(LSQL);
   end;
 
   //GERAR CÓDIGO PEDIDO
@@ -232,7 +233,7 @@ implementation
   LTemp: String;
   begin
     try
-      LResultSet := Self.FRepPedidos.ExecutarSQL('SELECT GEN_ID(GEN_COD_PEDIDO,1) AS COD FROM RDB$DATABASE;');
+      LResultSet := Self.FRepPedidos.Open('SELECT GEN_ID(GEN_COD_PEDIDO,1) AS COD FROM RDB$DATABASE;');
       LIDPedido := LResultSet.DataSet.FieldByName('COD').AsString;
 
       //COLOCAR '0' NA FRENTE
@@ -251,6 +252,23 @@ implementation
         raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
       end;
     end;
+  end;
+
+  //PASSAR VALOR TOTAL
+  procedure TControllerPedidos.AtualizarValorTotalPedido(AID:Integer;AValorTotal:String);
+  var LTotal: Currency;
+  begin
+    try
+//      LTotal := StrToCurrDef(AValorTotal,0);
+      Self.FAppPedidos.AtualizarTotalPedido(AID,AValorTotal);
+    except
+    //ERROS INESPERADOS
+      on E: Exception do
+      begin
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+      end;
+    end;
+
   end;
 
   // ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS

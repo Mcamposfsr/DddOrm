@@ -34,7 +34,8 @@ type
     procedure ReceberDataSet(ADataSet: TDataSet);
     procedure AtualizarDataSet; overload;
     procedure AtualizarDataSetWhere(AColumn: string; AValue: Integer); overload;
-    function ExecutarSQL(ASQL:String): IDBResultSet;
+    function Open(ASQL:String): IDBResultSet;
+    procedure ExecSQL(ASQL:String);
 
 
 
@@ -182,11 +183,17 @@ implementation
       raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
   end;
 
-  // EXECUTAR SQL DIRETAMENTE
-  function TRepository<T>.ExecutarSQL(ASQL:String): IDBResultSet;
+  // EXECUTAR SELECT
+  function TRepository<T>.Open(ASQL:String): IDBResultSet;
   begin
     Result := Self.FConn.CreateResultSet(ASQL);
   end;
+
+  // EXECUTAR SCRIPT QUE NÃO RETORNA NADA
+ procedure TRepository<T>.ExecSQL(ASQL:String);
+ begin
+  Self.FConn.ExecuteScript(ASQL);
+ end;
 
 end.
 

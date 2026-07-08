@@ -5,6 +5,7 @@ interface
  uses System.Generics.Collections,UDomainPedidos, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository,dbebr.factory.interfaces;
 
   type IAppPedidos = Interface
+    //CRUD
     Function BuscarPedido:TObjectList<TPedidos>;
     Function BuscarPedidoPeloCodigo(ACod:String): TPedidos;
     Function BuscarPedidoByID(ACodigo:Integer):TPedidos;
@@ -23,11 +24,14 @@ interface
       ACodPedido: String
     );
     procedure DeletarPedido(ACodigo:Integer);
+    //AUX
+    procedure AtualizarTotalPedido(AID:Integer; ATotal:String);
 
   End;
 
   type TAppPedidos = class(TInterfacedObject,IAppPedidos)
     public
+    //CRUD
     Function BuscarPedido:TObjectList<TPedidos>;
     Function BuscarPedidoPeloCodigo(ACod:String): TPedidos;
     Function BuscarPedidoByID(ACodigo:Integer):TPedidos;
@@ -37,7 +41,6 @@ interface
     ATotalLiquido: Currency;
     ACodPedido: String
     );
-
     procedure AtualizarPedido(
       AID:Integer;
       AIDCliente: Integer;
@@ -45,12 +48,13 @@ interface
       ATotalLiquido: Currency;
       ACodPedido: String
     );
-
     procedure DeletarPedido(ACodigo:Integer);
-    //    procedure AtualizarTotalPedido(AID: Integer;ATotal:Currency);
-      constructor Create(ARep:IRepository<TPedidos>);
-    private
 
+    //AUX
+    procedure AtualizarTotalPedido(AID:Integer; ATotal:String);
+
+    constructor Create(ARep:IRepository<TPedidos>);
+    private
       FRepository: IRepository<TPedidos>;
 
   end;
@@ -153,17 +157,24 @@ implementation
   LPedido: TPedidos;
   LID: Integer;
   begin
-    LResultSet := FRepository.ExecutarSQL('SELECT * FROM PEDIDOS WHERE NUMERO_PEDIDO = ''' + ACod + '''');
+    LResultSet := FRepository.Open('SELECT * FROM PEDIDOS WHERE NUMERO_PEDIDO = ''' + ACod + '''');
     LID := LResultSet.DataSet.FieldByName('ID_PEDIDO').AsInteger;
     LPedido := Self.BuscarPedidoByID(LID);
 
      Result := LPedido;
   end;
 
-  //UPDATETOTAL
-//  procedure TAppPedidos(AID: Integer;ATotal:Currency);
-//  begin
-//
-//  end;
+  //ATUALIZAR VALOR TOTAL DO PEDIDO
+  procedure TAppPedidos.AtualizarTotalPedido(AID:Integer; ATotal:String);
+  var
+  LID: String;
+  LTotal: String;
+  LSQL: String;
+  begin
+    LID := IntToStr(AID);
+    LTotal := StringReplace(ATotal,',','.',[rfReplaceAll]);
+    LSQL := 'UPDATE PEDIDOS SET TOTAL_LIQUIDO = ' + LTotal + ' WHERE ID_PEDIDO = ' + LID;
+    Self.FRepository.ExecSQL(LSQL);
+  end;
 
 end.
