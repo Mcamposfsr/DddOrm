@@ -21,6 +21,8 @@ type IControllerPedidos = interface
   //PEDIDOS
   function BuscarPedido(AID:Integer):TPedidos;
   function BuscarPedidoPeloCodigo(ACod:String):TPedidos;
+  //OPÇÃO DE EXIBIÇÃO LEGADO
+  procedure ExibirPedidos;
   procedure CadastrarPedido(AIDCliente:Integer;ADataEmissao,ATotalLiquido,ACodPedido:String);
   procedure AlterarPedido(AID,AIDCliente:Integer;ADataEmissao,ATotalLiquido,ACodPedido:String);
   procedure DeletarPedido(AID:Integer);
@@ -31,12 +33,12 @@ type IControllerPedidos = interface
 
   //ITENS PEDIDOS
   function BuscarItemPedido(AID:Integer):TItensPedidos;
+  procedure ExibirItensPedidos(AID: Integer);
   procedure CadastrarItemPedido(AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
   procedure AlterarItemPedido(AID,AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
   procedure DeletarItemPedido(AID:Integer);
   procedure FiltrarItemPedido(AFiltro:String);
 
-  function PlotarDataSetPedidos: IDBResultSet;
 end;
 
 //CONTROLLER FORM CLIENTES PAGAMENTO
@@ -45,6 +47,8 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
     //PEDIDOS
     function BuscarPedido(AID:Integer):TPedidos;
     function BuscarPedidoPeloCodigo(ACod:String):TPedidos;
+    //OPÇÃO DE EXIBIÇÃO LEGADO
+    procedure ExibirPedidos;
     procedure CadastrarPedido(AIDCliente:Integer;ADataEmissao,ATotalLiquido,ACodPedido:String);
     procedure AlterarPedido(AID,AIDCliente:Integer;ADataEmissao,ATotalLiquido,ACodPedido:String);
     procedure DeletarPedido(AID:Integer);
@@ -54,12 +58,11 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
 
     //ITENS PEDIDOS
     function BuscarItemPedido(AID:Integer):TItensPedidos;
+    procedure ExibirItensPedidos(AID: Integer);
     procedure CadastrarItemPedido(AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
     procedure AlterarItemPedido(AID,AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
     procedure DeletarItemPedido(AID:Integer);
     procedure FiltrarItemPedido(AFiltro:String);
-
-    function PlotarDataSetPedidos: IDBResultSet;
 
     constructor Create(
     AAppPedidos:IAppPedidos;
@@ -113,6 +116,20 @@ implementation
   begin
     try
       Result := FAppPedidos.BuscarPedidoPeloCodigo(ACod);
+    except
+    //ERROS INESPERADOS
+      on E: Exception do
+      begin
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+      end;
+    end;
+  end;
+
+  //EXIBIR PEDIDOS DATASET
+  procedure TControllerPedidos.ExibirPedidos;
+  begin
+    try
+      Self.FAppPedidos.BuscarPedidosLegado;
     except
     //ERROS INESPERADOS
       on E: Exception do
@@ -215,15 +232,6 @@ implementation
     end;
   end;
 
-  function TControllerPedidos.PlotarDataSetPedidos;
-  var LSQL: String;
-  begin
-    LSQL := 'SELECT P.ID_PEDIDO,C.NOME_CLIENTE,C.CPF_CLIENTE,P.DATA_EMISSAO ' +
-    'FROM CLIENTES C JOIN PEDIDOS P ON ' +
-    'C.id_cliente = P.id_cliente';
-    Result := Self.FRepPedidos.Open(LSQL);
-  end;
-
   //GERAR CÓDIGO PEDIDO
   function TControllerPedidos.GerarCodPedido:String;
   var
@@ -268,7 +276,6 @@ implementation
         raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
       end;
     end;
-
   end;
 
   // ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS
@@ -278,6 +285,22 @@ implementation
   begin
     try
       Result := FAppItensPedidos.BuscarItemPedidoByID(AID);
+    except
+    //ERROS INESPERADOS
+      on E: Exception do
+      begin
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+      end;
+    end;
+  end;
+
+  //EXIBIR ITENS PEDIDOS
+  procedure TControllerPedidos.ExibirItensPedidos(AID: Integer);
+  var LID: String;
+  begin
+    LID := IntToStr(AID);
+    try
+      Self.FAppItensPedidos.BuscarPedidosLegado(LID);
     except
     //ERROS INESPERADOS
       on E: Exception do

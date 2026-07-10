@@ -2,7 +2,7 @@ object FormPrincipal: TFormPrincipal
   Left = 0
   Top = 0
   Caption = 'DDDORM'
-  ClientHeight = 573
+  ClientHeight = 553
   ClientWidth = 1072
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -968,14 +968,13 @@ object FormPrincipal: TFormPrincipal
       ParentFont = False
       TabOrder = 3
       OnClick = BitBtnCadastrarPedidoClick
-      ExplicitLeft = 377
     end
   end
   object Panel2: TPanel
     Left = 0
     Top = 100
     Width = 1072
-    Height = 473
+    Height = 453
     Align = alClient
     Caption = 'DDDORM'
     Font.Charset = ANSI_CHARSET

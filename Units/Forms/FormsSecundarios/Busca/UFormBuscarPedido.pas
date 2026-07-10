@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
 
-  UIRepository,UDomainPedidos,UControllerPedidos;
+  UIRepository,UDomainPedidos,UDomainClientesPGTO,UControllerPedidos,dbebr.factory.interfaces;
 
 type
   TFormBuscarPedido = class(TForm)
@@ -29,6 +29,7 @@ type
   public
     //VAR CONTROLE
     FPedido: TPedidos;
+    FCLiente: TClientePGTO;
 
     constructor Create(
     AOWner: TComponent;
@@ -49,15 +50,30 @@ constructor TFormBuscarPedido.Create(
     ARepository: IRepository<TPedidos>;
     AController: IControllerPedidos
  );
+ var LDataSet: IDBResultSet;
  begin
   inherited Create(AOwner);
 
   FController := AController;
   FRepository := ARepository;
+  DBGrid1.DataSource := DataSource;
+  LDataSet := FRepository.Open('SELECT P.NUMERO_PEDIDO,C.CLI_NOME,C.CLI_DOCUMENTO,P.DATA_EMISSAO,P.TOTAL_LIQUIDO FROM PEDIDOS P INNER JOIN CLIENTES_PGTO C ON C.cli_codigo = P.id_cliente;');
 
 
-  FRepository.ReceberDataSet(Self.FDMemTable);
-  FRepository.AtualizarDataSet;
+  FDMemTable.DisableControls;
+  try
+    FDMemTable.Close;
+    FDMemTable.CopyDataSet(
+      LDataSet.DataSet,
+      [coStructure, coRestart, coAppend]
+    );
+  finally
+    FDMemTable.EnableControls;
+  end;
+
+  //BUSCA LEGADO - JOINS DO ORMBR NÃO FUNCIONAM NO FB 1.5;
+  FRepository.ReceberDataSetFirebirdLegado(Self.FDMemTable);
+  FController.ExibirPedidos;
  end;
 
   //SELECIONAR;

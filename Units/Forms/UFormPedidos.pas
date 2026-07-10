@@ -103,8 +103,8 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
     FRepositoryProdutos := TRepository<TProdutosECF>.Create(GDM.GetConnection);
 
     //CRIAR APPLICATION
-    FAppPedidos := TAppPedidos.Create(FRepositoryPedidos);
-    FAppItensPedidos := TAppItensPedidos.Create(FRepositoryItensPedidos);
+    FAppPedidos := TAppPedidos.Create(FRepositoryPedidos,FRepositoryClientesPGTO);
+    FAppItensPedidos := TAppItensPedidos.Create(FRepositoryItensPedidos,FRepositoryProdutos);
     FAppClientes := TAppClientesPGTO.Create(FRepositoryClientesPGTO);
     FAppProdutos := TAppProdutosECF.Create(FRepositoryProdutos);
 
@@ -114,8 +114,7 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
     FControllerProdutos := TControllerProdutosECF.Create(FAppProdutos,FRepositoryProdutos);
 
     //*PASSAR DATASET ITENS PEDIDOS*
-    FRepositoryItensPedidos.ReceberDataSet(Self.FDMemTable);
-
+    FRepositoryItensPedidos.ReceberDataSetFirebirdLegado(Self.FDMemTable);
   end;
 
   // ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS
@@ -255,7 +254,7 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
   //PREENCHER PEDIDO NA TELA
   procedure TFormPedidos.PreencherPedido(APedido:TPedidos);
   begin
-    Self.EditNomeCliente.Text := APedido.NomeCliente;
+    Self.EditNomeCliente.Text := APedido.Cliente.Nome;
     Self.EditDataPedido.Text := FormatDateTime('dd/mm/yyyy',APedido.DataEmissao);
     Self.EditCodigoPedido.Text := APedido.CodPedido;
   end;
@@ -279,8 +278,8 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
       LID:= -1
     else
       LID := FPedidoAtual.ID;
-      
-    FRepositoryItensPedidos.AtualizarDataSetWhere('ID_PEDIDO',LID);
+
+    Self.FControllerPedidos.ExibirItensPedidos(LID);
     Self.FDMemTable.Refresh;
   end;
 

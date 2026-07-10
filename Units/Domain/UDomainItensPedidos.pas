@@ -15,6 +15,8 @@ uses
   dbcbr.mapping.register,
   ormbr.types.blob,
 
+  UDomainProdutosECF,
+
   UErros,UGenericValidator,UDocValidator,Vcl.Dialogs;
 
   type
@@ -28,12 +30,12 @@ uses
     FID: Integer;
     FIDPedido: Integer;
     FIDProduto: Integer;
-    FNomeProduto: String;
     FQuantidade: Double;
     FPrecoUnit: Currency;
     FDescontoPercent: Double;
     FDescontoValor: Currency;
     FTotal: Currency;
+    FProduto: TProdutosECF;
   public
 
     Constructor Create(
@@ -63,12 +65,7 @@ uses
     [Column('ID_PRODUTO',ftInteger)]
     property IDProduto: Integer Read FIDProduto Write FIDProduto;
 
-    //NOME PRODUTO - JOIN
-    [Restrictions([noInsert,NoUpdate])]
-    [Column('PRO_NOME',ftString,50)]
-    [Dictionary('NOME PRODUTO','','','','')]
-    [JoinColumn('ID_PRODUTO','PRODUTOS_ECF','PRO_CODIGO','PRO_NOME')]
-    property NomeProduto: String Read FNomeProduto Write FNomeProduto;
+    property Produto: TProdutosECF Read FProduto Write FProduto;
 
     //QUANTIDADE
     [Column('QUANTIDADE',ftFloat)]

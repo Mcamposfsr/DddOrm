@@ -43,7 +43,6 @@ implementation
 
 {$R *.dfm}
 
-
 procedure TFormPrincipal.FormCreate(Sender: TObject);
   begin
     Self.BitBtnCadastrarCliente.Caption := 'Cadastrar' + sLineBreak + 'Cliente';
@@ -51,7 +50,6 @@ procedure TFormPrincipal.FormCreate(Sender: TObject);
     Self.BitBtnCadastrarProduto.Caption := 'Cadastrar' + sLineBreak + 'Produto';
     Self.BitBtnCadastrarPedido.Caption := 'Novo' + sLineBreak + 'Pedido';
   end;
-
 
 // ############### EVENTOS
 

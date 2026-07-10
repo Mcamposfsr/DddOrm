@@ -15,6 +15,8 @@ uses
   dbcbr.mapping.register,
   ormbr.types.blob,
 
+  UDomainClientesPGTO,
+
   UErros,UGenericValidator,UDocValidator,Vcl.Dialogs;
 
   type
@@ -27,26 +29,25 @@ uses
   private
     FID: Integer;
     FIDCliente: Integer;
-
     FDataEmissao: TDate;
     FTotalLiquido: Currency;
     FCodPedido: String;
-    //JOIN
-    FNomeCliente: String;
-    FCPFCliente: String;
 
-
+    //JOIN MANUAL
+    FCLiente: TClientePGTO;
   public
 
-//    procedure Validar;
 
-    Constructor Create(
-      AID:Integer;
-      AIDCliente: Integer;
-      ADataEmissao: TDate;
-      ATotalLiquido: Currency;
-      ACodPedido: String
-      ); Overload;
+
+  Constructor Create(
+    AID:Integer;
+    AIDCliente: Integer;
+    ADataEmissao: TDate;
+    ATotalLiquido: Currency;
+    ACodPedido: String
+    ); Overload;
+
+    Destructor Destroy;
 
   published
 
@@ -56,18 +57,8 @@ uses
     [Dictionary('NUMERO PEDIDO','','','','')]
     property CodPedido: String Read  FCodPedido Write FCodPedido;
 
-     //JOINS:
-    [Restrictions([NoInsert,NoUpdate])]
-    [Column('CLI_NOME',ftString,50)]
-    [Dictionary('NOME CLIENTE','','','','')]
-    [JoinColumn('ID_CLIENTE','CLIENTES_PGTO','CLI_CODIGO','CLI_NOME')]
-    property NomeCliente: String Read FNomeCliente Write FNomeCliente;
-
-    [Restrictions([NoInsert,NoUpdate])]
-    [Column('CLI_DOCUMENTO',ftString,18)]
-    [Dictionary('DOCUMENTO CLIENTE','','','','')]
-    [JoinCOlumn('ID_CLIENTE','CLIENTES_PGTO','CLI_CODIGO','CLI_DOCUMENTO')]
-    property CpfCliente: String Read FCPFCliente Write FCPFCliente;
+     //JOINS
+     property Cliente: TClientePGTO Read FCliente Write FCliente;
 
     //PK
     [Restrictions([NotNull,NoInsert,NoUpdate,HIDDEN])] //CONTROLE DA CHAVE PRIM핾IA
@@ -107,6 +98,14 @@ implementation
     FDataEmissao := ADataEmissao;
     FTotalLiquido := ATotalLiquido;
     FCodPedido := ACodPedido;
+  end;
+
+  //LIBERAR CLIENTE JOIN MANUAL
+  destructor TPedidos.Destroy;
+  begin
+    if assigned(Self.FCliente) then
+      Self.FCliente.Free;
+    inherited
   end;
 
   // ############## VALIDA합ES ############## VALIDA합ES ############## VALIDA합ES ############## VALIDA합ES ############## VALIDA합ES ############## VALIDA합ES ############## VALIDA합ES

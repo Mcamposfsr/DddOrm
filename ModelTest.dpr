@@ -55,7 +55,7 @@ begin
 
 
     // para banco Firebird 5
-    LLocationDB := ExtractFilePath(ParamStr(0)) + '..\..\DataBase\TESTE.FDB';
+    LLocationDB := ExtractFilePath(ParamStr(0)) + '..\..\DataBase\TESTE1-5.FDB';
 
     // para banco Firebird 1.5
 //    LLocationDB := TPath.GetFullPath(ExtractFilePath(ParamStr(0)) + '\..\..\..\TESTE_ORM.FDB');

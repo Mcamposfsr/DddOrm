@@ -2,7 +2,7 @@ unit UAppPedidos;
 
 
 interface
- uses System.Generics.Collections,UDomainPedidos, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository,dbebr.factory.interfaces;
+ uses System.Generics.Collections,UDomainPedidos, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository,dbebr.factory.interfaces,UDomainClientesPGTO;
 
   type IAppPedidos = Interface
     //CRUD
@@ -26,6 +26,9 @@ interface
     procedure DeletarPedido(ACodigo:Integer);
     //AUX
     procedure AtualizarTotalPedido(AID:Integer; ATotal:String);
+
+    //DATASET LEGADO
+    procedure BuscarPedidosLegado;
 
   End;
 
@@ -53,32 +56,54 @@ interface
     //AUX
     procedure AtualizarTotalPedido(AID:Integer; ATotal:String);
 
-    constructor Create(ARep:IRepository<TPedidos>);
-    private
-      FRepository: IRepository<TPedidos>;
+    //DATASET LEGADO
+    procedure BuscarPedidosLegado;
 
+    constructor Create(
+    ARepPedidos:IRepository<TPedidos>;
+    ARepClientes:IRepository<TClientePGTO>
+    );
+
+    private
+    FRepPedidos: IRepository<TPedidos>;
+    FRepClientes: IRepository<TClientePGTO>;
   end;
 
 implementation
 
   //RECEBER REPOSITORY
-  constructor TAppPedidos.Create(ARep:IRepository<TPedidos>);
+  constructor TAppPedidos.Create(
+    ARepPedidos:IRepository<TPedidos>;
+    ARepClientes:IRepository<TClientePGTO>
+    );
   begin
-    FRepository := ARep;
+    FRepPedidos := ARepPedidos;
+    FRepClientes := ARepClientes;
   end;
 
   //SELECT *
   Function TAppPedidos.BuscarPedido:TObjectList<TPedidos>;
   begin
-    Result := FRepository.SelectAll;
+    Result := FRepPedidos.SelectAll;
   end;
 
   //SELECT WHERE
   Function TAppPedidos.BuscarPedidoByID(ACodigo:Integer):TPedidos;
-  var LID: String;
+  var
+  LIDPedido: String;
+  LIDCliente: String;
+  LTPedidos: TPedidos;
   begin
-    LID := IntToStr(ACodigo);
-    Result := FRepository.Select(LID);
+    LIDPedido := IntToStr(ACodigo);
+    //BUSCAR PEDIDO
+    LTPedidos := FRepPedidos.Select(LIDPedido);
+
+    LIDCliente := IntToStr(LTPedidos.IDCliente);
+
+    //BUSCAR CLIENTE - JOIN MANUAL
+    LTPedidos.Cliente := FRepClientes.Select(LIDCliente);
+
+    Result := LTPedidos;
   end;
 
   //INSERT
@@ -99,7 +124,7 @@ implementation
        ATotalLiquido,
        ACodPedido
      );
-     FRepository.Insert(LPedido);
+     FRepPedidos.Insert(LPedido);
     finally
       LPedido.Free;
     end;
@@ -127,7 +152,7 @@ implementation
       ,ACodPedido
      );
 
-     FRepository.Update(LCodigo,LPedido);
+     FRepPedidos.Update(LCodigo,LPedido);
     finally
       LPedido.Free;
     end;
@@ -144,7 +169,7 @@ implementation
     try
       //CLASSE MÍNIMA APENAS PARA DELETE
      LPedido := TPedidos.Create(ACodigo,0,0,0,'');
-     FRepository.Delete(LPedido);
+     FRepPedidos.Delete(LPedido);
     finally
       LPedido.Free;
     end;
@@ -155,13 +180,20 @@ implementation
   var
   LResultSet: IDBResultSet;
   LPedido: TPedidos;
-  LID: Integer;
+  LIDCliente: String;
+  LIDPedido: Integer;
   begin
-    LResultSet := FRepository.Open('SELECT * FROM PEDIDOS WHERE NUMERO_PEDIDO = ''' + ACod + '''');
-    LID := LResultSet.DataSet.FieldByName('ID_PEDIDO').AsInteger;
-    LPedido := Self.BuscarPedidoByID(LID);
+    LResultSet := FRepPedidos.Open('SELECT * FROM PEDIDOS WHERE NUMERO_PEDIDO = ''' + ACod + '''');
+    LIDPedido := LResultSet.DataSet.FieldByName('ID_PEDIDO').AsInteger;
+    LPedido := Self.BuscarPedidoByID(LIDPedido);
 
-     Result := LPedido;
+
+    LIDCliente := IntToStr(LPedido.IDCliente);
+
+    //JOIN MANUAL
+    LPedido.Cliente := Self.FRepClientes.Select(LIDCliente);
+
+    Result := LPedido;
   end;
 
   //ATUALIZAR VALOR TOTAL DO PEDIDO
@@ -174,7 +206,17 @@ implementation
     LID := IntToStr(AID);
     LTotal := StringReplace(ATotal,',','.',[rfReplaceAll]);
     LSQL := 'UPDATE PEDIDOS SET TOTAL_LIQUIDO = ' + LTotal + ' WHERE ID_PEDIDO = ' + LID;
-    Self.FRepository.ExecSQL(LSQL);
+    Self.FRepPedidos.ExecSQL(LSQL);
+  end;
+
+  //DATASET LEGADO
+  procedure TAppPedidos.BuscarPedidosLegado;
+  var LSQL: String;
+  begin
+    LSQL := 'SELECT P.ID_PEDIDO, P.NUMERO_PEDIDO,C.CLI_NOME,C.CLI_DOCUMENTO,P.DATA_EMISSAO,P.TOTAL_LIQUIDO ' +
+    'FROM PEDIDOS P INNER JOIN CLIENTES_PGTO C ON C.cli_codigo = P.id_cliente';
+
+    Self.FRepPedidos.OpenFirebirdLegado(LSQL);
   end;
 
 end.

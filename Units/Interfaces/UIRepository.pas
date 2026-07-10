@@ -2,7 +2,7 @@ unit UIRepository;
 
 interface
 
-  Uses Data.DB, System.Generics.Collections, dbebr.factory.interfaces;
+  Uses Data.DB, System.Generics.Collections, dbebr.factory.interfaces, FireDAC.Comp.Client;
 
  //ABSTRAÇÃO REPOSITÓRIO GENÉRICO
   type IRepository<T: class, constructor> = interface
@@ -16,7 +16,13 @@ interface
       procedure FiltrarDataSet(AColumn,AFilter:String);
 
       //TRABALHAR RETORNO PARA UI
+
+      //PARA FIREBIRD 2.0 +++
       procedure ReceberDataSet(ADataSet: TDataSet);
+      //PARA FIREBIRD LEGADO 1.0
+      procedure ReceberDataSetFirebirdLegado(ADataSet: TFDMemTable);
+      procedure OpenFirebirdLegado(ASQL:String);
+
       procedure AtualizarDataSet; Overload;
       procedure AtualizarDataSetWhere(AColumn:String;AValue:Integer); Overload;
       function Open(ASQL:String): IDBResultSet;

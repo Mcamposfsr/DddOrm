@@ -7,7 +7,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Comp.DataSet, DateUtils, System.Classes,
   System.Generics.Collections, UIRepository, dbebr.factory.interfaces,
   dbebr.factory.firedac, ormbr.dml.generator.firebird,
-  ormbr.container.fdmemtable, ormbr.container.dataset.interfaces,
+  ormbr.container.fdmemtable, ormbr.container.dataset.interfaces,ormbr.form.monitor,
 
   //INTERFACE DM
   UIDM,
@@ -31,7 +31,12 @@ type
     procedure Delete(AClass: T);
     procedure FiltrarDataSet(AColumn,AFilter:String);
 
+    //PARA FIREBIRD 2.0 +++
     procedure ReceberDataSet(ADataSet: TDataSet);
+    //PARA FIREBIRD LEGADO 1.5
+    procedure ReceberDataSetFirebirdLegado(ADataSet: TFDMemTable);
+    procedure OpenFirebirdLegado(ASQL:String);
+
     procedure AtualizarDataSet; overload;
     procedure AtualizarDataSetWhere(AColumn: string; AValue: Integer); overload;
     function Open(ASQL:String): IDBResultSet;
@@ -41,6 +46,7 @@ type
 
     constructor Create(AConn: TFDConnection); overload;
     constructor Create(AConn: IDBConnection); overload;
+
     property ConexaoAtual: IDBConnection read GetConexaoAtual;
   private
     //ABSTRAÇÃO CONEXÃO ORMBr
@@ -49,11 +55,11 @@ type
     //CONTROLE DE DATASET
     FContainerDataSet: IContainerDataSet<T>;
 
+    //CONTROLE DATASET FB LEGADO - APENAS REFERÊNCIA AO REAL.
+    FDataSet: TFDMemTable;
+
     //CONTAINER CRUD
     FObjectContainer: IContainerObjectSet<T>;
-
-    function Teste: IDBResultSet;
-
   end;
 
 implementation
@@ -130,16 +136,8 @@ implementation
     result := FConn;
   end;
 
-  //SQL DIRETO
-  function TRepository<T>.Teste: IDBResultSet;
-  var
-    LDataSet: IDBResultSet;
-  begin
-    LDataSet := FConn.CreateResultSet('SELECT COUNT(*) AS CONTAGEM FROM CLIENTES');
-    Result := LDataSet;
-  end;
 
-  //################# DATASET ################# DATASET ################# DATASET ################# DATASET ################# DATASET
+  //################# DATASET FB 2.0 ++ ################# DATASET FB 2.0 ++################# DATASET FB 2.0 ++################# DATASET FB 2.0 ++################# DATASET FB 2.0 ++################# DATASET FB 2.0 ++
 
     //FILTRAR DATASET
   procedure TRepository<T>.FiltrarDataSet(AColumn,AFilter:String);
@@ -182,6 +180,38 @@ implementation
     else
       raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
   end;
+
+ // ################# DATASET FB 1.5 LEGADO ################# DATASET FB 1.5 LEGADO ################# DATASET FB 1.5 LEGADO ################# DATASET FB 1.5 LEGADO ################# DATASET FB 1.5 LEGADO
+
+  //RECEBER DATASET
+  procedure TRepository<T>.ReceberDataSetFirebirdLegado(ADataSet: TFDMemTable);
+  begin
+    //RECEBER DATASET DIRETO
+    Self.FDataSet := ADataSet;
+  end;
+
+  //FAZER BUSCAS PARA DATASET
+  procedure TRepository<T>.OpenFirebirdLegado(ASQL:String);
+  var LDataSet: IDBResultSet;
+  begin
+    if not assigned(Self.FDataSet) then
+      raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
+    
+    //RECEBER RESULTADO DA BUSCA
+    LDataSet := Self.Open(ASQL);
+    Self.FDataSet.DisableControls;
+    try
+      Self.FDataSet.Close;
+      Self.FDataSet.CopyDataSet(
+        LDataSet.DataSet,
+        [coStructure, coRestart, coAppend]
+      );
+    finally
+      Self.FDataSet.EnableControls;
+    end;
+  end;
+
+  // ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS
 
   // EXECUTAR SELECT
   function TRepository<T>.Open(ASQL:String): IDBResultSet;

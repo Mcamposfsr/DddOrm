@@ -2,11 +2,12 @@ unit UAppItensPedidos;
 
 
 interface
- uses System.Generics.Collections,UDomainItensPedidos, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository;
+ uses System.Generics.Collections,UDomainItensPedidos, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository,UDomainProdutosECF;
 
   type IAppItensPedidos = Interface
     Function BuscarItensPedido:TObjectList<TItensPedidos>;
     Function BuscarItemPedidoByID(ACodigo:Integer):TItensPedidos;
+    procedure BuscarPedidosLegado(AID: String);
     procedure InserirItemPedido(
       AIDPedido: Integer;
       AIDProduto: Integer;
@@ -28,6 +29,7 @@ interface
       FTotal: Currency
     );
     procedure DeletarItemPedido(AID:Integer);
+
   End;
 
   type TAppItensPedidos = class(TInterfacedObject,IAppItensPedidos)
@@ -35,6 +37,7 @@ interface
 
     Function BuscarItensPedido:TObjectList<TItensPedidos>;
     Function BuscarItemPedidoByID(ACodigo:Integer):TItensPedidos;
+    procedure BuscarPedidosLegado(AID: String);
     procedure InserirItemPedido(
       AIDPedido: Integer;
       AIDProduto: Integer;
@@ -56,31 +59,52 @@ interface
       FTotal: Currency
     );
     procedure DeletarItemPedido(AID:Integer);
-    constructor Create(ARep:IRepository<TItensPedidos>);
+
+
+
+    constructor Create(
+    ARepItensPedido:IRepository<TItensPedidos>;
+    ARepProduto:IRepository<TProdutosECF>
+    );
     private
-      FRepository: IRepository<TItensPedidos>;
+      FRepItensPedido: IRepository<TItensPedidos>;
+      FRepProduto: IRepository<TProdutosECF>;
   end;
 
 implementation
 
   //RECEBER REPOSITORY
-  constructor TAppItensPedidos.Create(ARep:IRepository<TItensPedidos>);
+  constructor TAppItensPedidos.Create(
+    ARepItensPedido:IRepository<TItensPedidos>;
+    ARepProduto:IRepository<TProdutosECF>
+  );
   begin
-    FRepository := ARep;
+    FRepItensPedido := ARepItensPedido;
+    FRepProduto := ARepProduto;
   end;
 
   //SELECT *
   Function TAppItensPedidos.BuscarItensPedido:TObjectList<TItensPedidos>;
   begin
-    Result := FRepository.SelectAll;
+    Result := FRepItensPedido.SelectAll;
   end;
 
   //SELECT WHERE
   Function TAppItensPedidos.BuscarItemPedidoByID(ACodigo:Integer):TItensPedidos;
-  var LID: String;
+  var
+  LIDItemPedido: String;
+  LIDProduto: String;
+  LITemPedido: TItensPedidos;
   begin
-    LID := IntToStr(ACodigo);
-    Result := FRepository.Select(LID);
+    LIDItemPedido := IntToStr(ACodigo);
+
+    LITemPedido := FRepItensPedido.Select(LIDItemPedido);
+
+    LIDProduto := IntToStr(LITemPedido.IDProduto);
+
+    LITemPedido.Produto := FRepProduto.Select(LIDProduto);
+
+    Result := LITemPedido;
   end;
 
   //INSERT
@@ -108,7 +132,7 @@ implementation
       ATotal
      );
 
-     FRepository.Insert(LItemPedido);
+     FRepItensPedido.Insert(LItemPedido);
     finally
       LItemPedido.Free;
     end;
@@ -143,7 +167,7 @@ implementation
       FTotal
      );
 
-     FRepository.Update(LCodigo,LItemPedido);
+     FRepItensPedido.Update(LCodigo,LItemPedido);
     finally
       LItemPedido.Free;
     end;
@@ -162,10 +186,22 @@ implementation
       //CLASSE MÍNIMA APENAS PARA DELETE
      LItemPedido := TItensPedidos.Create(AID,0,0,0,0,0,0,0);
 //     ShowMessage(IntToStr(LItemPedido.ID));
-     FRepository.Delete(LItemPedido);
+     FRepItensPedido.Delete(LItemPedido);
     finally
       LItemPedido.Free;
     end;
+  end;
+
+  //DATASET LEGADO
+  procedure TAppItensPedidos.BuscarPedidosLegado(AID: String);
+  var LSQL: String;
+  begin
+    LSQL := 'SELECT I.ID_ITEM,I.ID_PEDIDO,I.id_produto,P.PRO_NOME,'
+    + 'I.quantidade,I.PRECO_UNIT,I.desconto_percent, I.DESCONTO_VALOR,'
+    + 'I.TOTAL  FROM ITENS_PEDIDO I INNER JOIN produtos_ecf p on I.ID_PEDIDO = P.pro_codigo '
+    + 'where ID_PEDIDO = ''' + AID + '''';;
+
+    Self.FRepItensPedido.OpenFirebirdLegado(LSQL);
   end;
 
 end.
