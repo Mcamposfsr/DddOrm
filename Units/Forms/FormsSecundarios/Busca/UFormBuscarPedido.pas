@@ -26,6 +26,8 @@ type
   private
     FController: IControllerPedidos;
     FRepository: IRepository<TPedidos>;
+
+    procedure ConfigurarDataSet;
   public
     //VAR CONTROLE
     FPedido: TPedidos;
@@ -59,21 +61,11 @@ constructor TFormBuscarPedido.Create(
   DBGrid1.DataSource := DataSource;
   LDataSet := FRepository.Open('SELECT P.NUMERO_PEDIDO,C.CLI_NOME,C.CLI_DOCUMENTO,P.DATA_EMISSAO,P.TOTAL_LIQUIDO FROM PEDIDOS P INNER JOIN CLIENTES_PGTO C ON C.cli_codigo = P.id_cliente;');
 
-
-  FDMemTable.DisableControls;
-  try
-    FDMemTable.Close;
-    FDMemTable.CopyDataSet(
-      LDataSet.DataSet,
-      [coStructure, coRestart, coAppend]
-    );
-  finally
-    FDMemTable.EnableControls;
-  end;
-
   //BUSCA LEGADO - JOINS DO ORMBR NÃO FUNCIONAM NO FB 1.5;
   FRepository.ReceberDataSetFirebirdLegado(Self.FDMemTable);
   FController.ExibirPedidos;
+
+  Self.ConfigurarDataSet;
  end;
 
   //SELECIONAR;
@@ -98,6 +90,13 @@ constructor TFormBuscarPedido.Create(
   begin
     if key = VK_ESCAPE  then
       ModalResult := mrCancel;
+  end;
+
+  //CONFIGURAR DATASET
+  procedure TFormBuscarPedido.ConfigurarDataSet;
+  begin
+    Self.FDMemTable.FieldByName('ID_PEDIDO').Visible := False;
+    Self.FDMemTable.FieldByName('CLI_DOCUMENTO').Visible := False;
   end;
 
 end.

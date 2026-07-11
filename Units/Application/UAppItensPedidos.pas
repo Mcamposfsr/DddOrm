@@ -198,7 +198,7 @@ implementation
   begin
     LSQL := 'SELECT I.ID_ITEM,I.ID_PEDIDO,I.id_produto,P.PRO_NOME,'
     + 'I.quantidade,I.PRECO_UNIT,I.desconto_percent, I.DESCONTO_VALOR,'
-    + 'I.TOTAL  FROM ITENS_PEDIDO I INNER JOIN produtos_ecf p on I.ID_PEDIDO = P.pro_codigo '
+    + 'I.TOTAL  FROM ITENS_PEDIDO I INNER JOIN produtos_ecf p on I.ID_PRODUTO = P.pro_codigo '
     + 'where ID_PEDIDO = ''' + AID + '''';;
 
     Self.FRepItensPedido.OpenFirebirdLegado(LSQL);

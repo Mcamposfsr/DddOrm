@@ -310,6 +310,7 @@ object FormPedidos: TFormPedidos
         Top = 17
         Width = 26
         Height = 21
+        Enabled = False
         Glyph.Data = {
           36030000424D3603000000000000360000002800000010000000100000000100
           18000000000000030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
@@ -345,6 +346,7 @@ object FormPedidos: TFormPedidos
         Top = 17
         Width = 26
         Height = 21
+        Enabled = False
         Glyph.Data = {
           26040000424D2604000000000000360000002800000012000000120000000100
           180000000000F0030000C40E0000C40E00000000000000000000FFFFFFFFFFFF
@@ -388,6 +390,7 @@ object FormPedidos: TFormPedidos
         Top = 17
         Width = 26
         Height = 21
+        Enabled = False
         Glyph.Data = {
           26040000424D2604000000000000360000002800000012000000120000000100
           180000000000F0030000C40E0000C40E00000000000000000000FFFFFFFFFFFF

@@ -77,8 +77,6 @@ implementation
 
 {$R *.dfm}
 
-
-
 constructor TFormInserirItem.Create(
     AOwner:TComponent;
     AIDPedido:Integer;
@@ -118,8 +116,6 @@ constructor TFormInserirItem.Create(
       Self.CalcularTotal;
     end;
   end;
-
-
 
 procedure TFormInserirItem.BitBtnBuscarProdutoClick(Sender: TObject);
   var LFORM: TFormBuscarProdutos;
@@ -210,15 +206,29 @@ procedure TFormInserirItem.BitBtnBuscarProdutoClick(Sender: TObject);
   LValorUnitario: Currency;
   LQuantidade: Double;
   LPercentualDesconto: Double;
-  LValorDesconto: Currency;
+  LValorUnitarioDesconto: Currency;
+  LValorTotalDesconto: Currency;
   begin
+    //QUANTIDADE DO ITEM
     LQuantidade := StrToFloatDef(Self.EditQuantidade.Text,0);
-    LValorUnitario := StrToCurrDef(Self.EditPrecoUnitario.Text,0);
-    LPercentualDesconto := (StrToFloatDef(self.EditDesconto.Text,0) / 100);
-    LValorDesconto := LValorUnitario * LPercentualDesconto;
-    LTotal := (LValorUnitario - LValorDesconto) * LQuantidade;
 
-    Self.EditValorDescontado.Text := CurrToStr(LValorDesconto);
+    //VALOR UNITÁRIO DO ITEM
+    LValorUnitario := StrToCurrDef(Self.EditPrecoUnitario.Text,0);
+
+    // % DE DESCONTO
+    LPercentualDesconto := (StrToFloatDef(self.EditDesconto.Text,0) / 100);
+
+    //VALOR DESCONTADO UNITÁRIO
+    LValorUnitarioDesconto := LValorUnitario * LPercentualDesconto;
+
+    //VALOR TOTAL DESCONTADO
+    LValorTotalDesconto :=  LValorUnitarioDesconto * LQuantidade;
+
+    //VALOR LÍQUIDO TOTAL
+    LTotal := (LValorUnitario - LValorUnitarioDesconto) * LQuantidade;
+
+    //PASSAGEM DE VALORES PARA FORMULÁRIO
+    Self.EditValorDescontado.Text := CurrToStr(LValorTotalDesconto);
     Self.EditValorTotal.Text := CurrToStr(LTotal);
   end;
 

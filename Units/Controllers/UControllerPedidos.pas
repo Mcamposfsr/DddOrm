@@ -153,11 +153,8 @@ implementation
     try
       //RETIRAR O '.' ANTES DA CONVERSÃO PARA EVITAR ERROS DE CONVERSÃO
       LTotalLiquido := StrToFloatDef(StringReplace(ATotalLiquido, '.', '', [rfReplaceAll]),0);
-
       LDataEmissao := StrToDate(ADataEmissao);
-
       Self.FAppPedidos.InserirPedido(AIDCliente,LDataEmissao,LTotalLiquido,ACodPedido);
-//      Self.FRepPedidos.AtualizarDataSet;
     except
       //ERROS VALIDAÇÃO FORMULÁRIOS
       on E: EErrorFormInput do
@@ -189,7 +186,6 @@ implementation
       LTotalLiquido := StrToFloatDef(StringReplace(ATotalLiquido, '.', '', [rfReplaceAll]),0);
       LDataEmissao := StrToDate(ADataEmissao);
       Self.FAppPedidos.AtualizarPedido(AID,AIDCliente,LDataEmissao,LTotalLiquido,ACodPedido);
-      Self.FRepPedidos.AtualizarDataSet;
     except
       //ERROS VALIDAÇÃO FORMULÁRIOS
       on E: EErrorFormInput do
@@ -209,7 +205,6 @@ implementation
   begin
     try
       Self.FAppPedidos.DeletarPedido(AID);
-//      Self.FRepPedidos.AtualizarDataSet;
     except
       //ERROS INESPERADOS
       on E: Exception do
@@ -267,7 +262,6 @@ implementation
   var LTotal: Currency;
   begin
     try
-//      LTotal := StrToCurrDef(AValorTotal,0);
       Self.FAppPedidos.AtualizarTotalPedido(AID,AValorTotal);
     except
     //ERROS INESPERADOS
@@ -395,7 +389,6 @@ implementation
       LDescontoValor,
       LTotal
       );
-      Self.FRepItensPedidos.AtualizarDataSet;
 
     except
       //ERROS VALIDAÇÃO FORMULÁRIOS
