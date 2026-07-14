@@ -44,9 +44,11 @@ type
 
     procedure PreencherPedido(ACliente:TClientePGTO);
   public
+
     //VAR CONTROLE
     FClienteAtual: TClientePGTO;
-    FCodigoPedido: String;
+    FPedido: TPedidos;
+
 
     constructor Create(
     AOwner: TComponent;
@@ -109,15 +111,21 @@ constructor TFormCadastroPedido.Create(
   //CONFIRMAR
   procedure TFormCadastroPedido.ButtonConfirmarClick(Sender: TObject);
   begin
-    Self.FControllerPedidos.CadastrarPedido(
+//    Self.FControllerPedidos.CadastrarPedido(
+//    Self.FClienteAtual.Codigo,
+//    Self.EditDataPedido.Text,
+    //TOTAL COMEÇA VAZIO
+//    '',
+//    Self.EditNumeroPedido.Text);
+
+    //CRIAR PEDIDO EM MEMÓRIA
+    Self.FPedido :=  Self.FControllerPedidos.CriarPedido(
     Self.FClienteAtual.Codigo,
     Self.EditDataPedido.Text,
-    //TOTAL COMEÇA VAZIO
     '',
-    Self.EditNumeroPedido.Text);
+    Self.EditNumeroPedido.Text,
+    Self.FClienteAtual);
 
-    //PASSAR CÓDIGO PEDIDO PARA ACESSO EXTERNO
-    FCodigoPedido := Self.EditNumeroPedido.Text;
     ModalResult := mrOk
   end;
 

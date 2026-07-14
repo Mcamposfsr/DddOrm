@@ -3,17 +3,20 @@ unit UControllerPedidos;
 interface
 
 uses
-System.Generics.Collections,System.Classes,UFormatErrorText, System.SysUtils, Vcl.Dialogs,UErros,
+System.Generics.Collections,System.Classes,UFormatErrorText, System.SysUtils, Vcl.Dialogs,UErros,FireDAC.Comp.Client,
 
 UIRepository,
 
 
 UDomainPedidos,
+UDomainClientesPGTO,
+UDomainProdutosECF,
 UAppPedidos,
 
 UAppItensPedidos,
 UDomainItensPedidos,
-dbebr.factory.interfaces
+dbebr.factory.interfaces,
+dbebr.factory.firedac
 
 ;
 
@@ -21,6 +24,7 @@ type IControllerPedidos = interface
   //PEDIDOS
   function BuscarPedido(AID:Integer):TPedidos;
   function BuscarPedidoPeloCodigo(ACod:String):TPedidos;
+  function CriarPedido(AIDCliente:Integer;ADataEmissao,ATotalLiquido,ACodPedido:String;ACliente:TClientePGTO):TPedidos;
   //OPÇÃO DE EXIBIÇÃO LEGADO
   procedure ExibirPedidos;
   procedure CadastrarPedido(AIDCliente:Integer;ADataEmissao,ATotalLiquido,ACodPedido:String);
@@ -33,11 +37,17 @@ type IControllerPedidos = interface
 
   //ITENS PEDIDOS
   function BuscarItemPedido(AID:Integer):TItensPedidos;
+  function BuscarItensPedidos(AID:Integer):TObjectList<TItensPedidos>;
   procedure ExibirItensPedidos(AID: Integer);
+  function CriarItemPedido(AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String;AProduto:TProdutosECF):TItensPedidos;
   procedure CadastrarItemPedido(AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
   procedure AlterarItemPedido(AID,AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
   procedure DeletarItemPedido(AID:Integer);
   procedure FiltrarItemPedido(AFiltro:String);
+
+  //CRUD TRANSAÇÃO
+  procedure CriarPedidoComTransacao(APedido:TPedidos;AItensPedido:TObjectList<TItensPedidos>);
+  procedure AtualizarPedidoComTransacao(APedido:TPedidos;AItensPedido:TObjectList<TItensPedidos>);
 
 end;
 
@@ -47,6 +57,7 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
     //PEDIDOS
     function BuscarPedido(AID:Integer):TPedidos;
     function BuscarPedidoPeloCodigo(ACod:String):TPedidos;
+    function CriarPedido(AIDCliente:Integer;ADataEmissao,ATotalLiquido,ACodPedido:String;ACliente:TClientePGTO):TPedidos;
     //OPÇÃO DE EXIBIÇÃO LEGADO
     procedure ExibirPedidos;
     procedure CadastrarPedido(AIDCliente:Integer;ADataEmissao,ATotalLiquido,ACodPedido:String);
@@ -58,19 +69,30 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
 
     //ITENS PEDIDOS
     function BuscarItemPedido(AID:Integer):TItensPedidos;
+    function BuscarItensPedidos(AID:Integer):TObjectList<TItensPedidos>;
+    function CriarItemPedido(AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String;AProduto:TProdutosECF):TItensPedidos;
     procedure ExibirItensPedidos(AID: Integer);
     procedure CadastrarItemPedido(AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
     procedure AlterarItemPedido(AID,AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
     procedure DeletarItemPedido(AID:Integer);
     procedure FiltrarItemPedido(AFiltro:String);
 
+    //CRUD TRANSAÇÃO
+    procedure CriarPedidoComTransacao(APedido:TPedidos;AItensPedido:TOBjectList<TItensPedidos>);
+    procedure AtualizarPedidoComTransacao(APedido:TPedidos;AItensPedido:TOBjectList<TItensPedidos>);
+
+
+
     constructor Create(
+    AConn: TFDConnection;
     AAppPedidos:IAppPedidos;
     ARepPedidos:IRepository<TPedidos>;
     AAppItensPedidos:IAppItensPedidos;
     ARepItensPedidos:IRepository<TItensPedidos>
     );
   private
+    //CONEXÃO
+    FConn: IDBConnection;
     //PEDIDOS
     FAppPedidos: IAppPedidos;
     FRepPedidos: IRepository<TPedidos>;
@@ -83,12 +105,16 @@ end;
 implementation
 
   constructor TControllerPedidos.Create(
+    AConn: TFDConnection;
     AAppPedidos:IAppPedidos;
     ARepPedidos:IRepository<TPedidos>;
     AAppItensPedidos:IAppItensPedidos;
     ARepItensPedidos:IRepository<TItensPedidos>
     );
   begin
+    //CONEXÃO - TRABALHAR COM TRANSAÇÕES
+    FConn := TFactoryFireDAC.Create(AConn, dnFirebird);
+
     //PEDIDOS
     FAppPedidos := AAppPedidos;
     FRepPedidos := ARepPedidos;
@@ -97,6 +123,10 @@ implementation
     FAppItensPedidos := AAppItensPedidos;
     FRepItensPedidos := ARepItensPedidos;
   end;
+
+  // ################## CRUD ################## CRUD ################## CRUD ################## CRUD ################## CRUD ################## CRUD
+
+  // ***** PEDIDOS *****
 
   //BUSCAR
   function TControllerPedidos.BuscarPedido(AID:Integer):TPedidos;
@@ -112,10 +142,11 @@ implementation
     end;
   end;
 
-  function TControllerPedidos.BuscarPedidoPeloCodigo(ACod:String):TPedidos;
+   //EXIBIR PEDIDOS DATASET
+  procedure TControllerPedidos.ExibirPedidos;
   begin
     try
-      Result := FAppPedidos.BuscarPedidoPeloCodigo(ACod);
+      Self.FAppPedidos.BuscarPedidosLegado;
     except
     //ERROS INESPERADOS
       on E: Exception do
@@ -125,11 +156,11 @@ implementation
     end;
   end;
 
-  //EXIBIR PEDIDOS DATASET
-  procedure TControllerPedidos.ExibirPedidos;
+  //BUSCAR PELO COD PEDIDO
+  function TControllerPedidos.BuscarPedidoPeloCodigo(ACod:String):TPedidos;
   begin
     try
-      Self.FAppPedidos.BuscarPedidosLegado;
+      Result := FAppPedidos.BuscarPedidoPeloCodigo(ACod);
     except
     //ERROS INESPERADOS
       on E: Exception do
@@ -168,7 +199,6 @@ implementation
       end;
     end;
   end;
-
 
   //ALTERAR
   procedure TControllerPedidos.AlterarPedido(
@@ -227,42 +257,13 @@ implementation
     end;
   end;
 
-  //GERAR CÓDIGO PEDIDO
-  function TControllerPedidos.GerarCodPedido:String;
-  var
-  LResultSet: IDBResultSet;
-  LIDPedido: String;
-  LDataPedido:String;
-  LTemp: String;
+  // ***** ITENS PEDIDO *****
+
+  //BUSCAR
+  function TControllerPedidos.BuscarItemPedido(AID:Integer):TItensPedidos;
   begin
     try
-      LResultSet := Self.FRepPedidos.Open('SELECT GEN_ID(GEN_COD_PEDIDO,1) AS COD FROM RDB$DATABASE;');
-      LIDPedido := LResultSet.DataSet.FieldByName('COD').AsString;
-
-      //COLOCAR '0' NA FRENTE
-      while Length(LIDPedido) < 6 do
-      begin
-        LTemp :=  LIDPedido;
-        LIDPedido := '0' + LTemp;
-      end;
-
-      LDataPedido := FormatDateTime('ddmmyy',now);
-      Result := LDataPedido + '-' +LIDPedido;
-    except
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
-  end;
-
-  //PASSAR VALOR TOTAL
-  procedure TControllerPedidos.AtualizarValorTotalPedido(AID:Integer;AValorTotal:String);
-  var LTotal: Currency;
-  begin
-    try
-      Self.FAppPedidos.AtualizarTotalPedido(AID,AValorTotal);
+      Result := FAppItensPedidos.BuscarItemPedidoByID(AID);
     except
     //ERROS INESPERADOS
       on E: Exception do
@@ -272,13 +273,10 @@ implementation
     end;
   end;
 
-  // ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS ############ ITENS PEDIDOS
-
-  //BUSCAR
-  function TControllerPedidos.BuscarItemPedido(AID:Integer):TItensPedidos;
+  function TControllerPedidos.BuscarItensPedidos(AID:Integer):TObjectList<TItensPedidos>;
   begin
     try
-      Result := FAppItensPedidos.BuscarItemPedidoByID(AID);
+      Result := FAppItensPedidos.BuscarITensDoPedido(AID);
     except
     //ERROS INESPERADOS
       on E: Exception do
@@ -433,6 +431,169 @@ implementation
     end;
   end;
 
+  // ########### CRUD C/ TRANSAÇÃO ########### CRUD C/ TRANSAÇÃO ########### CRUD C/ TRANSAÇÃO ########### CRUD C/ TRANSAÇÃO ########### CRUD C/ TRANSAÇÃO
 
+  //CRIAR PEDIDO COMPLETO C/ TRANSAÇÃO (PEDIDO + ITENS)
+  procedure TControllerPedidos.CriarPedidoComTransacao(APedido:TPedidos;AItensPedido:TOBjectList<TItensPedidos>);
+  var
+  LID: Integer;
+  LITemPedido: TItensPedidos;
+
+  begin
+    Self.FConn.StartTransaction;
+    try
+      Self.FAppPedidos.InserirPedido(APedido);
+
+      LID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
+
+      //ALTERAR ID_PEDIDO PARA ID ATUAL
+      for LITemPedido in AItensPedido do
+        LITemPedido.IDPedido := LID;
+
+      Self.FAppItensPedidos.InserirItensPedido(AItensPedido);
+      Self.FConn.Commit;
+    except
+     on E: Exception do
+     begin
+       Self.FConn.Rollback;
+       raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+     end;
+    end;
+  end;
+
+  //ATUALIZAR PEDIDO COMPLETO C/ TRANSAÇÃO (PEDIDO + ITENS)
+  procedure TControllerPedidos.AtualizarPedidoComTransacao(APedido:TPedidos;AItensPedido:TOBjectList<TItensPedidos>);
+  begin
+    Self.FConn.StartTransaction;
+    try
+
+
+      Self.FConn.Commit;
+    except
+     on E: Exception do
+     begin
+       Self.FConn.Rollback;
+     end;
+    end;
+  end;
+
+
+  // ########## AUX CRUD ########## AUX CRUD ########## AUX CRUD ########## AUX CRUD ########## AUX CRUD ########## AUX CRUD ########## AUX CRUD ########## AUX CRUD ########## AUX CRUD ########## AUX CRUD ########## AUX CRUD ########## AUX CRUD
+
+  // ***** PEDIDOS *****
+
+  //CRIAR DTO PEDIDO PARA TRABALHAR COM TRANSAÇÕES
+  function TControllerPedidos.CriarPedido(
+  AIDCliente:Integer;
+  ADataEmissao,
+  ATotalLiquido,
+  ACodPedido:String;
+  ACliente:TClientePGTO
+  ):TPedidos;
+  var
+  LPedido: TPedidos;
+  LData: TDate;
+  begin
+    LData := StrToDate(ADataEmissao);
+
+    LPedido :=  TPedidos.Create(
+    -1,
+    AIDCliente,
+    LData,
+    0,
+    ACodPedido,
+    ACliente
+    );
+
+    Result := LPedido;
+  end;
+
+  //GERAR CÓDIGO PEDIDO
+  function TControllerPedidos.GerarCodPedido:String;
+  var
+  LResultSet: IDBResultSet;
+  LIDPedido: String;
+  LDataPedido:String;
+  LTemp: String;
+  begin
+    try
+      LResultSet := Self.FRepPedidos.Open('SELECT GEN_ID(GEN_COD_PEDIDO,1) AS COD FROM RDB$DATABASE;');
+      LIDPedido := LResultSet.DataSet.FieldByName('COD').AsString;
+
+      //COLOCAR '0' NA FRENTE
+      while Length(LIDPedido) < 6 do
+      begin
+        LTemp :=  LIDPedido;
+        LIDPedido := '0' + LTemp;
+      end;
+
+      LDataPedido := FormatDateTime('ddmmyy',now);
+      Result := LDataPedido + '-' +LIDPedido;
+    except
+      //ERROS INESPERADOS
+      on E: Exception do
+      begin
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+      end;
+    end;
+  end;
+
+  //PASSAR VALOR TOTAL
+  procedure TControllerPedidos.AtualizarValorTotalPedido(AID:Integer;AValorTotal:String);
+  var LTotal: Currency;
+  begin
+    try
+      Self.FAppPedidos.AtualizarTotalPedido(AID,AValorTotal);
+    except
+    //ERROS INESPERADOS
+      on E: Exception do
+      begin
+        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+      end;
+    end;
+  end;
+
+  // ***** ITENS PEDIDOS *****
+
+  //CRIAR PRODUTO PARA TRABALHAR COM TRANSAÇÕES
+  function TControllerPedidos.CriarItemPedido(
+  AIDPedido,
+  AIDProduto:Integer;
+  AQuantidade,
+  APrecoUnit,
+  ADescontoPercent,
+  ADescontoValor,
+  ATotal:String;
+  AProduto:TProdutosECF
+  ):TItensPedidos;
+  var
+  LQuantidade: Currency;
+  LPrecoUnit: Currency;
+  LDescontoPercent: Currency;
+  LDescontoValor: Currency;
+  LTotal: Currency;
+  LITemPedidos: TItensPedidos;
+  begin
+    //RETIRAR O '.' ANTES DA CONVERSÃO PARA EVITAR ERROS DE CONVERSÃO
+    LQuantidade := StrToFloatDef(StringReplace(AQuantidade, '.', '', [rfReplaceAll]),0);
+    LPrecoUnit := StrToFloatDef(StringReplace(APrecoUnit, '.', '', [rfReplaceAll]),0);
+    LDescontoPercent := StrToFloatDef(StringReplace(ADescontoPercent, '.', '', [rfReplaceAll]),0);
+    LDescontoValor := StrToFloatDef(StringReplace(ADescontoValor, '.', '', [rfReplaceAll]),0);
+    LTotal := StrToFloatDef(StringReplace(ATotal, '.', '', [rfReplaceAll]),0);
+
+    LITemPedidos := TItensPedidos.Create(
+    -1,
+    AIDPedido,
+    AIDProduto,
+    LQuantidade,
+    LPrecoUnit,
+    LDescontoPercent,
+    LDescontoValor,
+    LTotal,
+    AProduto
+    );
+
+    Result := LITemPedidos;
+  end;
 
 end.

@@ -2,7 +2,7 @@ object FormPedidos: TFormPedidos
   Left = 0
   Top = 0
   Caption = 'Pedidos'
-  ClientHeight = 613
+  ClientHeight = 677
   ClientWidth = 792
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,6 +12,7 @@ object FormPedidos: TFormPedidos
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
@@ -261,9 +262,9 @@ object FormPedidos: TFormPedidos
   end
   object Panel2: TPanel
     Left = 0
-    Top = 140
+    Top = 144
     Width = 792
-    Height = 473
+    Height = 533
     Align = alBottom
     TabOrder = 1
     object Label5: TLabel
@@ -450,6 +451,23 @@ object FormPedidos: TFormPedidos
       Height = 21
       Enabled = False
       TabOrder = 2
+    end
+    object BtnConfirmar: TButton
+      Left = 548
+      Top = 488
+      Width = 105
+      Height = 33
+      Caption = 'CONFIRMAR'
+      TabOrder = 3
+      OnClick = BtnConfirmarClick
+    end
+    object Button1: TButton
+      Left = 672
+      Top = 488
+      Width = 105
+      Height = 33
+      Caption = 'CANCELAR'
+      TabOrder = 4
     end
   end
   object DataSource: TDataSource

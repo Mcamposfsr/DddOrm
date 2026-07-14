@@ -26,6 +26,7 @@ type
   public
     function Select(AID: string): T;
     function SelectAll: TObjectList<T>;
+    function SelectAllByColumn(AColumn:String;AFilter:String): TObjectList<T>;
     procedure Insert(AClass: T);
     procedure Update(AID: string; ANewClass: T);
     procedure Delete(AClass: T);
@@ -89,6 +90,17 @@ implementation
   function TRepository<T>.SelectAll: TObjectList<T>;
   begin
     Result := FObjectContainer.Find;
+  end;
+
+  function TRepository<T>.SelectAllByColumn(AColumn:String;AFilter:String): TObjectList<T>;
+  var LWhere: String;
+  begin
+    if (AColumn = '') or (AFilter = '') then
+      raise Exception.Create('Falha ao executar SelectAllByColumn do Repository, Coluna ou Filtro vazio');
+      
+    LWhere := AColumn + ' = ' + AFilter;
+
+    Result := FObjectContainer.FindWhere(LWhere);
   end;
 
   procedure TRepository<T>.SetConexaoAtual(const Value: IDBConnection);

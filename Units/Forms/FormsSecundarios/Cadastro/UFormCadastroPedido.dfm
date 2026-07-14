@@ -22,9 +22,6 @@ object FormCadastroPedido: TFormCadastroPedido
     Height = 327
     Align = alClient
     TabOrder = 0
-    ExplicitTop = -8
-    ExplicitWidth = 443
-    ExplicitHeight = 402
     object Label6: TLabel
       Left = 16
       Top = 197

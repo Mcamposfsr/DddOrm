@@ -9,12 +9,16 @@ interface
     Function BuscarPedido:TObjectList<TPedidos>;
     Function BuscarPedidoPeloCodigo(ACod:String): TPedidos;
     Function BuscarPedidoByID(ACodigo:Integer):TPedidos;
+
+
     procedure InserirPedido(
     AIDCliente: Integer;
     ADataEmissao: TDate;
     ATotalLiquido: Currency;
     ACodPedido: String
-    );
+    ); Overload;
+
+    procedure InserirPedido(APedido:TPedidos); Overload;
 
     procedure AtualizarPedido(
       AID:Integer;
@@ -22,7 +26,13 @@ interface
       ADataEmissao: TDate;
       ATotalLiquido: Currency;
       ACodPedido: String
-    );
+    ); Overload;
+
+    procedure AtualizarPedido(
+      APedido:TPedidos
+    ); Overload;
+
+
     procedure DeletarPedido(ACodigo:Integer);
     //AUX
     procedure AtualizarTotalPedido(AID:Integer; ATotal:String);
@@ -38,19 +48,26 @@ interface
     Function BuscarPedido:TObjectList<TPedidos>;
     Function BuscarPedidoPeloCodigo(ACod:String): TPedidos;
     Function BuscarPedidoByID(ACodigo:Integer):TPedidos;
+
     procedure InserirPedido(
     AIDCliente: Integer;
     ADataEmissao: TDate;
     ATotalLiquido: Currency;
     ACodPedido: String
-    );
+    ); Overload;
+    procedure InserirPedido(APedido:TPedidos); Overload;
+
     procedure AtualizarPedido(
       AID:Integer;
       AIDCliente: Integer;
       ADataEmissao: TDate;
       ATotalLiquido: Currency;
       ACodPedido: String
-    );
+    ); Overload;
+    procedure AtualizarPedido(
+      APedido:TPedidos
+    ); Overload;
+
     procedure DeletarPedido(ACodigo:Integer);
 
     //AUX
@@ -130,6 +147,12 @@ implementation
     end;
   end;
 
+  //INSERT  - DTO PRONTO
+  procedure TAppPedidos.InserirPedido(APedido: TPedidos);
+  begin
+    FRepPedidos.Insert(APedido);
+  end;
+
   //UPDATE
   procedure TAppPedidos.AtualizarPedido(
       AID:Integer;
@@ -156,6 +179,12 @@ implementation
     finally
       LPedido.Free;
     end;
+  end;
+
+  //UPDATE - DTO PRONTO
+  procedure TAppPedidos.AtualizarPedido(APedido: TPedidos);
+  begin
+    FRepPedidos.Update(APedido.CodPedido,APedido);
   end;
 
   //DELETE

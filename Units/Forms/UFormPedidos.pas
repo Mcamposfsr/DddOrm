@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  Data.DB, Vcl.Grids, Vcl.DBGrids,
+  Data.DB, Vcl.Grids, Vcl.DBGrids,System.generics.collections,
 
 
   UDomainClientesPGTO,UDomainProdutosECF,UDomainPedidos,UDomainItensPedidos,UIRepository,UGenericRep,UDM,
@@ -43,6 +43,8 @@ type
     BitBtnCancelCliente: TBitBtn;
     DataSource: TDataSource;
     FDMemTable: TFDMemTable;
+    BtnConfirmar: TButton;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure BitBtnBuscarPedidoClick(Sender: TObject);
     procedure BitBtnCriarPedidoClick(Sender: TObject);
@@ -52,9 +54,12 @@ type
     procedure BitBtnExcluirItemClick(Sender: TObject);
     procedure BitBtnAlterarItemClick(Sender: TObject);
     procedure FDMemTableAfterRefresh(DataSet: TDataSet);
+    procedure BtnConfirmarClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     //ESTADOS INTERNOS
     FPedidoAtual: TPedidos;
+    FItensPedido: TObjectList<TItensPedidos>;
 
     //FERRAMENTAS
 
@@ -84,6 +89,7 @@ type
     procedure PassarValorTotal;
     procedure ConfigurarDataset;
     procedure EstadoControlesItens(AState:Boolean);
+    procedure RestarEstadoForm;
   public
     { Public declarations }
   end;
@@ -95,9 +101,12 @@ implementation
 
 {$R *.dfm}
 
-  // INICIAR FORM.
-procedure TFormPedidos.FormCreate(Sender: TObject);
+  // CONSTRUCTOR
+  procedure TFormPedidos.FormCreate(Sender: TObject);
   begin
+    //LISTA DE ITENS INTERNA
+    FItensPedido := TObjectList<TItensPedidos>.Create(True);
+
     //CRIAR REPOSITORY
     FRepositoryPedidos := TRepository<TPedidos>.Create(GDM.GetConnection);
     FRepositoryItensPedidos := TRepository<TItensPedidos>.Create(GDM.GetConnection);
@@ -111,16 +120,26 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
     FAppProdutos := TAppProdutosECF.Create(FRepositoryProdutos);
 
     //CONTROLLER
-    FControllerPedidos := TControllerPedidos.Create(FAppPedidos,FRepositoryPedidos,FAppItensPedidos,FRepositoryItensPedidos);
+    FControllerPedidos := TControllerPedidos.Create(GDM.GetConnection,FAppPedidos,FRepositoryPedidos,FAppItensPedidos,FRepositoryItensPedidos);
     FControllerClientes := TControllerClientesPGTO.Create(FAppClientes,FRepositoryClientesPGTO);
     FControllerProdutos := TControllerProdutosECF.Create(FAppProdutos,FRepositoryProdutos);
 
     //*PASSAR DATASET ITENS PEDIDOS*
-    FRepositoryItensPedidos.ReceberDataSetFirebirdLegado(Self.FDMemTable);
-    Self.AtualizarDataSet;
+//    FRepositoryItensPedidos.ReceberDataSetFirebirdLegado(Self.FDMemTable);
+    Self.ConfigurarDataset;
   end;
 
-  // ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS
+  //DESTRUCTOR
+  procedure TFormPedidos.FormClose(Sender: TObject; var Action: TCloseAction);
+  begin
+    if Assigned(Self.FItensPedido) then
+      Self.FItensPedido.Free;
+
+    if Assigned(Self.FPedidoAtual) then
+      Self.FPedidoAtual.Free;
+  end;
+
+// ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS ######### EVENTOS
 
   // ********** PEDIDOS **********
 
@@ -135,7 +154,10 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
       begin
         Self.FPedidoAtual := LFORM.FPedido;
         Self.PreencherPedido(Self.FPedidoAtual);
+
+        Self.FItensPedido := Self.FControllerPedidos.BuscarItensPedidos(Self.FPedidoAtual.ID);
         Self.EstadoControlesItens(True);
+
         //BUSCAR PEDIDOS
         Self.AtualizarDataSet;
       end;
@@ -154,12 +176,10 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
       LFORM := TFormCadastroPedido.Create(nil,FRepositoryPedidos,FControllerPedidos,FRepositoryClientesPGTO,FControllerClientes);
       if LFORM.ShowModal = mrOk then
       begin
-        Self.FPedidoAtual := Self.FControllerPedidos.BuscarPedidoPeloCodigo(LForm.FCodigoPedido);
+        Self.FPedidoAtual := LForm.FPedido;
 
         Self.PreencherPedido(Self.FPedidoAtual);
         Self.EstadoControlesItens(True);
-        //BUSCAR PEDIDOS
-        Self.AtualizarDataSet;
       end;
     finally
       LFORM.Free;
@@ -169,8 +189,7 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
 //CANCELAR
   procedure TFormPedidos.BitBtnCancelClienteClick(Sender: TObject);
   begin
-    Self.EstadoControlesItens(False);
-    Self.LimparPedidos;
+    Self.RestarEstadoForm;
   end;
 
   //DELETAR PEDIDO
@@ -182,20 +201,21 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
       Exit;
     end;
 
-    Self.EstadoControlesItens(False);
     Self.FControllerPedidos.DeletarPedido(Self.FPedidoAtual.ID);
-    Self.LimparPedidos;
+    Self.RestarEstadoForm;
+    ShowMessage('Pedido Excluído!');
   end;
+
 
 // ********** ITENS **********
 
   //ADICIONAR PRODUTO
   procedure TFormPedidos.BitBtnAdicionarItemClick(Sender: TObject);
-  var LFORM: TFormInserirItem;
+  var LFORM: TFormItensPedido;
   begin
     LFORM := nil;
     try
-      LFORM := TFormInserirItem.Create(
+      LFORM := TFormItensPedido.Create(
       nil,
       Self.FPedidoAtual.ID,
       -1,
@@ -207,9 +227,8 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
       );
       if LFORM.ShowModal = mrOk then
       begin
+        Self.FItensPedido.Add(LFORM.FItemPedido);
         Self.AtualizarDataSet;
-        Self.PassarValorTotal;
-        ShowMessage('Produto adicionado');
       end;
     finally
       LFORM.Free;
@@ -219,13 +238,20 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
   //ALTERAR PRODUTO
   procedure TFormPedidos.BitBtnAlterarItemClick(Sender: TObject);
   var
-  LFORM: TFormInserirItem;
+  LFORM: TFormItensPedido;
   LID: Integer;
   begin
+    //VERIFICAR ANTES DE ALTERAR
+    if Self.FDMemTable.IsEmpty then
+    begin
+      ShowMessage('Nenhum Produto selecionado');
+      Exit;
+    end;
+
     LID := Self.FDMemTable.FieldByName('ID_ITEM').AsInteger;
     LFORM := nil;
     try
-      LFORM := TFormInserirItem.Create(
+      LFORM := TFormItensPedido.Create(
       nil,
       Self.FPedidoAtual.ID,
       LID,
@@ -233,12 +259,12 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
       FRepositoryItensPedidos,
       FControllerPedidos,
       FRepositoryProdutos,
-      FControllerProdutos
+      FControllerProdutos,
+      Self.FItensPedido
       );
       if LFORM.ShowModal = mrOk then
       begin
         Self.AtualizarDataSet;
-        Self.PassarValorTotal;
         ShowMessage('Produto alterado');
       end;
     finally
@@ -250,11 +276,16 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
   procedure TFormPedidos.BitBtnExcluirItemClick(Sender: TObject);
   var LID: Integer;
   begin
+    if Self.FDMemTable.IsEmpty then
+    begin
+      ShowMessage('Nenhum Produto selecionado');
+      Exit;
+    end;
+
     LID := Self.FDMemTable.FieldByName('ID_ITEM').AsInteger;
-    Self.FControllerPedidos.DeletarItemPedido(LID);
+    Self.FItensPedido.Delete(LID);
 
     Self.AtualizarDataSet;
-    Self.PassarValorTotal;
     ShowMessage('Produto excluído');
   end;
 
@@ -265,6 +296,14 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
   begin
     LValorTotal := SomarColunaDataSet(Self.FDMemTable,'TOTAL');
     Self.EditTotalLiquido.Text := CurrToStr(LValorTotal);
+  end;
+
+  //CONFIRMAR AÇÕES
+  procedure TFormPedidos.BtnConfirmarClick(Sender: TObject);
+  begin
+    Self.FControllerPedidos.CriarPedidoComTransacao(Self.FPedidoAtual,Self.FItensPedido);
+    ShowMessage('Pedido Cadastrado!');
+    Self.RestarEstadoForm;
   end;
 
 // ######### FUNÇÕES AUXÍLIARES ######### FUNÇÕES AUXÍLIARES ######### FUNÇÕES AUXÍLIARES ######### FUNÇÕES AUXÍLIARES ######### FUNÇÕES AUXÍLIARES
@@ -290,36 +329,72 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
 
   //ATUALIZAR DATASET
   procedure TFormPedidos.AtualizarDataSet;
-  var LID: Integer;
+  var
+  LID: Integer;
+  I: Integer;
   begin
-    if not Assigned(FPedidoAtual) then
-      LID:= -1
-    else
-      LID := FPedidoAtual.ID;
-    Self.FControllerPedidos.ExibirItensPedidos(LID);
-    Self.ConfigurarDataset;
-    Self.FDMemTable.Refresh;
+    try
+      Self.FDMemTable.DisableControls;
+      Self.FDMemTable.EmptyDataSet;
+
+      //VALIDAR EXISTENCIA DA LISTA
+      if not Assigned(Self.FItensPedido) then
+        Exit;
+      //VALIDAR EXISTENCIA DOS ITENS
+      if (Self.FItensPedido.Count < 1) then
+        Exit;
+
+      for I := 0 to Self.FItensPedido.Count -1 do
+      begin
+        Self.FDMemTable.Append;
+
+        Self.FDMemTable.FieldByName('ID_ITEM').AsInteger := I;
+        Self.FDMemTable.FieldByName('ID_PEDIDO').AsInteger := Self.FItensPedido[I].IDPedido;
+        Self.FDMemTable.FieldByName('ID_PRODUTO').AsInteger := Self.FItensPedido[I].IDProduto;
+        Self.FDMemTable.FieldByName('DESCONTO_PERCENT').AsFloat := Self.FItensPedido[I].DescontoPercent;
+        Self.FDMemTable.FieldByName('PRO_NOME').AsString := Self.FItensPedido[I].Produto.Nome;
+        Self.FDMemTable.FieldByName('QUANTIDADE').AsFloat := Self.FItensPedido[I].Quantidade;
+        Self.FDMemTable.FieldByName('PRECO_UNIT').AsCurrency := Self.FItensPedido[I].PrecoUnit;
+        Self.FDMemTable.FieldByName('DESCONTO_VALOR').AsCurrency := Self.FItensPedido[I].DescontoValor;
+        Self.FDMemTable.FieldByName('TOTAL').AsCurrency := Self.FItensPedido[I].Total;
+
+        Self.FDMemTable.Post;
+      end;
+    finally
+      Self.FDMemTable.EnableControls;
+      Self.FDMemTable.Refresh;
+    end;
   end;
 
   //ATUALIZAR VALOR TOTAL DO REGISTRO DE PEDIDOS
   procedure TFormPedidos.PassarValorTotal;
   begin
     Self.FControllerPedidos.AtualizarValorTotalPedido(
-      Self.FPedidoAtual.ID,
-      Self.EditTotalLiquido.Text
+    Self.FPedidoAtual.ID,
+    Self.EditTotalLiquido.Text
     );
   end;
 
   //ATUALIZAR VALOR TOTAL DO REGISTRO DE PEDIDOS
   procedure TFormPedidos.ConfigurarDataset;
   begin
+    Self.FDMemTable.FieldDefs.Add('ID_ITEM',ftInteger);
+    Self.FDMemTable.FieldDefs.Add('ID_PEDIDO',ftInteger);
+    Self.FDMemTable.FieldDefs.Add('ID_PRODUTO',ftInteger);
+    Self.FDMemTable.FieldDefs.Add('PRO_NOME',ftString,50);
+    Self.FDMemTable.FieldDefs.Add('QUANTIDADE',ftFloat);
+    Self.FDMemTable.FieldDefs.Add('PRECO_UNIT',ftFloat);
+    Self.FDMemTable.FieldDefs.Add('DESCONTO_PERCENT',ftFloat);
+    Self.FDMemTable.FieldDefs.Add('DESCONTO_VALOR',ftFloat);
+    Self.FDMemTable.FieldDefs.Add('TOTAL',ftFloat);
+
+    Self.FDMemTable.CreateDataSet;
+
     Self.FDMemTable.FieldByName('ID_ITEM').Visible := False;
     Self.FDMemTable.FieldByName('ID_PEDIDO').Visible := False;
     Self.FDMemTable.FieldByName('ID_PRODUTO').Visible := False;
-    Self.FDMemTable.FieldByName('DESCONTO_PERCENT').Visible := False;
 
     Self.FDMemTable.FieldByName('PRO_NOME').DisplayLabel := 'NOME PRODUTO';
-    Self.FDMemTable.FieldByName('PRO_NOME').DisplayWidth := 40;
     Self.FDMemTable.FieldByName('PRECO_UNIT').DisplayLabel := 'PREÇO UNITÁRIO';
     Self.FDMemTable.FieldByName('DESCONTO_VALOR').DisplayLabel := 'VALOR DESCONTADO';
   end;
@@ -330,6 +405,16 @@ procedure TFormPedidos.FormCreate(Sender: TObject);
     Self.BitBtnAdicionarItem.Enabled := AState;
     Self.BitBtnAlterarItem.Enabled := AState;
     Self.BitBtnExcluirItem.Enabled := AState;
+  end;
+
+  //RESETAR O ESTADO INICIAL DO FORM
+  procedure TFormPedidos.RestarEstadoForm;
+  begin
+    FreeAndNil(Self.FPedidoAtual);
+    FreeAndNil(Self.FItensPedido);
+    Self.AtualizarDataSet;
+    Self.EstadoControlesItens(False);
+    Self.LimparPedidos;
   end;
 
 

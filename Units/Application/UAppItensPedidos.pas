@@ -5,8 +5,10 @@ interface
  uses System.Generics.Collections,UDomainItensPedidos, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository,UDomainProdutosECF;
 
   type IAppItensPedidos = Interface
+
     Function BuscarItensPedido:TObjectList<TItensPedidos>;
     Function BuscarItemPedidoByID(ACodigo:Integer):TItensPedidos;
+    Function BuscarITensDoPedido(AID:Integer):TObjectList<TItensPedidos>;
     procedure BuscarPedidosLegado(AID: String);
     procedure InserirItemPedido(
       AIDPedido: Integer;
@@ -18,6 +20,8 @@ interface
       ATotal: Currency
     );
 
+    procedure InserirItensPedido(AItens:TObjectList<TItensPedidos>);
+
     procedure AtualizarItemPedido(
       FID: Integer;
       FIDPedido: Integer;
@@ -28,6 +32,8 @@ interface
       FDescontoValor: Currency;
       FTotal: Currency
     );
+
+    procedure AtualizarItensPedido(AIDPedido:Integer;AItens:TObjectList<TItensPedidos>);
     procedure DeletarItemPedido(AID:Integer);
 
   End;
@@ -37,6 +43,7 @@ interface
 
     Function BuscarItensPedido:TObjectList<TItensPedidos>;
     Function BuscarItemPedidoByID(ACodigo:Integer):TItensPedidos;
+    Function BuscarITensDoPedido(AID:Integer):TObjectList<TItensPedidos>;
     procedure BuscarPedidosLegado(AID: String);
     procedure InserirItemPedido(
       AIDPedido: Integer;
@@ -47,6 +54,7 @@ interface
       ADescontoValor: Currency;
       ATotal: Currency
     );
+    procedure InserirItensPedido(AItens:TObjectList<TItensPedidos>);
 
     procedure AtualizarItemPedido(
       FID: Integer;
@@ -58,9 +66,8 @@ interface
       FDescontoValor: Currency;
       FTotal: Currency
     );
+    procedure AtualizarItensPedido(AIDPedido:Integer;AItens:TObjectList<TItensPedidos>);
     procedure DeletarItemPedido(AID:Integer);
-
-
 
     constructor Create(
     ARepItensPedido:IRepository<TItensPedidos>;
@@ -107,6 +114,24 @@ implementation
     Result := LITemPedido;
   end;
 
+  //SELECT * WHERE
+  Function TAppItensPedidos.BuscarITensDoPedido(AID:Integer):TObjectList<TItensPedidos>;
+  var
+  LID: String;
+  LITens: TObjectList<TItensPedidos>;
+  LItem: TItensPedidos;
+  begin
+    LID := IntToStr(AID);
+    LITens := Self.FRepItensPedido.SelectAllByColumn('ID_PEDIDO',LID);
+    for LItem in LITens do
+    begin
+      LItem.Produto := FRepProduto.Select(IntToStr(LItem.IDProduto));
+    end;
+
+    LID := IntToStr(AID);
+    Result := LITens;
+  end;
+
   //INSERT
   procedure TAppItensPedidos.InserirItemPedido(
       AIDPedido: Integer;
@@ -135,6 +160,16 @@ implementation
      FRepItensPedido.Insert(LItemPedido);
     finally
       LItemPedido.Free;
+    end;
+  end;
+
+  //INSERIR VÁRIOS ITENS
+  procedure TAppItensPedidos.InserirItensPedido(AItens:TObjectList<TItensPedidos>);
+  var LItens: TItensPedidos;
+  begin
+    for LItens in AItens do
+    begin
+      FRepItensPedido.Insert(LItens);
     end;
   end;
 
@@ -171,6 +206,18 @@ implementation
     finally
       LItemPedido.Free;
     end;
+  end;
+
+  //ATUALIZAR VÁRIOS ITENS
+  procedure TAppItensPedidos.AtualizarItensPedido(AIDPedido:Integer;AItens:TObjectList<TItensPedidos>);
+  var LID: String;
+  begin
+    LID := IntToStr(AIDPedido);
+
+    //LIMPAR ITENS DO PEDIDO
+    Self.FRepItensPedido.ExecSQL('DELETE FROM ITENS_PEDIDO WHERE ID_PEDIDO = ''' + LID + '''');
+    //INSERIR LISTA DE ITENS
+    Self.InserirItensPedido(AItens);
   end;
 
   //DELETE

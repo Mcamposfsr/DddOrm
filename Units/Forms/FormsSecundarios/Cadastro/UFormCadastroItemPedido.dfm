@@ -1,4 +1,4 @@
-object FormInserirItem: TFormInserirItem
+object FormItensPedido: TFormItensPedido
   Left = 0
   Top = 0
   Caption = 'Inserir Produto'

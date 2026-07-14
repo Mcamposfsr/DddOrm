@@ -46,7 +46,8 @@ uses
       APrecoUnit: Currency;
       ADescontoPercent: Double;
       ADescontoValor: Currency;
-      ATotal: Currency
+      ATotal: Currency;
+      AProduto: TProdutosECF = nil
       ); Overload;
 
   published
@@ -85,7 +86,7 @@ uses
 
     //VALOR TOTAL
     [Column('TOTAL',ftCurrency)]
-    property ATotal: Currency Read FTotal Write FTotal;
+    property Total: Currency Read FTotal Write FTotal;
   end;
 
 implementation
@@ -98,7 +99,8 @@ implementation
       APrecoUnit: Currency;
       ADescontoPercent: Double;
       ADescontoValor: Currency;
-      ATotal: Currency
+      ATotal: Currency;
+      AProduto: TProdutosECF = nil
       );
   begin
     FID := AID;
@@ -109,6 +111,7 @@ implementation
     FDescontoPercent := ADescontoPercent;
     FDescontoValor := ADescontoValor;
     FTotal := ATotal;
+    FProduto := AProduto;
   end;
 
   // ############## VALIDA합ES ############## VALIDA합ES ############## VALIDA합ES ############## VALIDA합ES ############## VALIDA합ES ############## VALIDA합ES ############## VALIDA합ES

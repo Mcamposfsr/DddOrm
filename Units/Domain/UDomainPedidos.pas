@@ -44,7 +44,8 @@ uses
     AIDCliente: Integer;
     ADataEmissao: TDate;
     ATotalLiquido: Currency;
-    ACodPedido: String
+    ACodPedido: String;
+    ACliente: TClientePGTO = nil
     ); Overload;
 
     Destructor Destroy;
@@ -90,7 +91,8 @@ implementation
       AIDCliente: Integer;
       ADataEmissao: TDate;
       ATotalLiquido: Currency;
-      ACodPedido: String
+      ACodPedido: String;
+      ACliente: TClientePGTO = nil
        );
   begin
     FID := AID;
@@ -98,6 +100,7 @@ implementation
     FDataEmissao := ADataEmissao;
     FTotalLiquido := ATotalLiquido;
     FCodPedido := ACodPedido;
+    FCLiente := ACliente;
   end;
 
   //LIBERAR CLIENTE JOIN MANUAL

@@ -10,7 +10,7 @@ uses
   UDomainProdutosECF,UGenericRep,UIRepository,UControllerProdutosECF, UDomainItensPedidos,UControllerPedidos;
 
 type
-  TFormInserirItem = class(TForm)
+  TFormItensPedido = class(TForm)
     TPanel: TPanel;
     Label6: TLabel;
     GroupBox3: TGroupBox;
@@ -55,7 +55,10 @@ type
     FIDPedido: Integer;
     FIDItemPedido: Integer;
     FItemPedido: TItensPedidos;
+    FItensPedido: TObjectList<TItensPedidos>;
+
     FProduto: TProdutosECF;
+
     FOperacao: String;
 
     constructor Create(
@@ -66,18 +69,19 @@ type
     ARepositoryItensPedido: IRepository<TItensPedidos>;
     AControllerItensPedido: IControllerPedidos;
     ARepositoryProdutosECF:IRepository<TProdutosECF>;
-    AControllerProdutosECF:IControllerProdutosECF
+    AControllerProdutosECF:IControllerProdutosECF;
+    AItensPedido: TObjectList<TItensPedidos> = nil
     );
   end;
 
 var
-  FormInserirItem: TFormInserirItem;
+  FormItensPedido: TFormItensPedido;
 
 implementation
 
 {$R *.dfm}
 
-constructor TFormInserirItem.Create(
+constructor TFormItensPedido.Create(
     AOwner:TComponent;
     AIDPedido:Integer;
     AIDItem:Integer;
@@ -85,8 +89,10 @@ constructor TFormInserirItem.Create(
     ARepositoryItensPedido: IRepository<TItensPedidos>;
     AControllerItensPedido: IControllerPedidos;
     ARepositoryProdutosECF:IRepository<TProdutosECF>;
-    AControllerProdutosECF:IControllerProdutosECF
+    AControllerProdutosECF:IControllerProdutosECF;
+    AItensPedido: TObjectList<TItensPedidos> = nil
     );
+  var LItemPedido :TItensPedidos;
   begin
     inherited Create(AOwner);
     FIDPedido := AIDPedido;
@@ -96,7 +102,7 @@ constructor TFormInserirItem.Create(
     FControllerItensPedido := AControllerItensPedido;
     FRepositoryProdutosECF := ARepositoryProdutosECF;
     FControllerProdutosECF := AControllerProdutosECF;
-
+    FItensPedido := AItensPedido;
 
     if FOperacao = 'INSERT' then
     begin
@@ -104,20 +110,26 @@ constructor TFormInserirItem.Create(
     end
     else if FOperacao = 'UPDATE' then
     begin
-      FItemPedido := Self.FControllerItensPedido.BuscarItemPedido(FIDItemPedido);
-      FProduto := Self.FControllerProdutosECF.BuscarProdutoECF(FItemPedido.IDProduto);
+      //AUXÍLIO NO USO DO ITEM
+      LItemPedido := FItensPedido.Items[FIDItemPedido];
+
+      //PASSAR ITEM PARA FORMULÁRIO
+      Self.FProduto := LItemPedido.Produto;
 
       //PASAR VALORES PARA EDIT.
-      Self.PreencherProduto(FProduto);
-      Self.EditDesconto.Text := FloatToStr(FItemPedido.DescontoPercent);
-      Self.EditQuantidade.Text :=  FloatToStr(FItemPedido.Quantidade);
+      Self.PreencherProduto(Self.FProduto);
+      Self.EditDesconto.Text := FloatToStr(LItemPedido.DescontoPercent);
+      Self.EditQuantidade.Text :=  FloatToStr(LItemPedido.Quantidade);
 
       //CALCULAR VALOR TOTAL
       Self.CalcularTotal;
     end;
   end;
 
-procedure TFormInserirItem.BitBtnBuscarProdutoClick(Sender: TObject);
+  // ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS
+
+  //BUSCAR PRODUTO
+  procedure TFormItensPedido.BitBtnBuscarProdutoClick(Sender: TObject);
   var LFORM: TFormBuscarProdutos;
   begin
     LFORM := nil;
@@ -125,9 +137,10 @@ procedure TFormInserirItem.BitBtnBuscarProdutoClick(Sender: TObject);
       LFORM := TFormBuscarProdutos.Create(nil,FRepositoryProdutosECF,FControllerProdutosECF);
       if LFORM.ShowModal = mrOk then
       begin
-        Self.PreencherProduto(LFORM.FProduto);
         //RECEBER PRODUTO SELECIONADO
         Self.FProduto := LFORM.FProduto;
+
+        Self.PreencherProduto(Self.FProduto);
         Self.CalcularTotal;
       end;
     finally
@@ -135,54 +148,77 @@ procedure TFormInserirItem.BitBtnBuscarProdutoClick(Sender: TObject);
     end;
   end;
 
-
   //EVENTO PARA CALCULAR TOTAL:
-  procedure TFormInserirItem.EditDescontoChange(Sender: TObject);
+  procedure TFormItensPedido.EditDescontoChange(Sender: TObject);
   begin
     Self.CalcularTotal;
   end;
 
   //EVENTO PARA CALCULAR TOTAL:
-  procedure TFormInserirItem.EditQuantidadeChange(Sender: TObject);
+  procedure TFormItensPedido.EditQuantidadeChange(Sender: TObject);
   begin
     Self.CalcularTotal;
   end;
 
   //CANCELAR
-  procedure TFormInserirItem.ButtonCancelarClick(Sender: TObject);
+  procedure TFormItensPedido.ButtonCancelarClick(Sender: TObject);
   begin
     ModalResult := mrCancel;
   end;
 
   //CONFIRMAR
-  procedure TFormInserirItem.ButtonConfirmarClick(Sender: TObject);
+  procedure TFormItensPedido.ButtonConfirmarClick(Sender: TObject);
   begin
     if FOperacao = 'INSERT' then
     begin
       //CADASTRAR
-      Self.FControllerItensPedido.CadastrarItemPedido(
+//      Self.FControllerItensPedido.CadastrarItemPedido(
+//      Self.FIDPedido,
+//      Self.FProduto.Codigo,
+//      Self.EditQuantidade.Text,
+//      Self.EditPrecoUnitario.Text,
+//      Self.EditDesconto.Text,
+//      Self.EditValorDescontado.Text,
+//      Self.EditValorTotal.Text
+//      );
+
+      FItemPedido := Self.FControllerItensPedido.CriarItemPedido(
       Self.FIDPedido,
       Self.FProduto.Codigo,
       Self.EditQuantidade.Text,
       Self.EditPrecoUnitario.Text,
       Self.EditDesconto.Text,
       Self.EditValorDescontado.Text,
-      Self.EditValorTotal.Text
+      Self.EditValorTotal.Text,
+      Self.FProduto
       );
     end
     else if FOperacao = 'UPDATE' then
     begin
       //ALTERAR
-      Self.FControllerItensPedido.AlterarItemPedido(
-      FIDItemPedido,
+//      Self.FControllerItensPedido.AlterarItemPedido(
+//      FIDItemPedido,
+//      Self.FIDPedido,
+//      Self.FProduto.Codigo,
+//      Self.EditQuantidade.Text,
+//      Self.EditPrecoUnitario.Text,
+//      Self.EditDesconto.Text,
+//      Self.EditValorDescontado.Text,
+//      Self.EditValorTotal.Text
+//      );
+
+      FItemPedido := Self.FControllerItensPedido.CriarItemPedido(
       Self.FIDPedido,
       Self.FProduto.Codigo,
       Self.EditQuantidade.Text,
       Self.EditPrecoUnitario.Text,
       Self.EditDesconto.Text,
       Self.EditValorDescontado.Text,
-      Self.EditValorTotal.Text
+      Self.EditValorTotal.Text,
+      Self.FProduto
       );
+
+      Self.FItensPedido.Items[FIDItemPedido] := FItemPedido;
     end;
     ModalResult := mrOk;
   end;
@@ -190,7 +226,7 @@ procedure TFormInserirItem.BitBtnBuscarProdutoClick(Sender: TObject);
 // ############ MÉTODOS AUXÍLIARES ############ MÉTODOS AUXÍLIARES ############ MÉTODOS AUXÍLIARES ############ MÉTODOS AUXÍLIARES
 
   //PREENCHER FORM COM PRODUTO
-  procedure TFormInserirItem.PreencherProduto(AProduto: TProdutosECF);
+  procedure TFormItensPedido.PreencherProduto(AProduto: TProdutosECF);
   begin
     Self.EditNomeProduto.Text := AProduto.Nome;
     Self.EditPrecoUnitario.Text := CurrToStr(AProduto.PrecoVenda);
@@ -200,7 +236,7 @@ procedure TFormInserirItem.BitBtnBuscarProdutoClick(Sender: TObject);
   end;
 
   //CALCULAR VALOR TOTAL
-  procedure TFormInserirItem.CalcularTotal;
+  procedure TFormItensPedido.CalcularTotal;
   var
   LTotal: Currency;
   LValorUnitario: Currency;

@@ -198,7 +198,7 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Units\Forms\FormsSecundarios\Cadastro\UFormCadastroItemPedido.pas">
-            <Form>FormInserirItem</Form>
+            <Form>FormItensPedido</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Units\Forms\FormsSecundarios\Busca\UFormBuscarProdutos.pas">

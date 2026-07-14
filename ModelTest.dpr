@@ -39,7 +39,7 @@ uses
   UFormCadastroFormaPGTO in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroFormaPGTO.pas' {FormCadastroPGTO},
   UFormCadastroPedido in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroPedido.pas' {FormCadastroPedido},
   UFormCadastroProdutosEFC in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroProdutosEFC.pas' {FormCadastroProdutosEFC},
-  UFormCadastroItemPedido in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroItemPedido.pas' {FormInserirItem},
+  UFormCadastroItemPedido in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroItemPedido.pas' {FormItensPedido},
   UFormBuscarProdutos in 'Units\Forms\FormsSecundarios\Busca\UFormBuscarProdutos.pas' {FormBuscarProdutos},
   UDataSetColumnSum in 'Units\Utils\UDataSetColumnSum.pas';
 

@@ -10,6 +10,7 @@ interface
       function GetConexaoAtual : IDBConnection;
       function Select(AID:String):T;
       function SelectAll:TObjectList<T>;
+      function SelectAllByColumn(AColumn:String;AFilter:String): TObjectList<T>;
       procedure Insert(AClass:T);
       procedure Update(AID:String;ANewClass:T);
       procedure Delete(AClass:T);
