@@ -463,10 +463,19 @@ implementation
 
   //ATUALIZAR PEDIDO COMPLETO C/ TRANSAÇÃO (PEDIDO + ITENS)
   procedure TControllerPedidos.AtualizarPedidoComTransacao(APedido:TPedidos;AItensPedido:TOBjectList<TItensPedidos>);
+  var
+  LITemPedido: TItensPedidos;
   begin
     Self.FConn.StartTransaction;
     try
+      APedido.ID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
 
+//    ALTERAR ID_PEDIDO PARA ID ATUAL
+      for LITemPedido in AItensPedido do
+        LITemPedido.IDPedido := APedido.ID;
+//
+      Self.FAppPedidos.AtualizarPedido(APedido);
+      Self.FAppItensPedidos.AtualizarItensPedido(APedido.ID,AItensPedido);
 
       Self.FConn.Commit;
     except

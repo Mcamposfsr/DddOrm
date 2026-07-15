@@ -162,9 +162,9 @@ implementation
       ACodPedido: String
     );
   var LPedido: TPedidos;
-  LCodigo: String;
+  LID: String;
   begin
-    LCodigo := IntToStr(AID);
+    LID := IntToStr(AID);
     LPedido := nil;
     try
      LPedido := TPedidos.Create(
@@ -175,7 +175,7 @@ implementation
       ,ACodPedido
      );
 
-     FRepPedidos.Update(LCodigo,LPedido);
+     FRepPedidos.Update(LID,LPedido);
     finally
       LPedido.Free;
     end;
@@ -183,8 +183,10 @@ implementation
 
   //UPDATE - DTO PRONTO
   procedure TAppPedidos.AtualizarPedido(APedido: TPedidos);
+  var LID: String;
   begin
-    FRepPedidos.Update(APedido.CodPedido,APedido);
+    LID := IntToStr(APedido.ID);
+    FRepPedidos.Update(LID,APedido);
   end;
 
   //DELETE

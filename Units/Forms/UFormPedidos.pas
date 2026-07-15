@@ -40,26 +40,29 @@ type
     Label5: TLabel;
     EditTotalLiquido: TEdit;
     Label6: TLabel;
-    BitBtnCancelCliente: TBitBtn;
     DataSource: TDataSource;
     FDMemTable: TFDMemTable;
     BtnConfirmar: TButton;
-    Button1: TButton;
+    BtnCancelar: TButton;
+    BitBtnAlterarPedido: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure BitBtnBuscarPedidoClick(Sender: TObject);
     procedure BitBtnCriarPedidoClick(Sender: TObject);
     procedure BitBtnRemoverPedidoClick(Sender: TObject);
-    procedure BitBtnCancelClienteClick(Sender: TObject);
+    procedure BitBtnAlterarPedidoClick(Sender: TObject);
     procedure BitBtnAdicionarItemClick(Sender: TObject);
     procedure BitBtnExcluirItemClick(Sender: TObject);
     procedure BitBtnAlterarItemClick(Sender: TObject);
     procedure FDMemTableAfterRefresh(DataSet: TDataSet);
     procedure BtnConfirmarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure BtnCancelarClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     //ESTADOS INTERNOS
     FPedidoAtual: TPedidos;
     FItensPedido: TObjectList<TItensPedidos>;
+    FOperacao: String;
 
     //FERRAMENTAS
 
@@ -104,6 +107,9 @@ implementation
   // CONSTRUCTOR
   procedure TFormPedidos.FormCreate(Sender: TObject);
   begin
+    //SEM OPERAÇÃO INICIAL
+    FOperacao := '';
+
     //LISTA DE ITENS INTERNA
     FItensPedido := TObjectList<TItensPedidos>.Create(True);
 
@@ -129,8 +135,20 @@ implementation
     Self.ConfigurarDataset;
   end;
 
+
+
   //DESTRUCTOR
   procedure TFormPedidos.FormClose(Sender: TObject; var Action: TCloseAction);
+  begin
+    if Assigned(Self.FItensPedido) then
+      FreeAndNil(Self.FItensPedido);
+
+    if Assigned(Self.FPedidoAtual) then
+      FreeAndNil(Self.FPedidoAtual);
+  end;
+
+  //DESTRUCTOR
+  procedure TFormPedidos.FormDestroy(Sender: TObject);
   begin
     if Assigned(Self.FItensPedido) then
       Self.FItensPedido.Free;
@@ -150,13 +168,14 @@ implementation
     LFORM := nil;
     try
       LFORM := TFormBuscarPedido.Create(nil,FRepositoryPedidos,FControllerPedidos);
+      Self.RestarEstadoForm;
       if LFORM.ShowModal = mrOk then
       begin
         Self.FPedidoAtual := LFORM.FPedido;
         Self.PreencherPedido(Self.FPedidoAtual);
 
+        FreeAndNil(Self.FItensPedido);
         Self.FItensPedido := Self.FControllerPedidos.BuscarItensPedidos(Self.FPedidoAtual.ID);
-        Self.EstadoControlesItens(True);
 
         //BUSCAR PEDIDOS
         Self.AtualizarDataSet;
@@ -176,6 +195,10 @@ implementation
       LFORM := TFormCadastroPedido.Create(nil,FRepositoryPedidos,FControllerPedidos,FRepositoryClientesPGTO,FControllerClientes);
       if LFORM.ShowModal = mrOk then
       begin
+        Self.RestarEstadoForm;
+        Self.FOperacao := 'INSERT';
+        Self.BtnConfirmar.Enabled := True;
+
         Self.FPedidoAtual := LForm.FPedido;
 
         Self.PreencherPedido(Self.FPedidoAtual);
@@ -186,10 +209,18 @@ implementation
     end;
   end;
 
-//CANCELAR
-  procedure TFormPedidos.BitBtnCancelClienteClick(Sender: TObject);
+  //ALTERAR PEDIDO
+  procedure TFormPedidos.BitBtnAlterarPedidoClick(Sender: TObject);
   begin
-    Self.RestarEstadoForm;
+    if not Assigned(FPedidoAtual) then
+    begin
+      ShowMessage('Selecione um pedido!');
+      Exit;
+    end;
+
+    Self.FOperacao := 'UPDATE';
+    Self.BtnConfirmar.Enabled := True;
+    Self.EstadoControlesItens(True);
   end;
 
   //DELETAR PEDIDO
@@ -202,14 +233,17 @@ implementation
     end;
 
     Self.FControllerPedidos.DeletarPedido(Self.FPedidoAtual.ID);
+
+    Self.FOperacao := '';
     Self.RestarEstadoForm;
+
     ShowMessage('Pedido Excluído!');
   end;
 
 
 // ********** ITENS **********
 
-  //ADICIONAR PRODUTO
+  //ADICIONAR ITEM
   procedure TFormPedidos.BitBtnAdicionarItemClick(Sender: TObject);
   var LFORM: TFormItensPedido;
   begin
@@ -229,13 +263,14 @@ implementation
       begin
         Self.FItensPedido.Add(LFORM.FItemPedido);
         Self.AtualizarDataSet;
+        Self.PassarValorTotal;
       end;
     finally
       LFORM.Free;
     end;
   end;
 
-  //ALTERAR PRODUTO
+  //ALTERAR ITEM
   procedure TFormPedidos.BitBtnAlterarItemClick(Sender: TObject);
   var
   LFORM: TFormItensPedido;
@@ -266,13 +301,14 @@ implementation
       begin
         Self.AtualizarDataSet;
         ShowMessage('Produto alterado');
+        Self.PassarValorTotal;
       end;
     finally
       LFORM.Free;
     end;
   end;
 
-  //REMOVER PRODUTO
+  //REMOVER ITEM
   procedure TFormPedidos.BitBtnExcluirItemClick(Sender: TObject);
   var LID: Integer;
   begin
@@ -286,9 +322,39 @@ implementation
     Self.FItensPedido.Delete(LID);
 
     Self.AtualizarDataSet;
+    Self.PassarValorTotal;
     ShowMessage('Produto excluído');
   end;
 
+  // ***** FINAL DO FLUXO *****
+
+  //CONFIRMAR AÇÕES
+  procedure TFormPedidos.BtnConfirmarClick(Sender: TObject);
+  begin
+    if Self.FOperacao = '' then
+      ShowMessage('Nenhuma operacao iniciada')
+    else if Self.FOperacao = 'INSERT' then
+    begin
+      Self.FControllerPedidos.CriarPedidoComTransacao(Self.FPedidoAtual,Self.FItensPedido);
+      ShowMessage('Pedido Cadastrado!');
+    end
+    else if Self.FOperacao = 'UPDATE' then
+    begin
+      Self.FControllerPedidos.AtualizarPedidoComTransacao(Self.FPedidoAtual,Self.FItensPedido);
+      ShowMessage('Pedido Alterado!');
+    end;
+
+    Self.BtnConfirmar.Enabled := False;
+    Self.RestarEstadoForm;
+  end;
+
+  //CANCELAR AÇÕES
+  procedure TFormPedidos.BtnCancelarClick(Sender: TObject);
+  begin
+    Self.RestarEstadoForm;
+  end;
+
+  // ***** EVENTO AUXILIAR *****
 
   //CALCULAR TOTAL
   procedure TFormPedidos.FDMemTableAfterRefresh(DataSet: TDataSet);
@@ -298,13 +364,6 @@ implementation
     Self.EditTotalLiquido.Text := CurrToStr(LValorTotal);
   end;
 
-  //CONFIRMAR AÇÕES
-  procedure TFormPedidos.BtnConfirmarClick(Sender: TObject);
-  begin
-    Self.FControllerPedidos.CriarPedidoComTransacao(Self.FPedidoAtual,Self.FItensPedido);
-    ShowMessage('Pedido Cadastrado!');
-    Self.RestarEstadoForm;
-  end;
 
 // ######### FUNÇÕES AUXÍLIARES ######### FUNÇÕES AUXÍLIARES ######### FUNÇÕES AUXÍLIARES ######### FUNÇÕES AUXÍLIARES ######### FUNÇÕES AUXÍLIARES
 
@@ -369,10 +428,7 @@ implementation
   //ATUALIZAR VALOR TOTAL DO REGISTRO DE PEDIDOS
   procedure TFormPedidos.PassarValorTotal;
   begin
-    Self.FControllerPedidos.AtualizarValorTotalPedido(
-    Self.FPedidoAtual.ID,
-    Self.EditTotalLiquido.Text
-    );
+    Self.FPedidoAtual.TotalLiquido := StrToCurrDef(Self.EditTotalLiquido.Text,0);
   end;
 
   //ATUALIZAR VALOR TOTAL DO REGISTRO DE PEDIDOS
@@ -410,10 +466,18 @@ implementation
   //RESETAR O ESTADO INICIAL DO FORM
   procedure TFormPedidos.RestarEstadoForm;
   begin
+    //RESETAR OPERACAO
+    FOperacao := '';
+    //DESATIVAR BTN CONFIRMAR
+    Self.BtnConfirmar.Enabled := False;
+    //LIBERAR ESTADOS ITNERNOS
     FreeAndNil(Self.FPedidoAtual);
-    FreeAndNil(Self.FItensPedido);
+    Self.FItensPedido.Clear;
+    //RESETAR DATASET
     Self.AtualizarDataSet;
+    //DESATIVAR BOTOES DOS ITENS
     Self.EstadoControlesItens(False);
+    //LIMPAR CAMPOS DE PEDIDOS
     Self.LimparPedidos;
   end;
 
