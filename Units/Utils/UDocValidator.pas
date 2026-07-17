@@ -6,6 +6,7 @@ uses
   System.SysUtils,System.Classes,System.Generics.Collections,Vcl.Dialogs;
 
 type
+  //CLASSE VALIDADORA DE DOCUMENTOS
   TDocValidator = class
   public
     //RETIRAR SINAIS DO DOCUMENTO

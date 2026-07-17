@@ -7,13 +7,13 @@ interface
 
 implementation
 
-
+  // FORMATAR MENSAGEM DE ERROR -> EErrorFormInput
   Function FFormatErrorText(ACampos,AValores:TStringList):String;
   var
   LMsg: String;
   I: Integer;
   begin
-    LMsg := sLineBreak + 'Campos inválidos:' + sLineBreak;
+    LMsg := sLineBreak + sLineBreak + 'Campos inválidos:' + sLineBreak;
 
     for  I:= 0  to ACampos.Count -1 do
     begin

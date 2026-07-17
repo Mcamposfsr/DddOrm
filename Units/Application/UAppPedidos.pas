@@ -10,7 +10,6 @@ interface
     Function BuscarPedidoPeloCodigo(ACod:String): TPedidos;
     Function BuscarPedidoByID(ACodigo:Integer):TPedidos;
 
-
     procedure InserirPedido(
     AIDCliente: Integer;
     ADataEmissao: TDate;
@@ -36,6 +35,7 @@ interface
     procedure DeletarPedido(ACodigo:Integer);
     //AUX
     procedure AtualizarTotalPedido(AID:Integer; ATotal:String);
+    Function CriarDTOPedido(AIDPedido,AIDCliente:Integer;ACodPedido:String;ATotalLiquido:Currency;ADataEmissao:TDate;ACliente:TClientePGTO):TPedidos;
 
     //DATASET LEGADO
     procedure BuscarPedidosLegado;
@@ -72,6 +72,8 @@ interface
 
     //AUX
     procedure AtualizarTotalPedido(AID:Integer; ATotal:String);
+    Function CriarDTOPedido(AIDPedido,AIDCliente:Integer;ACodPedido:String;ATotalLiquido:Currency;ADataEmissao:TDate;ACliente:TClientePGTO):TPedidos;
+
 
     //DATASET LEGADO
     procedure BuscarPedidosLegado;
@@ -141,6 +143,9 @@ implementation
        ATotalLiquido,
        ACodPedido
      );
+
+     LPedido.Validar;
+
      FRepPedidos.Insert(LPedido);
     finally
       LPedido.Free;
@@ -150,6 +155,7 @@ implementation
   //INSERT  - DTO PRONTO
   procedure TAppPedidos.InserirPedido(APedido: TPedidos);
   begin
+    APedido.Validar;
     FRepPedidos.Insert(APedido);
   end;
 
@@ -175,6 +181,8 @@ implementation
       ,ACodPedido
      );
 
+     LPedido.Validar;
+
      FRepPedidos.Update(LID,LPedido);
     finally
       LPedido.Free;
@@ -185,6 +193,7 @@ implementation
   procedure TAppPedidos.AtualizarPedido(APedido: TPedidos);
   var LID: String;
   begin
+    APedido.Validar;
     LID := IntToStr(APedido.ID);
     FRepPedidos.Update(LID,APedido);
   end;
@@ -238,6 +247,31 @@ implementation
     LTotal := StringReplace(ATotal,',','.',[rfReplaceAll]);
     LSQL := 'UPDATE PEDIDOS SET TOTAL_LIQUIDO = ' + LTotal + ' WHERE ID_PEDIDO = ' + LID;
     Self.FRepPedidos.ExecSQL(LSQL);
+  end;
+
+  //CRIAR E RETORNAR DTO PEDIDOS
+  Function TAppPedidos.CriarDTOPedido(
+  AIDPedido,
+  AIDCliente:Integer;
+  ACodPedido:String;
+  ATotalLiquido:Currency;
+  ADataEmissao:TDate;
+  ACliente:TClientePGTO
+  ):TPedidos;
+  var LPedido: TPedidos;
+  begin
+    LPedido :=  TPedidos.Create(
+    AIDPedido,
+    AIDCliente,
+    ADataEmissao,
+    ATotalLiquido,
+    ACodPedido,
+    ACliente
+    );
+
+    LPedido.Validar;
+
+    Result := LPedido;
   end;
 
   //DATASET LEGADO

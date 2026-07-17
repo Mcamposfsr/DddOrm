@@ -50,6 +50,7 @@ uses
 
     Destructor Destroy;
 
+    procedure Validar;
   published
 
     //CÓDIGO PEDIDO
@@ -111,10 +112,35 @@ implementation
     inherited
   end;
 
+
+
   // ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES
 
-//  procedure TProdutosECF.Validar;
-//  begin
-//  end;
+  procedure TPedidos.Validar;
+  var
+   LErrorCadastro: EErrorFormInput;
+   LEstado: Boolean;
+   begin
+    LErrorCadastro := EErrorFormInput.Create;
+    LEstado := True;
+
+
+    //VERIFICAR SE JOIN FOI FEITO
+    if not assigned(Self.FCLiente) then
+      raise Exception.Create('Falha interna, cliente não incluso no domain pedido');
+
+    if Self.FCLiente.Ativo = 'N' then
+      begin
+        LEstado  := False;
+        LErrorCadastro.FCampos.Add('Cliente Ativo');
+        LErrorCadastro.FValores.Add('Pedidos estão disponíveis apenas para clientes ativos!');
+      end;
+
+    if not LEstado then
+      raise LErrorCadastro
+    else
+      LErrorCadastro.Free;
+
+   end;
 
 end.

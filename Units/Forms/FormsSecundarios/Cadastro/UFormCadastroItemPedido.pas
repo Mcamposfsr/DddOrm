@@ -39,6 +39,7 @@ type
     procedure EditDescontoChange(Sender: TObject);
     procedure ButtonCancelarClick(Sender: TObject);
     procedure ButtonConfirmarClick(Sender: TObject);
+
   private
     //FERRAMENTAS
     FRepositoryItensPedido: IRepository<TItensPedidos>;
@@ -49,14 +50,14 @@ type
 
     procedure PreencherProduto(AProduto: TProdutosECF);
     procedure CalcularTotal;
+    procedure VerificarProduto;
   public
     //VAR CONTROLE
 
     FIDPedido: Integer;
-    FIDItemPedido: Integer;
+    FIndiceItemPedido: Integer;
     FItemPedido: TItensPedidos;
     FItensPedido: TObjectList<TItensPedidos>;
-
     FProduto: TProdutosECF;
 
     FOperacao: String;
@@ -64,7 +65,7 @@ type
     constructor Create(
     AOwner:TComponent;
     AIDPedido:Integer;
-    AIDItem:Integer;
+    AIndiceItem:Integer;
     AOperacao:String;
     ARepositoryItensPedido: IRepository<TItensPedidos>;
     AControllerItensPedido: IControllerPedidos;
@@ -84,7 +85,7 @@ implementation
 constructor TFormItensPedido.Create(
     AOwner:TComponent;
     AIDPedido:Integer;
-    AIDItem:Integer;
+    AIndiceItem:Integer;
     AOperacao:String;
     ARepositoryItensPedido: IRepository<TItensPedidos>;
     AControllerItensPedido: IControllerPedidos;
@@ -92,11 +93,10 @@ constructor TFormItensPedido.Create(
     AControllerProdutosECF:IControllerProdutosECF;
     AItensPedido: TObjectList<TItensPedidos> = nil
     );
-  var LItemPedido :TItensPedidos;
   begin
     inherited Create(AOwner);
     FIDPedido := AIDPedido;
-    FIDItemPedido := AIDItem;
+    FIndiceItemPedido := AIndiceItem;
     FOperacao := AOperacao;
     FRepositoryItensPedido := ARepositoryItensPedido;
     FControllerItensPedido := AControllerItensPedido;
@@ -111,15 +111,15 @@ constructor TFormItensPedido.Create(
     else if FOperacao = 'UPDATE' then
     begin
       //AUXÍLIO NO USO DO ITEM
-      LItemPedido := FItensPedido.Items[FIDItemPedido];
+      Self.FItemPedido := FItensPedido.Items[FIndiceItemPedido];
 
       //PASSAR ITEM PARA FORMULÁRIO
-      Self.FProduto := LItemPedido.Produto;
+      Self.FProduto := Self.FItemPedido.Produto;
 
       //PASAR VALORES PARA EDIT.
       Self.PreencherProduto(Self.FProduto);
-      Self.EditDesconto.Text := FloatToStr(LItemPedido.DescontoPercent);
-      Self.EditQuantidade.Text :=  FloatToStr(LItemPedido.Quantidade);
+      Self.EditDesconto.Text := FloatToStr(Self.FItemPedido.DescontoPercent);
+      Self.EditQuantidade.Text :=  FloatToStr(Self.FItemPedido.Quantidade);
 
       //CALCULAR VALOR TOTAL
       Self.CalcularTotal;
@@ -139,6 +139,9 @@ constructor TFormItensPedido.Create(
       begin
         //RECEBER PRODUTO SELECIONADO
         Self.FProduto := LFORM.FProduto;
+
+        //TRABALHAR A MESMA REFERÊNCIA DA LISTA
+        Self.VerificarProduto;
 
         Self.PreencherProduto(Self.FProduto);
         Self.CalcularTotal;
@@ -169,22 +172,18 @@ constructor TFormItensPedido.Create(
   //CONFIRMAR
   procedure TFormItensPedido.ButtonConfirmarClick(Sender: TObject);
   begin
+    if not assigned(Self.FProduto) then
+    begin
+      ShowMessage('Selecione um Produto');
+      Exit;
+    end;
+
     if FOperacao = 'INSERT' then
     begin
-      //CADASTRAR
-//      Self.FControllerItensPedido.CadastrarItemPedido(
-//      Self.FIDPedido,
-//      Self.FProduto.Codigo,
-//      Self.EditQuantidade.Text,
-//      Self.EditPrecoUnitario.Text,
-//      Self.EditDesconto.Text,
-//      Self.EditValorDescontado.Text,
-//      Self.EditValorTotal.Text
-//      );
-
-      FItemPedido := Self.FControllerItensPedido.CriarItemPedido(
+      //CADASTRAR EM MEMÓRIA
+      Self.FControllerItensPedido.CriarItemPedidoEmMemoria(
+      Self.FItensPedido,
       Self.FIDPedido,
-      Self.FProduto.Codigo,
       Self.EditQuantidade.Text,
       Self.EditPrecoUnitario.Text,
       Self.EditDesconto.Text,
@@ -195,30 +194,23 @@ constructor TFormItensPedido.Create(
     end
     else if FOperacao = 'UPDATE' then
     begin
-      //ALTERAR
-//      Self.FControllerItensPedido.AlterarItemPedido(
-//      FIDItemPedido,
-//      Self.FIDPedido,
-//      Self.FProduto.Codigo,
-//      Self.EditQuantidade.Text,
-//      Self.EditPrecoUnitario.Text,
-//      Self.EditDesconto.Text,
-//      Self.EditValorDescontado.Text,
-//      Self.EditValorTotal.Text
-//      );
-
-      FItemPedido := Self.FControllerItensPedido.CriarItemPedido(
-      Self.FIDPedido,
-      Self.FProduto.Codigo,
-      Self.EditQuantidade.Text,
-      Self.EditPrecoUnitario.Text,
-      Self.EditDesconto.Text,
-      Self.EditValorDescontado.Text,
-      Self.EditValorTotal.Text,
-      Self.FProduto
+      //ALTERAR EM MEMÓRIA
+      Self.FControllerItensPedido.AtualizarItemPedidoEmMemoria(
+        //ITEM ATIGO
+        Self.FIndiceItemPedido,
+        Self.FItensPedido,
+        //ITEM NOVO
+        Self.FItemPedido.ID,
+        Self.FIDPedido,
+        Self.FProduto.Codigo,
+        Self.EditQuantidade.Text,
+        Self.EditPrecoUnitario.Text,
+        Self.EditDesconto.Text,
+        Self.EditValorDescontado.Text,
+        Self.EditValorTotal.Text,
+        Self.FProduto
       );
 
-      Self.FItensPedido.Items[FIDItemPedido] := FItemPedido;
     end;
     ModalResult := mrOk;
   end;
@@ -266,6 +258,26 @@ constructor TFormItensPedido.Create(
     //PASSAGEM DE VALORES PARA FORMULÁRIO
     Self.EditValorDescontado.Text := CurrToStr(LValorTotalDesconto);
     Self.EditValorTotal.Text := CurrToStr(LTotal);
+  end;
+
+  //VERIFICAR SE PRODUTO JÁ ESTÁ PRESENTE NA LISTA(PARA TRABALHAR COM A MESMA REFERÊNCIA DO PRODUTO)
+  procedure TFormItensPedido.VerificarProduto;
+  var
+  //VAR AUX PARA GARANTIR CONTROLE DE ESTOQUE
+  LItem: TItensPedidos;
+  begin
+    //VERIFICAR SE HÁ ITEM REPETIDO.
+    for LItem in FItensPedido do
+    begin
+      //VERIFICAR SE O PRODUTO BUSCADO NO BANCO JÁ NÃO ESTÁ NA LISTA - SE ESTIVER, OS ITENS DEVEM APONTAR PARA A MESMA REFERÊNCIA DO PRODUTO
+      if LItem.Produto.CodigoDeBarras = Self.FProduto.CodigoDeBarras then
+      begin
+        //PASSAR REFERÊNCIA JÁ EXISTENTE / LIMPAR REFERÊNCIA QUE VEIO DO BANCO.
+        Self.FProduto.Free;
+        Self.FProduto := LItem.Produto;
+        Break;
+      end;
+    end;
   end;
 
 end.

@@ -11,8 +11,6 @@ uses
   //INTERFACE DM
   UIDM;
 
-  
-
 type
   TDM = class(TInterfacedObject,IDM)
   private
@@ -54,6 +52,7 @@ implementation
     Self.FConnection.TxOptions.AutoCommit := False;
   end;
 
+  // DESTRUCTOR
   destructor TDM.Destroy;
   begin
       if Assigned(Self.FConnection) then
@@ -62,7 +61,6 @@ implementation
         Self.FConnection.Connected := False;
       FConnection.Free;
     end;
-
     inherited Destroy;
   end;
 

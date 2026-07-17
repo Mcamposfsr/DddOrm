@@ -31,6 +31,7 @@ type
     procedure BtnCadastrarClick(Sender: TObject);
     procedure BtnAlterarClick(Sender: TObject);
     procedure BtnDeletarClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     //FERRAMENTAS
     FRepository: IRepository<TProdutosECF>;
@@ -70,11 +71,15 @@ procedure TFormProdutosEFC.FormCreate(Sender: TObject);
     TFloatField(FDMemTable.FieldByName('DESCONTO_MAX')).DisplayFormat := '0.0 %';
 
     FRepository.AtualizarDataSet;
-
   end;
 
-
 // ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
+
+  //ATUALIZAR SEMPRE QUE ABERTO
+  procedure TFormProdutosEFC.FormShow(Sender: TObject);
+  begin
+    FRepository.AtualizarDataSet;
+  end;
 
   //FILTRAR
   procedure TFormProdutosEFC.EditFiltroChange(Sender: TObject);

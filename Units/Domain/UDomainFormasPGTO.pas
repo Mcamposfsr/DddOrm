@@ -101,7 +101,9 @@ implementation
     end;
 
     if not LEstado then
-      raise LErrorCadastro;
+      raise LErrorCadastro
+    else
+      LErrorCadastro.Free;
 
    end;
 

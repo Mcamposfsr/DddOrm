@@ -6,6 +6,7 @@ interface
 
   type IAppItensPedidos = Interface
 
+    //CRUD
     Function BuscarItensPedido:TObjectList<TItensPedidos>;
     Function BuscarItemPedidoByID(ACodigo:Integer):TItensPedidos;
     Function BuscarITensDoPedido(AID:Integer):TObjectList<TItensPedidos>;
@@ -19,9 +20,7 @@ interface
       ADescontoValor: Currency;
       ATotal: Currency
     );
-
     procedure InserirItensPedido(AItens:TObjectList<TItensPedidos>);
-
     procedure AtualizarItemPedido(
       FID: Integer;
       FIDPedido: Integer;
@@ -32,15 +31,45 @@ interface
       FDescontoValor: Currency;
       FTotal: Currency
     );
-
     procedure AtualizarItensPedido(AIDPedido:Integer;AItens:TObjectList<TItensPedidos>);
     procedure DeletarItemPedido(AID:Integer);
+
+    // AUX CRUD
+    procedure CriarDTOItensPedido(
+      AItens:TObjectList<TItensPedidos>;
+      AIDItemPedido,
+      AIDPedido:Integer;
+      APrecoUnit,
+      ADescontoValor,
+      ATotal:Currency;
+      ADescontoPercent,
+      AQuantidade:Double;
+      AProduto:TProdutosECF
+      );
+
+    procedure AtualizarDTOItensPedido(
+      //ITEM ORIGINAL
+      AIndiceItemOriginal:Integer;
+      AItens:TObjectList<TItensPedidos>;
+
+      //ITEM NOVO
+      AIDItemPedido,
+      AIDPedido,
+      AIDProduto:Integer;
+      APrecoUnit,
+      ADescontoValor,
+      ATotal:Currency;
+      ADescontoPercent,
+      AQuantidade:Double;
+      AProduto:TProdutosECF
+    );
 
   End;
 
   type TAppItensPedidos = class(TInterfacedObject,IAppItensPedidos)
     public
 
+    //CRUD
     Function BuscarItensPedido:TObjectList<TItensPedidos>;
     Function BuscarItemPedidoByID(ACodigo:Integer):TItensPedidos;
     Function BuscarITensDoPedido(AID:Integer):TObjectList<TItensPedidos>;
@@ -55,7 +84,6 @@ interface
       ATotal: Currency
     );
     procedure InserirItensPedido(AItens:TObjectList<TItensPedidos>);
-
     procedure AtualizarItemPedido(
       FID: Integer;
       FIDPedido: Integer;
@@ -68,6 +96,36 @@ interface
     );
     procedure AtualizarItensPedido(AIDPedido:Integer;AItens:TObjectList<TItensPedidos>);
     procedure DeletarItemPedido(AID:Integer);
+
+    // AUX CRUD
+    procedure CriarDTOItensPedido(
+      AItens:TObjectList<TItensPedidos>;
+      AIDItemPedido,
+      AIDPedido:Integer;
+      APrecoUnit,
+      ADescontoValor,
+      ATotal:Currency;
+      ADescontoPercent,
+      AQuantidade:Double;
+      AProduto:TProdutosECF
+      );
+
+    procedure AtualizarDTOItensPedido(
+      //ITEM ORIGINAL
+      AIndiceItemOriginal:Integer;
+      AItens:TObjectList<TItensPedidos>;
+
+      //ITEM NOVO
+      AIDItemPedido,
+      AIDPedido,
+      AIDProduto:Integer;
+      APrecoUnit,
+      ADescontoValor,
+      ATotal:Currency;
+      ADescontoPercent,
+      AQuantidade:Double;
+      AProduto:TProdutosECF
+    );
 
     constructor Create(
     ARepItensPedido:IRepository<TItensPedidos>;
@@ -163,12 +221,20 @@ implementation
     end;
   end;
 
-  //INSERIR VÁRIOS ITENS
+  //INSERIR VÁRIOS ITENS (JÁ PRONTOS)
   procedure TAppItensPedidos.InserirItensPedido(AItens:TObjectList<TItensPedidos>);
-  var LItens: TItensPedidos;
+  var
+  LItens: TItensPedidos;
+  LID: String;
   begin
     for LItens in AItens do
     begin
+      LID := IntToStr(LItens.Produto.Codigo);
+
+      //ATUALIZAR PRODUTO VENDIDO
+      Self.FRepProduto.Update(LID,LITens.Produto);
+
+      //INSERIR ITEM NO PEDIDO
       FRepItensPedido.Insert(LItens);
     end;
   end;
@@ -250,5 +316,119 @@ implementation
 
     Self.FRepItensPedido.OpenFirebirdLegado(LSQL);
   end;
+
+  //CRIAR DTO -> TRABALHAR COM OS ITENS EM MEMÓRIA
+  procedure TAppItensPedidos.CriarDTOItensPedido(
+    AItens:TObjectList<TItensPedidos>;
+    AIDItemPedido,
+    AIDPedido:Integer;
+    APrecoUnit,
+    ADescontoValor,
+    ATotal:Currency;
+    ADescontoPercent,
+    AQuantidade:Double;
+    AProduto:TProdutosECF
+    );
+  var LITemPedidos: TItensPedidos;
+  begin
+    LITemPedidos := TItensPedidos.Create(
+    AIDItemPedido,
+    AIDPedido,
+    AProduto.Codigo,
+    AQuantidade,
+    APrecoUnit,
+    ADescontoPercent,
+    ADescontoValor,
+    ATotal,
+    //ENUM PARA INFORMAR PRODUTO NÃO ALTERADO
+    siNotAltered,
+    AProduto
+    );
+
+    //VALIDAÇÃO INTERNA
+    LITemPedidos.Validar;
+
+    //TRABALHAR ESTOQUE EM MEMÓRIA PARA AO FIM ATUALIZAR.
+    LItemPedidos.DescontarEstoque;
+
+    AItens.add(LITemPedidos);
+  end;
+
+  //ATUALIZAR DTO -> TRABALHAR COM OS ITENS EM MEMÓRIA
+  procedure TAppItensPedidos.AtualizarDTOItensPedido(
+      //ITEM ORIGINAL
+      AIndiceItemOriginal:Integer;
+      AItens:TObjectList<TItensPedidos>;
+
+      //ITEM NOVO
+      AIDItemPedido,
+      AIDPedido,
+      AIDProduto:Integer;
+      APrecoUnit,
+      ADescontoValor,
+      ATotal:Currency;
+      ADescontoPercent,
+      AQuantidade:Double;
+      AProduto:TProdutosECF
+    );
+    var
+    LITemNovo: TItensPedidos;
+    LITemAntigo: TItensPedidos;
+    begin
+      //BUSCAR ITEM ANTIGO NO ARRRAY
+      LITemAntigo := AItens.Items[AIndiceItemOriginal];
+
+      //DEVOLVER ANTIGO ESTOQUE
+      LITemAntigo.DevolverEstoque;
+
+      //ALTERAÇÃO NO MESMO PRODUTO
+      if LITemAntigo.Produto.CodigoDeBarras = AProduto.CodigoDeBarras then
+      begin
+        //ATUALIZAR CONFIGURAÇÕES
+
+        LITemAntigo.Quantidade := AQuantidade;
+        LITemAntigo.DescontoPercent := ADescontoPercent;
+        LITemAntigo.DescontoValor := ADescontoValor;
+        LITemAntigo.Total := ATotal;
+
+        //MARCAR COMO ALTERADO
+        LITemAntigo.State :=  siAltered;
+
+        //VERIFICAR SE ATUALIZAÇÃO ESTÁ OK
+        LITemAntigo.Validar;
+
+        //AJUSTAR NOVO ESTOQUE EM MEMÓRIA
+        LITemAntigo.DescontarEstoque;
+      end
+      //ALTERAÇÃO DE PRODUTOS DIFERENTES
+      else if LITemAntigo.Produto.CodigoDeBarras <> AProduto.CodigoDeBarras then
+      begin
+        //FLAG PARA LIMPAR ITEM ANTIGO DO BANCO
+        LITemAntigo.State := siDeleted;
+
+        //CRIAR NOVO ITEM
+        LITemNovo := TItensPedidos.Create(
+        AIDItemPedido,
+        AIDPedido,
+        AIDProduto,
+        AQuantidade,
+        APrecoUnit,
+        ADescontoPercent,
+        ADescontoValor,
+        ATotal,
+        //ENUM PARA INFORMAR PRODUTO NÃO ALTERADO
+        siNotAltered,
+        AProduto
+        );
+
+        //VERIFICAR SE NOVO ITEM ESTÁ OK
+        LITemNovo.Validar;
+
+        //AJUSTAR NOVO ESTOQUE EM MEMÓRIA
+        LITemNovo.DescontarEstoque;
+
+        AItens.Add(LITemNovo);
+      end;
+    end;
 
 end.

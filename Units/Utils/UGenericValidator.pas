@@ -8,6 +8,8 @@ interface
   function ValidarNome(Anome:String):Boolean;
 implementation
 
+  //VALIDAÇÕES GERAIS
+
   function ValidarTelefone(ATelefone:String):Boolean;
   begin
     result :=  (TRegEx.IsMatch(ATelefone, '^(?:\d{11}|\(?\d{2}\)?\s?(?:\d{4,5}|\d\s\d{4})-\d{4})$'));

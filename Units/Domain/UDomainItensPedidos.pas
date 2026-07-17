@@ -20,6 +20,9 @@ uses
   UErros,UGenericValidator,UDocValidator,Vcl.Dialogs;
 
   type
+    TStatusItem = (siAltered,siDeleted,siNotAltered);
+
+  type
 
   [Entity]
   [Table('ITENS_PEDIDO','')]
@@ -36,7 +39,14 @@ uses
     FDescontoValor: Currency;
     FTotal: Currency;
     FProduto: TProdutosECF;
+
+    //CONTROLE DO ITEM
+    FState: TstatusItem;
   public
+
+    procedure Validar;
+    procedure DescontarEstoque;
+    procedure DevolverEstoque;
 
     Constructor Create(
       AID: Integer;
@@ -47,6 +57,7 @@ uses
       ADescontoPercent: Double;
       ADescontoValor: Currency;
       ATotal: Currency;
+      AState: TStatusItem = siNotAltered;
       AProduto: TProdutosECF = nil
       ); Overload;
 
@@ -87,6 +98,8 @@ uses
     //VALOR TOTAL
     [Column('TOTAL',ftCurrency)]
     property Total: Currency Read FTotal Write FTotal;
+
+    property State: TStatusItem Read FState Write FState;
   end;
 
 implementation
@@ -100,6 +113,7 @@ implementation
       ADescontoPercent: Double;
       ADescontoValor: Currency;
       ATotal: Currency;
+      AState: TStatusItem = siNotAltered;
       AProduto: TProdutosECF = nil
       );
   begin
@@ -111,10 +125,64 @@ implementation
     FDescontoPercent := ADescontoPercent;
     FDescontoValor := ADescontoValor;
     FTotal := ATotal;
+    FState :=  AState;
     FProduto := AProduto;
+
+  end;
+
+  // ######### REGRAS NEGÓCIO ######### REGRAS NEGÓCIO ######### REGRAS NEGÓCIO ######### REGRAS NEGÓCIO ######### REGRAS NEGÓCIO ######### REGRAS NEGÓCIO ######### REGRAS NEGÓCIO
+
+  //RETIRAR QUANTIDADE VENDIDA DO ESTOQUE -> NO FLUXO DE CADASTRO ESSE NOVO VALOR DO PRODUTO.ESTOQUE É PASSADO NO UPDATE.
+  procedure TItensPedidos.DescontarEstoque;
+  begin
+    //PASSAR VALOR A SER ALTERADO NO ESTOQUE (OBS: O MÉTODO DE PRODUTOS SOMA VALORES SEMPRE).
+    Self.FProduto.AlterarEstoque(-Self.FQuantidade);
+  end;
+
+  //DEVOLVER QUANTIDADE RETIRADA DO ESTOQUE
+  procedure TItensPedidos.DevolverEstoque;
+  begin
+    Self.FProduto.AlterarEstoque(Self.FQuantidade);
   end;
 
   // ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES
 
+  procedure TItensPedidos.Validar;
+  var
+  LErrorCadastro: EErrorFormInput;
+  LEstado: Boolean;
+  begin
+    LErrorCadastro := EErrorFormInput.Create;
+    LEstado := True;
+
+    //VALIDAR LIMITE DE DESCONTO
+    if Self.FProduto.DescontoMax < Self.FDescontoPercent then
+    begin
+      LEstado  := False;
+      LErrorCadastro.FCampos.Add('Limite de desconto');
+      LErrorCadastro.FValores.Add('Desconto maior que o limite permitido para o produto!');
+    end;
+
+    //VERIFICAR SE A VENDA DO PRODUTO É PERMITIDA
+    if Self.FProduto.SitPermiteVenda = 'N' then
+    begin
+      LEstado  := False;
+      LErrorCadastro.FCampos.Add('Venda permitida');
+      LErrorCadastro.FValores.Add('A venda desse produto não é permitida!');
+    end;
+
+    //VERIFICA SE HÁ ESTOQUE DISPONÍVEL
+    if Self.FProduto.Estoque < Self.Quantidade then
+    begin
+      LEstado  := False;
+      LErrorCadastro.FCampos.Add('Quantidade');
+      LErrorCadastro.FValores.Add('Quantidade é maior que estoque atual!');
+    end;
+
+    if not LEstado then
+      raise LErrorCadastro
+    else
+      LErrorCadastro.Free;
+  end;
 
 end.

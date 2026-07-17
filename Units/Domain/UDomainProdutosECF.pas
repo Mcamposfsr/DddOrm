@@ -37,9 +37,11 @@ uses
     FDescontoMax: Double;
 
     procedure ValidarCodBarras(AError:EErrorFormInput;var AEstado: Boolean);
+
   public
 
     procedure Validar;
+    procedure AlterarEstoque(AQuantidade:Double);
 
     Constructor Create(
     ACodigo: Integer;
@@ -123,6 +125,14 @@ implementation
     FDescontoMax := ADescontoMax;
   end;
 
+  // ######### REGRAS NEGÓCIO ######### REGRAS NEGÓCIO ######### REGRAS NEGÓCIO ######### REGRAS NEGÓCIO ######### REGRAS NEGÓCIO ######### REGRAS NEGÓCIO
+
+  procedure TProdutosECF.AlterarEstoque(AQuantidade:Double);
+  begin
+    //EXECUTAR POSSÍVEIS REGRAS DE ESTOQUE AQUI.
+    Self.Estoque := Self.Estoque + Aquantidade;
+  end;
+
   // ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES
 
   //VALIDAÇÃO CÓDIGO DE BARRAS
@@ -189,7 +199,9 @@ implementation
     end;
 
     if not LEstado then
-      raise LErrorCadastro;
+      raise LErrorCadastro
+    else
+      LErrorCadastro.Free;
 
    end;
 

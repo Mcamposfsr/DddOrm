@@ -111,15 +111,14 @@ constructor TFormCadastroPedido.Create(
   //CONFIRMAR
   procedure TFormCadastroPedido.ButtonConfirmarClick(Sender: TObject);
   begin
-//    Self.FControllerPedidos.CadastrarPedido(
-//    Self.FClienteAtual.Codigo,
-//    Self.EditDataPedido.Text,
-    //TOTAL COMEÇA VAZIO
-//    '',
-//    Self.EditNumeroPedido.Text);
+    if not Assigned(Self.FClienteAtual) then
+      begin
+        ShowMessage('Selecione um Cliente');
+        Exit;
+      end;
 
     //CRIAR PEDIDO EM MEMÓRIA
-    Self.FPedido :=  Self.FControllerPedidos.CriarPedido(
+    Self.FPedido :=  Self.FControllerPedidos.CriarPedidoEmMemoria(
     Self.FClienteAtual.Codigo,
     Self.EditDataPedido.Text,
     '',

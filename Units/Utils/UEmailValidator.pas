@@ -5,6 +5,7 @@ interface
 uses
   System.RegularExpressions;
 
+// VALIDAR EMAIL
 function ValidarEmail(AEmail: String): Boolean;
 
 implementation

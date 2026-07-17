@@ -2,7 +2,7 @@ object FormPrincipal: TFormPrincipal
   Left = 0
   Top = 0
   Caption = 'DDDORM'
-  ClientHeight = 553
+  ClientHeight = 533
   ClientWidth = 1072
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -974,7 +974,7 @@ object FormPrincipal: TFormPrincipal
     Left = 0
     Top = 100
     Width = 1072
-    Height = 453
+    Height = 433
     Align = alClient
     Caption = 'DDDORM'
     Font.Charset = ANSI_CHARSET

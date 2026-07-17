@@ -55,7 +55,6 @@ type
     procedure BitBtnAlterarItemClick(Sender: TObject);
     procedure FDMemTableAfterRefresh(DataSet: TDataSet);
     procedure BtnConfirmarClick(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BtnCancelarClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
@@ -77,8 +76,6 @@ type
     FAppItensPedidos: IAppItensPedidos;
     FAppClientes: IAppClientesPGTO;
     FAppProdutos: IAppProdutosECF;
-
-
 
     //CONTROLLERS
     FControllerPedidos: IControllerPedidos;
@@ -126,25 +123,21 @@ implementation
     FAppProdutos := TAppProdutosECF.Create(FRepositoryProdutos);
 
     //CONTROLLER
-    FControllerPedidos := TControllerPedidos.Create(GDM.GetConnection,FAppPedidos,FRepositoryPedidos,FAppItensPedidos,FRepositoryItensPedidos);
+    FControllerPedidos := TControllerPedidos.Create(
+    GDM.GetConnection,
+    FAppPedidos,
+    FRepositoryPedidos,
+    FAppItensPedidos,
+    FRepositoryItensPedidos,
+    FAppProdutos,
+    FRepositoryProdutos
+    );
+
     FControllerClientes := TControllerClientesPGTO.Create(FAppClientes,FRepositoryClientesPGTO);
     FControllerProdutos := TControllerProdutosECF.Create(FAppProdutos,FRepositoryProdutos);
 
-    //*PASSAR DATASET ITENS PEDIDOS*
-//    FRepositoryItensPedidos.ReceberDataSetFirebirdLegado(Self.FDMemTable);
+    //CONFIGURAR EXIBIÇÃO DO DATASET
     Self.ConfigurarDataset;
-  end;
-
-
-
-  //DESTRUCTOR
-  procedure TFormPedidos.FormClose(Sender: TObject; var Action: TCloseAction);
-  begin
-    if Assigned(Self.FItensPedido) then
-      FreeAndNil(Self.FItensPedido);
-
-    if Assigned(Self.FPedidoAtual) then
-      FreeAndNil(Self.FPedidoAtual);
   end;
 
   //DESTRUCTOR
@@ -257,11 +250,12 @@ implementation
       FRepositoryItensPedidos,
       FControllerPedidos,
       FRepositoryProdutos,
-      FControllerProdutos
+      FControllerProdutos,
+      //PASSAR LISTA PARA FORM TRABALHAR NA MESMA
+      Self.FItensPedido
       );
       if LFORM.ShowModal = mrOk then
       begin
-        Self.FItensPedido.Add(LFORM.FItemPedido);
         Self.AtualizarDataSet;
         Self.PassarValorTotal;
       end;
@@ -274,27 +268,28 @@ implementation
   procedure TFormPedidos.BitBtnAlterarItemClick(Sender: TObject);
   var
   LFORM: TFormItensPedido;
-  LID: Integer;
+  LIndiceItem: Integer;
   begin
     //VERIFICAR ANTES DE ALTERAR
     if Self.FDMemTable.IsEmpty then
     begin
-      ShowMessage('Nenhum Produto selecionado');
+      ShowMessage('Nenhum Produto selecionado');                           ;
       Exit;
     end;
 
-    LID := Self.FDMemTable.FieldByName('ID_ITEM').AsInteger;
+    LIndiceItem := Self.FDMemTable.FieldByName('INDICE_ITEM').AsInteger;
     LFORM := nil;
     try
       LFORM := TFormItensPedido.Create(
       nil,
       Self.FPedidoAtual.ID,
-      LID,
+      LIndiceItem,
       'UPDATE',
       FRepositoryItensPedidos,
       FControllerPedidos,
       FRepositoryProdutos,
       FControllerProdutos,
+      //PASSAR LISTA PARA FORM TRABALHAR NA MESMA
       Self.FItensPedido
       );
       if LFORM.ShowModal = mrOk then
@@ -310,7 +305,7 @@ implementation
 
   //REMOVER ITEM
   procedure TFormPedidos.BitBtnExcluirItemClick(Sender: TObject);
-  var LID: Integer;
+  var LIndiceItem: Integer;
   begin
     if Self.FDMemTable.IsEmpty then
     begin
@@ -318,8 +313,8 @@ implementation
       Exit;
     end;
 
-    LID := Self.FDMemTable.FieldByName('ID_ITEM').AsInteger;
-    Self.FItensPedido.Delete(LID);
+    LIndiceItem := Self.FDMemTable.FieldByName('INDICE_ITEM').AsInteger;
+    Self.FItensPedido.Delete(LIndiceItem);
 
     Self.AtualizarDataSet;
     Self.PassarValorTotal;
@@ -344,6 +339,7 @@ implementation
       ShowMessage('Pedido Alterado!');
     end;
 
+    //REINICIAR FORMULÁRIO
     Self.BtnConfirmar.Enabled := False;
     Self.RestarEstadoForm;
   end;
@@ -351,7 +347,9 @@ implementation
   //CANCELAR AÇÕES
   procedure TFormPedidos.BtnCancelarClick(Sender: TObject);
   begin
+    Self.BtnConfirmar.Enabled := False;
     Self.RestarEstadoForm;
+    Self.Close;
   end;
 
   // ***** EVENTO AUXILIAR *****
@@ -405,9 +403,13 @@ implementation
 
       for I := 0 to Self.FItensPedido.Count -1 do
       begin
+        //VERIFICAR SE ITEM FOI DELETADO
+        if Self.FItensPedido[I].State = siDeleted then
+          continue;
+
         Self.FDMemTable.Append;
 
-        Self.FDMemTable.FieldByName('ID_ITEM').AsInteger := I;
+        Self.FDMemTable.FieldByName('INDICE_ITEM').AsInteger := I;
         Self.FDMemTable.FieldByName('ID_PEDIDO').AsInteger := Self.FItensPedido[I].IDPedido;
         Self.FDMemTable.FieldByName('ID_PRODUTO').AsInteger := Self.FItensPedido[I].IDProduto;
         Self.FDMemTable.FieldByName('DESCONTO_PERCENT').AsFloat := Self.FItensPedido[I].DescontoPercent;
@@ -434,7 +436,7 @@ implementation
   //ATUALIZAR VALOR TOTAL DO REGISTRO DE PEDIDOS
   procedure TFormPedidos.ConfigurarDataset;
   begin
-    Self.FDMemTable.FieldDefs.Add('ID_ITEM',ftInteger);
+    Self.FDMemTable.FieldDefs.Add('INDICE_ITEM',ftInteger);
     Self.FDMemTable.FieldDefs.Add('ID_PEDIDO',ftInteger);
     Self.FDMemTable.FieldDefs.Add('ID_PRODUTO',ftInteger);
     Self.FDMemTable.FieldDefs.Add('PRO_NOME',ftString,50);
@@ -446,7 +448,7 @@ implementation
 
     Self.FDMemTable.CreateDataSet;
 
-    Self.FDMemTable.FieldByName('ID_ITEM').Visible := False;
+    Self.FDMemTable.FieldByName('INDICE_ITEM').Visible := False;
     Self.FDMemTable.FieldByName('ID_PEDIDO').Visible := False;
     Self.FDMemTable.FieldByName('ID_PRODUTO').Visible := False;
 
@@ -480,7 +482,5 @@ implementation
     //LIMPAR CAMPOS DE PEDIDOS
     Self.LimparPedidos;
   end;
-
-
 end.
 
