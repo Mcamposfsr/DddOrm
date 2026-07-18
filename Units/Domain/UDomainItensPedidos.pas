@@ -20,7 +20,7 @@ uses
   UErros,UGenericValidator,UDocValidator,Vcl.Dialogs;
 
   type
-    TStatusItem = (siAltered,siDeleted,siNotAltered);
+    TStatusItem = (siDefault,siCreated,siAltered,siDeleted);
 
   type
 
@@ -57,7 +57,7 @@ uses
       ADescontoPercent: Double;
       ADescontoValor: Currency;
       ATotal: Currency;
-      AState: TStatusItem = siNotAltered;
+      AState: TStatusItem = siDefault;
       AProduto: TProdutosECF = nil
       ); Overload;
 
@@ -113,7 +113,7 @@ implementation
       ADescontoPercent: Double;
       ADescontoValor: Currency;
       ATotal: Currency;
-      AState: TStatusItem = siNotAltered;
+      AState: TStatusItem = siDefault;
       AProduto: TProdutosECF = nil
       );
   begin

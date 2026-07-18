@@ -31,10 +31,12 @@ interface
       FDescontoValor: Currency;
       FTotal: Currency
     );
-    procedure AtualizarItensPedido(AIDPedido:Integer;AItens:TObjectList<TItensPedidos>);
+    procedure AtualizarItensPedido(AItens:TObjectList<TItensPedidos>);
     procedure DeletarItemPedido(AID:Integer);
 
-    // AUX CRUD
+    //CRUD EM MEMÓRIA
+
+    //CREATE
     procedure CriarDTOItensPedido(
       AItens:TObjectList<TItensPedidos>;
       AIDItemPedido,
@@ -47,6 +49,7 @@ interface
       AProduto:TProdutosECF
       );
 
+    //UPDATE
     procedure AtualizarDTOItensPedido(
       //ITEM ORIGINAL
       AIndiceItemOriginal:Integer;
@@ -63,6 +66,9 @@ interface
       AQuantidade:Double;
       AProduto:TProdutosECF
     );
+
+    //DELETE
+    procedure DeletarDTOItensPedido(AItem:TItensPedidos);
 
   End;
 
@@ -94,10 +100,12 @@ interface
       FDescontoValor: Currency;
       FTotal: Currency
     );
-    procedure AtualizarItensPedido(AIDPedido:Integer;AItens:TObjectList<TItensPedidos>);
+    procedure AtualizarItensPedido(AItens:TObjectList<TItensPedidos>);
     procedure DeletarItemPedido(AID:Integer);
 
-    // AUX CRUD
+    //CRUD EM MEMÓRIA
+
+    //CREATE
     procedure CriarDTOItensPedido(
       AItens:TObjectList<TItensPedidos>;
       AIDItemPedido,
@@ -110,6 +118,7 @@ interface
       AProduto:TProdutosECF
       );
 
+    //UPDATE
     procedure AtualizarDTOItensPedido(
       //ITEM ORIGINAL
       AIndiceItemOriginal:Integer;
@@ -126,6 +135,9 @@ interface
       AQuantidade:Double;
       AProduto:TProdutosECF
     );
+
+    //DELETE
+    procedure DeletarDTOItensPedido(AItem:TItensPedidos);
 
     constructor Create(
     ARepItensPedido:IRepository<TItensPedidos>;
@@ -184,6 +196,8 @@ implementation
     for LItem in LITens do
     begin
       LItem.Produto := FRepProduto.Select(IntToStr(LItem.IDProduto));
+      //DEFINIR ITENS VINDOS DO BANCO COMO INALTERADOS
+      LItem.State := siDefault;
     end;
 
     LID := IntToStr(AID);
@@ -224,18 +238,22 @@ implementation
   //INSERIR VÁRIOS ITENS (JÁ PRONTOS)
   procedure TAppItensPedidos.InserirItensPedido(AItens:TObjectList<TItensPedidos>);
   var
-  LItens: TItensPedidos;
+  LItem: TItensPedidos;
   LID: String;
   begin
-    for LItens in AItens do
+    for LItem in AItens do
     begin
-      LID := IntToStr(LItens.Produto.Codigo);
+      LID := IntToStr(LItem.Produto.Codigo);
 
-      //ATUALIZAR PRODUTO VENDIDO
-      Self.FRepProduto.Update(LID,LITens.Produto);
+      //INSERIR INTENS DELETADOS
+      if not (LItem.State = siDeleted) then
+      begin
+        //INSERIR ITEM NO PEDIDO
+        FRepItensPedido.Insert(LITem);
 
-      //INSERIR ITEM NO PEDIDO
-      FRepItensPedido.Insert(LItens);
+        //ATUALIZAR PRODUTO VENDIDO
+        Self.FRepProduto.Update(LID,LITem.Produto);
+      end;
     end;
   end;
 
@@ -275,15 +293,38 @@ implementation
   end;
 
   //ATUALIZAR VÁRIOS ITENS
-  procedure TAppItensPedidos.AtualizarItensPedido(AIDPedido:Integer;AItens:TObjectList<TItensPedidos>);
-  var LID: String;
+  procedure TAppItensPedidos.AtualizarItensPedido(AItens:TObjectList<TItensPedidos>);
+  var
+  LItem: TItensPedidos;
+  LID: String;
+  LIDProduto: String;
   begin
-    LID := IntToStr(AIDPedido);
+    for LItem in AItens do
+    begin
+      //ATUALIZAR ESTOQUE
+      LIDProduto := IntToStr(LItem.Produto.Codigo);
+      Self.FRepProduto.Update(LIDProduto,LITem.Produto);
 
-    //LIMPAR ITENS DO PEDIDO
-    Self.FRepItensPedido.ExecSQL('DELETE FROM ITENS_PEDIDO WHERE ID_PEDIDO = ''' + LID + '''');
-    //INSERIR LISTA DE ITENS
-    Self.InserirItensPedido(AItens);
+      //ITENS FLAGADOS COMO CRIADOS
+      if LItem.State = siCreated then
+      begin
+        //INSERIR ITEM
+        Self.FRepItensPedido.Insert(LItem);
+      end
+      //ITENS FLAGADOS COMO DELETADOS
+      else if LItem.State = siDeleted then
+      begin
+        //DELETAR ITEM
+        Self.FRepItensPedido.Delete(LItem);
+      end
+      //ITENS FLAGADOS COMO ALTERADO
+      else if LItem.State = siAltered then
+      begin
+        //ATUALIZAR ITEM
+        LID := IntToStr(LItem.ID);
+        Self.FRepItensPedido.Update(LID,LItem);
+      end;
+    end;
   end;
 
   //DELETE
@@ -341,7 +382,7 @@ implementation
     ADescontoValor,
     ATotal,
     //ENUM PARA INFORMAR PRODUTO NÃO ALTERADO
-    siNotAltered,
+    siCreated,
     AProduto
     );
 
@@ -417,7 +458,7 @@ implementation
         ADescontoValor,
         ATotal,
         //ENUM PARA INFORMAR PRODUTO NÃO ALTERADO
-        siNotAltered,
+        siCreated,
         AProduto
         );
 
@@ -429,6 +470,14 @@ implementation
 
         AItens.Add(LITemNovo);
       end;
+    end;
+
+    //DELETAR DTO -> TRABALHAR COM OS ITENS EM MEMÓRIA
+    procedure TAppItensPedidos.DeletarDTOItensPedido(AItem:TItensPedidos);
+    begin
+      //REGRAS DE NEGÓCIO PARA DELETE AQUI.
+      AItem.DevolverEstoque;
+      AItem.State := siDeleted;
     end;
 
 end.

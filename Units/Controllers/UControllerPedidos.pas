@@ -47,8 +47,12 @@ type IControllerPedidos = interface
   procedure CadastrarItemPedido(AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
   procedure AlterarItemPedido(AID,AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
   procedure DeletarItemPedido(AID:Integer);
+  procedure ExibirItensPedidos(AID: Integer);
+  procedure FiltrarItemPedido(AFiltro:String);
 
-  //AUX CRUD
+  // CRUD EM MEMÓRIA
+
+  //INSERT
   procedure CriarItemPedidoEmMemoria(
   AItens:TObjectList<TItensPedidos>;
   AIDPedido:Integer;
@@ -60,23 +64,25 @@ type IControllerPedidos = interface
   AProduto:TProdutosECF
   );
 
+  //UPDATE
   procedure AtualizarItemPedidoEmMemoria(
-    //ITEM ORIGINAL
-    AIndiceItemOriginal:Integer;
-    AItens:TObjectList<TItensPedidos>;
-    //ITEM NOVO
-    AIDItemPedido,
-    AIDPedido,
-    AIDProduto:Integer;
-    AQuantidade,
-    APrecoUnit,
-    ADescontoPercent,
-    ADescontoValor,
-    ATotal:String;
-    AProduto:TProdutosECF
-    );
-  procedure ExibirItensPedidos(AID: Integer);
-  procedure FiltrarItemPedido(AFiltro:String);
+  //ITEM ORIGINAL
+  AIndiceItemOriginal:Integer;
+  AItens:TObjectList<TItensPedidos>;
+  //ITEM NOVO
+  AIDItemPedido,
+  AIDPedido,
+  AIDProduto:Integer;
+  AQuantidade,
+  APrecoUnit,
+  ADescontoPercent,
+  ADescontoValor,
+  ATotal:String;
+  AProduto:TProdutosECF
+  );
+
+  //DELETE
+  procedure DeletarItemPedidoEmMemoria(AItem:TItensPedidos);
 
   //CRUD COM TRANSAÇÃO
   procedure CriarPedidoComTransacao(APedido:TPedidos;AItensPedido:TOBjectList<TItensPedidos>);
@@ -112,19 +118,22 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
     procedure CadastrarItemPedido(AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
     procedure AlterarItemPedido(AID,AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
     procedure DeletarItemPedido(AID:Integer);
+    procedure ExibirItensPedidos(AID: Integer);
+    procedure FiltrarItemPedido(AFiltro:String);
 
-    //AUX CRUD
+    //INSERT
     procedure CriarItemPedidoEmMemoria(
-      AItens:TObjectList<TItensPedidos>;
-      AIDPedido:Integer;
-      AQuantidade,
-      APrecoUnit,
-      ADescontoPercent,
-      ADescontoValor,
-      ATotal:String;
-      AProduto:TProdutosECF
-      );
+    AItens:TObjectList<TItensPedidos>;
+    AIDPedido:Integer;
+    AQuantidade,
+    APrecoUnit,
+    ADescontoPercent,
+    ADescontoValor,
+    ATotal:String;
+    AProduto:TProdutosECF
+    );
 
+    //UPDATE
     procedure AtualizarItemPedidoEmMemoria(
     //ITEM ORIGINAL
     AIndiceItemOriginal:Integer;
@@ -141,8 +150,8 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
     AProduto:TProdutosECF
     );
 
-    procedure ExibirItensPedidos(AID: Integer);
-    procedure FiltrarItemPedido(AFiltro:String);
+    //DELETE
+    procedure DeletarItemPedidoEmMemoria(AItem:TItensPedidos);
 
     //CRUD COM TRANSAÇÃO
     procedure CriarPedidoComTransacao(APedido:TPedidos;AItensPedido:TOBjectList<TItensPedidos>);
@@ -519,6 +528,7 @@ implementation
   begin
     Self.FConn.StartTransaction;
     try
+      //INSERIR PEDIDO
       Self.FAppPedidos.InserirPedido(APedido);
 
       LID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
@@ -527,6 +537,7 @@ implementation
       for LITemPedido in AItensPedido do
         LITemPedido.IDPedido := LID;
 
+      //INSERIR ITENS
       Self.FAppItensPedidos.InserirItensPedido(AItensPedido);
       Self.FConn.Commit;
     except
@@ -554,14 +565,18 @@ implementation
   begin
     Self.FConn.StartTransaction;
     try
+      //BUSCAR ID DO PEDIDO
       APedido.ID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
 
-//    ALTERAR ID_PEDIDO PARA ID ATUAL
+      //ALTERAR ID_PEDIDO PARA ID ATUAL
       for LITemPedido in AItensPedido do
         LITemPedido.IDPedido := APedido.ID;
-//
+
+      //ATUALIZAR PEDIDO
       Self.FAppPedidos.AtualizarPedido(APedido);
-      Self.FAppItensPedidos.AtualizarItensPedido(APedido.ID,AItensPedido);
+
+      //ATUALIZAR ITENS
+      Self.FAppItensPedidos.AtualizarItensPedido(AItensPedido);
 
       Self.FConn.Commit;
     except
@@ -774,6 +789,26 @@ implementation
         AProduto
       );
 
+    except
+      //ERROS VALIDAÇÃO FORMULÁRIOS
+      on E: EErrorFormInput do
+      begin
+        raise Exception.Create('Falha ao criar item do pedido.' +  FFormatErrorText(E.FCampos,E.FValores));
+      end;
+
+      //ERROS GENÉRICOS
+      on E: Exception do
+      begin
+         raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+      end;
+    end;
+  end;
+
+
+  procedure TControllerPedidos.DeletarItemPedidoEmMemoria(AItem:TItensPedidos);
+  begin
+    try
+      Self.FAppItensPedidos.DeletarDTOItensPedido(AITem);
     except
       //ERROS VALIDAÇÃO FORMULÁRIOS
       on E: EErrorFormInput do

@@ -123,7 +123,29 @@ constructor TFormItensPedido.Create(
 
       //CALCULAR VALOR TOTAL
       Self.CalcularTotal;
+    end
+    else if FOperacao = 'DELETE' then
+    begin
+      EditQuantidade.Enabled := False;
+      EditDesconto.Enabled := False;
+
+      //AUXÍLIO NO USO DO ITEM
+      Self.FItemPedido := FItensPedido.Items[FIndiceItemPedido];
+
+      //PASSAR ITEM PARA FORMULÁRIO
+      Self.FProduto := Self.FItemPedido.Produto;
+
+      //PASAR VALORES PARA EDIT.
+      Self.PreencherProduto(Self.FProduto);
+      Self.EditDesconto.Text := FloatToStr(Self.FItemPedido.DescontoPercent);
+      Self.EditQuantidade.Text :=  FloatToStr(Self.FItemPedido.Quantidade);
+
+      //DESATIVAR CONTROLES
+
+      //CALCULAR VALOR TOTAL
+      Self.CalcularTotal;
     end;
+
   end;
 
   // ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS
@@ -210,7 +232,11 @@ constructor TFormItensPedido.Create(
         Self.EditValorTotal.Text,
         Self.FProduto
       );
-
+    end
+    else if FOperacao = 'DELETE' then
+    begin
+      //DELETAR EM MEMÓRIA
+      Self.FControllerItensPedido.DeletarItemPedidoEmMemoria(Self.FItemPedido);
     end;
     ModalResult := mrOk;
   end;

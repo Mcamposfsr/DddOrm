@@ -305,8 +305,11 @@ implementation
 
   //REMOVER ITEM
   procedure TFormPedidos.BitBtnExcluirItemClick(Sender: TObject);
-  var LIndiceItem: Integer;
+  var
+  LIndiceItem: Integer;
+  LFORM: TFormItensPedido;
   begin
+    //VERIFICAR ANTES DE ALTERAR
     if Self.FDMemTable.IsEmpty then
     begin
       ShowMessage('Nenhum Produto selecionado');
@@ -314,11 +317,30 @@ implementation
     end;
 
     LIndiceItem := Self.FDMemTable.FieldByName('INDICE_ITEM').AsInteger;
-    Self.FItensPedido.Delete(LIndiceItem);
 
-    Self.AtualizarDataSet;
-    Self.PassarValorTotal;
-    ShowMessage('Produto excluído');
+    LFORM := nil;
+    try
+      LFORM := TFormItensPedido.Create(
+      nil,
+      Self.FPedidoAtual.ID,
+      LIndiceItem,
+      'DELETE',
+      FRepositoryItensPedidos,
+      FControllerPedidos,
+      FRepositoryProdutos,
+      FControllerProdutos,
+      //PASSAR LISTA PARA FORM TRABALHAR NA MESMA
+      Self.FItensPedido
+      );
+      if LFORM.ShowModal = mrOk then
+      begin
+        Self.AtualizarDataSet;
+        Self.PassarValorTotal;
+        ShowMessage('Produto excluído');
+      end;
+    finally
+      LFORM.Free;
+    end;
   end;
 
   // ***** FINAL DO FLUXO *****
