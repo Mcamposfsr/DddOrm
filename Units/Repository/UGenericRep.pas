@@ -30,18 +30,20 @@ type
     procedure Insert(AClass: T);
     procedure Update(AID: string; ANewClass: T);
     procedure Delete(AClass: T);
-    procedure FiltrarDataSet(AColumn,AFilter:String);
+    function Open(ASQL:String): IDBResultSet;
+    procedure ExecSQL(ASQL:String);
 
     //PARA FIREBIRD 2.0 +++
     procedure ReceberDataSet(ADataSet: TDataSet);
+    procedure FiltrarDataSet(AColumn,AFilter:String);
+    procedure AtualizarDataSet; overload;
+    procedure AtualizarDataSetWhere(AColumn: string; AValue: Integer); overload;
+
+
     //PARA FIREBIRD LEGADO 1.5
     procedure ReceberDataSetFirebirdLegado(ADataSet: TFDMemTable);
     procedure OpenFirebirdLegado(ASQL:String);
-
-    procedure AtualizarDataSet; overload;
-    procedure AtualizarDataSetWhere(AColumn: string; AValue: Integer); overload;
-    function Open(ASQL:String): IDBResultSet;
-    procedure ExecSQL(ASQL:String);
+    procedure FiltrarDataSetLegado(AColumn,AFilter:String);
 
 
 
@@ -151,7 +153,7 @@ implementation
 
   //################# DATASET FB 2.0 ++ ################# DATASET FB 2.0 ++################# DATASET FB 2.0 ++################# DATASET FB 2.0 ++################# DATASET FB 2.0 ++################# DATASET FB 2.0 ++
 
-    //FILTRAR DATASET
+  //FILTRAR DATASET
   procedure TRepository<T>.FiltrarDataSet(AColumn,AFilter:String);
   begin
     if AFilter = '' then
@@ -165,7 +167,7 @@ implementation
     Self.FContainerDataSet.DataSet.Filtered := True;
   end;
 
-    //PASSAR CONTROLE DO DATA-SET PARA ORM REPOSITORY
+  //PASSAR CONTROLE DO DATA-SET PARA ORM REPOSITORY
   procedure TRepository<T>.ReceberDataSet(ADataSet: TDataSet);
   begin
     Self.FContainerDataSet := TContainerFDMemTable<T>.Create(FConn, ADataSet);
@@ -221,6 +223,23 @@ implementation
     finally
       Self.FDataSet.EnableControls;
     end;
+  end;
+
+    //FILTRAR DATASET
+  procedure TRepository<T>.FiltrarDataSetLegado(AColumn,AFilter:String);
+  begin
+    if not assigned(Self.FDataSet) then
+      raise Exception.Create('ERROR: NÃO FOI POSSÍVEL FILTRAR O DATASET: DATASET NÃO ATRIBUÍDO');
+
+    if AFilter = '' then
+    begin
+     Self.FDataSet.Filtered := False;
+     Self.FDataSet.Filter := '';
+     Exit
+    end;
+    Self.FDataSet.FilterOptions := [foCaseInsensitive];
+    Self.FDataSet.Filter := Format('%s like ''%%%s%%''', [AColumn, AFilter]);
+    Self.FDataSet.Filtered := True;
   end;
 
   // ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS

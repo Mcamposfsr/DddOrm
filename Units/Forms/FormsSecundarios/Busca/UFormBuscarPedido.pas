@@ -20,9 +20,11 @@ type
     ButtonCancel: TButton;
     DataSource: TDataSource;
     FDMemTable: TFDMemTable;
+    EditFiltrarDataset: TEdit;
     procedure ButtonSelectClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure EditFiltrarDatasetChange(Sender: TObject);
   private
     FController: IControllerPedidos;
     FRepository: IRepository<TPedidos>;
@@ -72,10 +74,22 @@ constructor TFormBuscarPedido.Create(
   procedure TFormBuscarPedido.ButtonSelectClick(Sender: TObject);
   var LID: Integer;
   begin
+    if Self.FDMemTable.IsEmpty then
+    begin
+      ShowMessage('Selecione um Cliente!');
+      Exit;
+    end;
+
     LID := Self.FDMemTable.FieldByName('ID_PEDIDO').AsInteger;
     FPedido := FController.BuscarPedido(LID);
 
     ModalResult := mrOk;
+  end;
+
+  //FILTRAR NOME CLIENTE
+  procedure TFormBuscarPedido.EditFiltrarDatasetChange(Sender: TObject);
+  begin
+    Self.FController.FiltrarPedido(EditFiltrarDataset.Text);
   end;
 
   //CANCELAR

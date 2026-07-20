@@ -334,7 +334,7 @@ implementation
   procedure TControllerPedidos.FiltrarPedido(AFiltro:String);
   begin
     try
-      Self.FRepPedidos.FiltrarDataSet('ID_PEDIDO',AFiltro);
+      Self.FRepPedidos.FiltrarDataSetLegado('CLI_NOME',AFiltro);
     except
       on E: Exception do
       begin

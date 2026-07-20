@@ -21,8 +21,10 @@ type
     ButtonCancel: TButton;
     DataSource: TDataSource;
     FDMemTable: TFDMemTable;
+    EditFiltrarDataset: TEdit;
     procedure ButtonSelectClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
+    procedure EditFiltrarDatasetChange(Sender: TObject);
   private
     //FERRAMENTAS
     FRepositoryProdutosECF: IRepository<TProdutosECF>;
@@ -61,13 +63,27 @@ implementation
     FRepositoryProdutosECF.AtualizarDataSet;
   end;
 
+
+
   //BUSCAR
   procedure TFormBuscarProdutos.ButtonSelectClick(Sender: TObject);
   var LID: Integer;
   begin
+    if Self.FDMemTable.IsEmpty then
+    begin
+      ShowMessage('Selecione um Cliente!');
+      Exit;
+    end;
+
     LID := Self.FDMemTable.FieldByName('PRO_CODIGO').AsInteger;
     FProduto := FControllerProdutosECF.BuscarProdutoECF(LID);
     ModalResult := mrOK;
+  end;
+
+  //FILTRAR CLIENTES
+  procedure TFormBuscarProdutos.EditFiltrarDatasetChange(Sender: TObject);
+  begin
+    Self.FControllerProdutosECF.FiltrarProdutoECF(EditFiltrarDataset.Text);
   end;
 
   //CANCELAR

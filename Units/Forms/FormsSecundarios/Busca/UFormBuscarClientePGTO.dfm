@@ -2,7 +2,7 @@ object FormBuscarClientePGTO: TFormBuscarClientePGTO
   Left = 0
   Top = 0
   Caption = 'Buscar Cliente'
-  ClientHeight = 375
+  ClientHeight = 395
   ClientWidth = 761
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,9 +20,10 @@ object FormBuscarClientePGTO: TFormBuscarClientePGTO
     Left = 0
     Top = 0
     Width = 761
-    Height = 375
+    Height = 395
     Align = alClient
     TabOrder = 0
+    ExplicitHeight = 375
     object Label1: TLabel
       Left = 16
       Top = 16
@@ -38,7 +39,7 @@ object FormBuscarClientePGTO: TFormBuscarClientePGTO
     end
     object DBGrid1: TDBGrid
       Left = 16
-      Top = 75
+      Top = 91
       Width = 729
       Height = 238
       DataSource = DataSource
@@ -51,7 +52,7 @@ object FormBuscarClientePGTO: TFormBuscarClientePGTO
     end
     object ButtonSelect: TButton
       Left = 542
-      Top = 327
+      Top = 343
       Width = 91
       Height = 35
       Caption = 'SELECIONAR'
@@ -60,13 +61,24 @@ object FormBuscarClientePGTO: TFormBuscarClientePGTO
     end
     object ButtonCancel: TButton
       Left = 654
-      Top = 327
+      Top = 343
       Width = 91
       Height = 35
       Caption = 'CANCELAR'
       TabOrder = 2
       OnClick = ButtonCancelClick
       OnKeyDown = ButtonCancelKeyDown
+    end
+    object EditFiltrarDataset: TEdit
+      Left = 16
+      Top = 56
+      Width = 321
+      Height = 21
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+      TextHint = 'Filtrar nome do cliente'
+      OnChange = EditFiltrarDatasetChange
     end
   end
   object DataSource: TDataSource

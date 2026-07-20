@@ -21,10 +21,12 @@ type
     ButtonCancel: TButton;
     DataSource: TDataSource;
     FDMemTable: TFDMemTable;
+    EditFiltrarDataset: TEdit;
     procedure ButtonSelectClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
     procedure ButtonCancelKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure EditFiltrarDatasetChange(Sender: TObject);
   private
     //FERRAMENTAS
     FRepositoryClientes: IRepository<TClientePGTO>;
@@ -61,14 +63,28 @@ implementation
     FRepositoryClientes.AtualizarDataSet;
   end;
 
-  //SELECIONAR
+
+
+//SELECIONAR
   procedure TFormBuscarClientePGTO.ButtonSelectClick(Sender: TObject);
    var LID: Integer;
   begin
+    if Self.FDMemTable.IsEmpty then
+    begin
+      ShowMessage('Selecione um Cliente!');
+      Exit;
+    end;
+
     LID := Self.FDMemTable.FieldByName('CLI_CODIGO').AsInteger;
     FCliente := FControllerClientes.BuscarClientePGTO(LID);
 
     ModalResult := mrOk;
+  end;
+
+  //FILTRAR CLIENTE
+  procedure TFormBuscarClientePGTO.EditFiltrarDatasetChange(Sender: TObject);
+  begin
+    Self.FControllerClientes.FiltrarClientesPGTO(EditFiltrarDataset.Text);
   end;
 
   //CANCELAR
