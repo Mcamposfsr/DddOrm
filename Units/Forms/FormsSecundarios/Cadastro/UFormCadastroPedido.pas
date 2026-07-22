@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,System.Generics.Collections,
 
-  dbebr.factory.interfaces,
+  dbebr.factory.interfaces,UErros,
 
   UDomainPedidos,UDomainClientesPGTO,UControllerPedidos,UIRepository,UControllerClientesPGTO,
 
@@ -33,6 +33,7 @@ type
     procedure ButtonConfirmarClick(Sender: TObject);
     procedure ButtonCancelarClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormShow(Sender: TObject);
   private
 
 
@@ -82,10 +83,18 @@ constructor TFormCadastroPedido.Create(
       FRepositoryClientes := ARepositoryClientes;
       FControllerClientes := AControllerClientes;
 
-
       //PASSAR DATA ATUAL PARA EDIT
       Self.EditDataPedido.Text := FormatDateTime('dd/mm/yyyy',now);
-      Self.EditNumeroPedido.Text := Self.FControllerPedidos.GerarCodPedido;
+    end;
+
+    procedure TFormCadastroPedido.FormShow(Sender: TObject);
+    begin
+      TTratamentoDeErros.ExecutarOnForm(
+        procedure
+        begin
+          Self.EditNumeroPedido.Text := Self.FControllerPedidos.GerarCodPedido;
+        end
+      );
     end;
 
 
@@ -117,15 +126,20 @@ constructor TFormCadastroPedido.Create(
         Exit;
       end;
 
-    //CRIAR PEDIDO EM MEMÓRIA
-    Self.FPedido :=  Self.FControllerPedidos.CriarPedidoEmMemoria(
-    Self.FClienteAtual.Codigo,
-    Self.EditDataPedido.Text,
-    '',
-    Self.EditNumeroPedido.Text,
-    Self.FClienteAtual);
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        //CRIAR PEDIDO EM MEMÓRIA
+        Self.FPedido :=  Self.FControllerPedidos.CriarPedidoEmMemoria(
+        Self.FClienteAtual.Codigo,
+        Self.EditDataPedido.Text,
+        '',
+        Self.EditNumeroPedido.Text,
+        Self.FClienteAtual);
 
-    ModalResult := mrOk
+        ModalResult := mrOk
+      end
+    );
   end;
 
   //CANCELAR
@@ -141,7 +155,7 @@ constructor TFormCadastroPedido.Create(
       ModalResult := mrCancel;
   end;
 
-  //  ######## FUNÇÕES AUXÍLIARES  ######## FUNÇÕES AUXÍLIARES  ######## FUNÇÕES AUXÍLIARES  ######## FUNÇÕES AUXÍLIARES  ######## FUNÇÕES AUXÍLIARES  ######## FUNÇÕES AUXÍLIARES
+//  ######## FUNÇÕES AUXÍLIARES  ######## FUNÇÕES AUXÍLIARES  ######## FUNÇÕES AUXÍLIARES  ######## FUNÇÕES AUXÍLIARES  ######## FUNÇÕES AUXÍLIARES  ######## FUNÇÕES AUXÍLIARES
 
   procedure TFormCadastroPedido.PreencherPedido(ACliente:TClientePGTO);
   begin

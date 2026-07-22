@@ -9,7 +9,7 @@ uses
 
   System.Generics.Collections,
   //CLASSE MODELO ORM
-  UDomainFormasPGTO,UDM,UGenericRep,UAppFormasPGTO,UControllerFormasPGTO,UIRepository,UFormCadastroFormaPGTO,
+  UDomainFormasPGTO,UDM,UGenericRep,UAppFormasPGTO,UControllerFormasPGTO,UIRepository,UFormCadastroFormaPGTO,UErros,
 
   dbebr.factory.interfaces,
   dbebr.factory.firedac,
@@ -79,7 +79,12 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
     //CONFIGURAR FORMATO CAMPO DATASET
     TFloatField(FDMemTable.FieldByName('FIN_JUROS')).DisplayFormat := '0.0 %';
 
-    FRepository.AtualizarDataSet;
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        FRepository.AtualizarDataSet
+      end
+    );
   end;
 
 
@@ -90,7 +95,12 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
   //FILTRAR
   procedure TFormFormasPGTO.EditFiltroChange(Sender: TObject);
   begin
-    Self.FController.FiltrarClientesPGTO(EditFiltro.Text);
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        Self.FController.FiltrarClientesPGTO(EditFiltro.Text)
+      end
+    );
   end;
 
   //FECHAR
@@ -152,7 +162,6 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
       finally
         LFORMCadastroPGTO.Free;
       end;
-
     except
       on E: Exception do
       begin

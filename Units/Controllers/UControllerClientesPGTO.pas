@@ -38,15 +38,7 @@ implementation
   //BUSCAR
   function TControllerClientesPGTO.BuscarClientePGTO(ACOD:Integer):TClientePGTO;
   begin
-    try
-      Result := FApp.BuscarClientePGTOByID(ACOD);
-    except
-    //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Result := FApp.BuscarClientePGTOByID(ACOD);
   end;
 
   //CADASTRAR
@@ -63,25 +55,12 @@ implementation
   );
   var
   LLimiteCredito: Currency;
-
   begin
-    try
-      //RETIRAR O '.' ANTES DA CONVERSÃO PARA EVITAR ERROS DE CONVERSÃO
-      LLimiteCredito := StrToFloat(StringReplace(ALimiteCredito, '.', '', [rfReplaceAll]));
-      Self.FApp.InserirClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,LLimiteCredito);
-      Self.FRep.AtualizarDataSet;
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao cadastrar cliente.' + FFormatErrorText(E.FCampos,E.FValores));
-      end;
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    //CONVERSÕES
+    LLimiteCredito := StrToFloat(StringReplace(ALimiteCredito, '.', '', [rfReplaceAll]));
+
+    Self.FApp.InserirClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,LLimiteCredito);
+    Self.FRep.AtualizarDataSet;
   end;
 
   //ALTERAR
@@ -99,49 +78,24 @@ implementation
   );
   var LLimiteCredito: Currency;
   begin
-    try
-      LLimiteCredito := StrToFloat(StringReplace(ALimiteCredito, '.', '', [rfReplaceAll]));
-      Self.FApp.AtualizarClientePGTO(ACOD,ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,LLimiteCredito);
-      Self.FRep.AtualizarDataSet;
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao cadastrar cliente.' +  FFormatErrorText(E.FCampos,E.FValores));
-      end;
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    //CONVERSÕES
+    LLimiteCredito := StrToFloat(StringReplace(ALimiteCredito, '.', '', [rfReplaceAll]));
+
+    Self.FApp.AtualizarClientePGTO(ACOD,ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,LLimiteCredito);
+    Self.FRep.AtualizarDataSet;
   end;
 
   //DELETAR
   procedure TControllerClientesPGTO.DeletarClientePGTO(ACOD:Integer);
   begin
-    try
-      Self.FApp.DeletarClientePGTO(ACOD);
-      Self.FRep.AtualizarDataSet;
-    except
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FApp.DeletarClientePGTO(ACOD);
+    Self.FRep.AtualizarDataSet;
   end;
 
   //FILTRAR
   procedure TControllerClientesPGTO.FiltrarClientesPGTO(AFiltro:String);
   begin
-    try
-      Self.FRep.FiltrarDataSet('CLI_NOME',AFiltro);
-    except
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FRep.FiltrarDataSet('CLI_NOME',AFiltro);
   end;
+
 end.

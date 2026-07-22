@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,System.Generics.Collections,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,System.Generics.Collections,UErros,
 
   UFormBuscarProdutos,
   UDomainProdutosECF,UGenericRep,UIRepository,UControllerProdutosECF, UDomainItensPedidos,UControllerPedidos;
@@ -39,6 +39,7 @@ type
     procedure EditDescontoChange(Sender: TObject);
     procedure ButtonCancelarClick(Sender: TObject);
     procedure ButtonConfirmarClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
 
   private
     //FERRAMENTAS
@@ -103,49 +104,56 @@ constructor TFormItensPedido.Create(
     FRepositoryProdutosECF := ARepositoryProdutosECF;
     FControllerProdutosECF := AControllerProdutosECF;
     FItensPedido := AItensPedido;
+  end;
 
-    if FOperacao = 'INSERT' then
+  procedure TFormItensPedido.FormShow(Sender: TObject);
+  begin
+    TTratamentoDeErros.ExecutarOnForm(
+    procedure
     begin
-      //NADA A FAZER
+      if FOperacao = 'INSERT' then
+      begin
+        //NADA A FAZER
+      end
+      else if FOperacao = 'UPDATE' then
+      begin
+        //AUXÍLIO NO USO DO ITEM
+        Self.FItemPedido := FItensPedido.Items[FIndiceItemPedido];
+
+        //PASSAR ITEM PARA FORMULÁRIO
+        Self.FProduto := Self.FItemPedido.Produto;
+
+        //PASAR VALORES PARA EDIT.
+        Self.PreencherProduto(Self.FProduto);
+        Self.EditDesconto.Text := FloatToStr(Self.FItemPedido.DescontoPercent);
+        Self.EditQuantidade.Text :=  FloatToStr(Self.FItemPedido.Quantidade);
+
+        //CALCULAR VALOR TOTAL
+        Self.CalcularTotal;
+      end
+      else if FOperacao = 'DELETE' then
+      begin
+        EditQuantidade.Enabled := False;
+        EditDesconto.Enabled := False;
+
+        //AUXÍLIO NO USO DO ITEM
+        Self.FItemPedido := FItensPedido.Items[FIndiceItemPedido];
+
+        //PASSAR ITEM PARA FORMULÁRIO
+        Self.FProduto := Self.FItemPedido.Produto;
+
+        //PASAR VALORES PARA EDIT.
+        Self.PreencherProduto(Self.FProduto);
+        Self.EditDesconto.Text := FloatToStr(Self.FItemPedido.DescontoPercent);
+        Self.EditQuantidade.Text :=  FloatToStr(Self.FItemPedido.Quantidade);
+
+        //DESATIVAR CONTROLES
+
+        //CALCULAR VALOR TOTAL
+        Self.CalcularTotal;
+      end;
     end
-    else if FOperacao = 'UPDATE' then
-    begin
-      //AUXÍLIO NO USO DO ITEM
-      Self.FItemPedido := FItensPedido.Items[FIndiceItemPedido];
-
-      //PASSAR ITEM PARA FORMULÁRIO
-      Self.FProduto := Self.FItemPedido.Produto;
-
-      //PASAR VALORES PARA EDIT.
-      Self.PreencherProduto(Self.FProduto);
-      Self.EditDesconto.Text := FloatToStr(Self.FItemPedido.DescontoPercent);
-      Self.EditQuantidade.Text :=  FloatToStr(Self.FItemPedido.Quantidade);
-
-      //CALCULAR VALOR TOTAL
-      Self.CalcularTotal;
-    end
-    else if FOperacao = 'DELETE' then
-    begin
-      EditQuantidade.Enabled := False;
-      EditDesconto.Enabled := False;
-
-      //AUXÍLIO NO USO DO ITEM
-      Self.FItemPedido := FItensPedido.Items[FIndiceItemPedido];
-
-      //PASSAR ITEM PARA FORMULÁRIO
-      Self.FProduto := Self.FItemPedido.Produto;
-
-      //PASAR VALORES PARA EDIT.
-      Self.PreencherProduto(Self.FProduto);
-      Self.EditDesconto.Text := FloatToStr(Self.FItemPedido.DescontoPercent);
-      Self.EditQuantidade.Text :=  FloatToStr(Self.FItemPedido.Quantidade);
-
-      //DESATIVAR CONTROLES
-
-      //CALCULAR VALOR TOTAL
-      Self.CalcularTotal;
-    end;
-
+    );
   end;
 
   // ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS ############# PRODUTOS
@@ -185,7 +193,9 @@ constructor TFormItensPedido.Create(
     Self.CalcularTotal;
   end;
 
-  //CANCELAR
+
+
+//CANCELAR
   procedure TFormItensPedido.ButtonCancelarClick(Sender: TObject);
   begin
     ModalResult := mrCancel;
@@ -200,45 +210,50 @@ constructor TFormItensPedido.Create(
       Exit;
     end;
 
-    if FOperacao = 'INSERT' then
-    begin
-      //CADASTRAR EM MEMÓRIA
-      Self.FControllerItensPedido.CriarItemPedidoEmMemoria(
-      Self.FItensPedido,
-      Self.FIDPedido,
-      Self.EditQuantidade.Text,
-      Self.EditPrecoUnitario.Text,
-      Self.EditDesconto.Text,
-      Self.EditValorDescontado.Text,
-      Self.EditValorTotal.Text,
-      Self.FProduto
-      );
-    end
-    else if FOperacao = 'UPDATE' then
-    begin
-      //ALTERAR EM MEMÓRIA
-      Self.FControllerItensPedido.AtualizarItemPedidoEmMemoria(
-        //ITEM ATIGO
-        Self.FIndiceItemPedido,
-        Self.FItensPedido,
-        //ITEM NOVO
-        Self.FItemPedido.ID,
-        Self.FIDPedido,
-        Self.FProduto.Codigo,
-        Self.EditQuantidade.Text,
-        Self.EditPrecoUnitario.Text,
-        Self.EditDesconto.Text,
-        Self.EditValorDescontado.Text,
-        Self.EditValorTotal.Text,
-        Self.FProduto
-      );
-    end
-    else if FOperacao = 'DELETE' then
-    begin
-      //DELETAR EM MEMÓRIA
-      Self.FControllerItensPedido.DeletarItemPedidoEmMemoria(Self.FItemPedido);
-    end;
-    ModalResult := mrOk;
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        if FOperacao = 'INSERT' then
+        begin
+          //CADASTRAR EM MEMÓRIA
+          Self.FControllerItensPedido.CriarItemPedidoEmMemoria(
+          Self.FItensPedido,
+          Self.FIDPedido,
+          Self.EditQuantidade.Text,
+          Self.EditPrecoUnitario.Text,
+          Self.EditDesconto.Text,
+          Self.EditValorDescontado.Text,
+          Self.EditValorTotal.Text,
+          Self.FProduto
+          );
+        end
+        else if FOperacao = 'UPDATE' then
+        begin
+          //ALTERAR EM MEMÓRIA
+          Self.FControllerItensPedido.AtualizarItemPedidoEmMemoria(
+            //ITEM ATIGO
+            Self.FIndiceItemPedido,
+            Self.FItensPedido,
+            //ITEM NOVO
+            Self.FItemPedido.ID,
+            Self.FIDPedido,
+            Self.FProduto.Codigo,
+            Self.EditQuantidade.Text,
+            Self.EditPrecoUnitario.Text,
+            Self.EditDesconto.Text,
+            Self.EditValorDescontado.Text,
+            Self.EditValorTotal.Text,
+            Self.FProduto
+          );
+        end
+        else if FOperacao = 'DELETE' then
+        begin
+          //DELETAR EM MEMÓRIA
+          Self.FControllerItensPedido.DeletarItemPedidoEmMemoria(Self.FItemPedido);
+        end;
+        ModalResult := mrOk;
+      end
+    );
   end;
 
 // ############ MÉTODOS AUXÍLIARES ############ MÉTODOS AUXÍLIARES ############ MÉTODOS AUXÍLIARES ############ MÉTODOS AUXÍLIARES

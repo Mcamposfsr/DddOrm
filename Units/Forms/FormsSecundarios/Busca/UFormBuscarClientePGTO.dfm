@@ -23,7 +23,6 @@ object FormBuscarClientePGTO: TFormBuscarClientePGTO
     Height = 395
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 375
     object Label1: TLabel
       Left = 16
       Top = 16

@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, NumericEdit, Vcl.StdCtrls,
 
-  UControllerClientesPGTO,UDomainClientesPGTO, Vcl.Buttons,UGenericValidator, System.Character;
+  UControllerClientesPGTO,UDomainClientesPGTO, Vcl.Buttons,UGenericValidator, System.Character,UErros;
 
 type
   TFormCadastroClientes = class(TForm)
@@ -43,7 +43,6 @@ type
     procedure BitBtnRemoverEmailClick(Sender: TObject);
     procedure BitBtnAdicionarTelefoneClick(Sender: TObject);
     procedure BitBtnRemoverTelefoneClick(Sender: TObject);
-    procedure GroupBox2Click(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure ButtonCancelarClick(Sender: TObject);
   private
@@ -95,36 +94,33 @@ implementation
   procedure TFormCadastroClientes.FormShow(Sender: TObject);
   var LCliente: TClientePGTO;
   begin
-    //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
-    if FOperacao = 'SELECT' then
-    begin
-      LCliente := FController.BuscarClientePGTO(FCODCliente);
-      Self.ReceberValores(LCliente);
-      Self.FormControl(False);
-    end
-    else if FOperacao = 'INSERT' then
-    begin
-      //NADA A FAZER
-    end
-    else if FOperacao = 'UPDATE' then
-    begin
-      LCliente := FController.BuscarClientePGTO(FCODCliente);
-      Self.ReceberValores(LCliente);
-      Self.FormControl(True);
-    end
-    else if FOperacao = 'DELETE' then
-    begin
-      LCliente := FController.BuscarClientePGTO(FCODCliente);
-      Self.ReceberValores(LCliente);
-      Self.FormControl(FALSE);
-      BtnConfirmar.Enabled := True;
-    end;
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        //PASSAR VALORES NA TELA
+        if FOperacao <> 'INSERT' then
+        begin
+          LCliente := FController.BuscarClientePGTO(FCODCliente);
+          Self.ReceberValores(LCliente);
+        end;
+
+        //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
+        if FOperacao = 'SELECT' then
+        begin
+          Self.FormControl(False);
+        end
+        else if FOperacao = 'UPDATE' then
+        begin
+          Self.FormControl(True);
+        end
+        else if FOperacao = 'DELETE' then
+        begin
+          Self.FormControl(FALSE);
+          BtnConfirmar.Enabled := True;
+        end;
+      end
+    );
   end;
-
-  procedure TFormCadastroClientes.GroupBox2Click(Sender: TObject);
-begin
-
-end;
 
 // ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
 
@@ -135,7 +131,9 @@ end;
 
   procedure TFormCadastroClientes.BtnConfirmarClick(Sender: TObject);
   begin
-    try
+    TTratamentoDeErros.ExecutarOnForm(
+    procedure
+    begin
        //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
       if FOperacao = 'INSERT' then
       begin
@@ -173,17 +171,10 @@ end;
         FController.DeletarClientePGTO(Self.FCODCliente);
         Self.Close;
       end;
-
-    except
-      on E: Exception do
-      begin
-        ShowMessage(E.Message);
-      end;
-    end;
+    end);
   end;
 
-
-//ADICIONAR EMAIL A LISTA
+  //ADICIONAR EMAIL A LISTA
   procedure TFormCadastroClientes.BitBtnAdicionarEmailClick(Sender: TObject);
   begin
     if Self.EditEmail.Text = '' then

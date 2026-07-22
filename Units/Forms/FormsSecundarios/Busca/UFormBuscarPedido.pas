@@ -8,6 +8,7 @@ uses
   Vcl.DBGrids, Vcl.ExtCtrls, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
+  UErros,
 
   UIRepository,UDomainPedidos,UDomainClientesPGTO,UControllerPedidos,dbebr.factory.interfaces;
 
@@ -65,7 +66,13 @@ constructor TFormBuscarPedido.Create(
 
   //BUSCA LEGADO - JOINS DO ORMBR NÃO FUNCIONAM NO FB 1.5;
   FRepository.ReceberDataSetFirebirdLegado(Self.FDMemTable);
-  FController.ExibirPedidos;
+
+  TTratamentoDeErros.ExecutarOnForm(
+    procedure
+    begin
+    FController.ExibirPedidos
+    end
+  );
 
   Self.ConfigurarDataSet;
  end;
@@ -74,22 +81,31 @@ constructor TFormBuscarPedido.Create(
   procedure TFormBuscarPedido.ButtonSelectClick(Sender: TObject);
   var LID: Integer;
   begin
-    if Self.FDMemTable.IsEmpty then
+    TTratamentoDeErros.ExecutarOnForm(
+    procedure
     begin
-      ShowMessage('Selecione um Cliente!');
-      Exit;
-    end;
+      if Self.FDMemTable.IsEmpty then
+      begin
+        ShowMessage('Selecione um Cliente!');
+        Exit;
+      end;
 
-    LID := Self.FDMemTable.FieldByName('ID_PEDIDO').AsInteger;
-    FPedido := FController.BuscarPedido(LID);
+      LID := Self.FDMemTable.FieldByName('ID_PEDIDO').AsInteger;
+      FPedido := FController.BuscarPedido(LID);
 
-    ModalResult := mrOk;
+      ModalResult := mrOk;
+    end);
   end;
 
   //FILTRAR NOME CLIENTE
   procedure TFormBuscarPedido.EditFiltrarDatasetChange(Sender: TObject);
   begin
-    Self.FController.FiltrarPedido(EditFiltrarDataset.Text);
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        Self.FController.FiltrarPedido(EditFiltrarDataset.Text)
+      end
+    );
   end;
 
   //CANCELAR

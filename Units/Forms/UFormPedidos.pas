@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  Data.DB, Vcl.Grids, Vcl.DBGrids,System.generics.collections,
+  Data.DB, Vcl.Grids, Vcl.DBGrids,System.generics.collections,UErros,
 
 
   UDomainClientesPGTO,UDomainProdutosECF,UDomainPedidos,UDomainItensPedidos,UIRepository,UGenericRep,UDM,
@@ -219,18 +219,23 @@ implementation
   //DELETAR PEDIDO
   procedure TFormPedidos.BitBtnRemoverPedidoClick(Sender: TObject);
   begin
-    if not Assigned(FPedidoAtual) then
+    TTratamentoDeErros.ExecutarOnForm(
+    procedure
     begin
-      ShowMessage('Selecione um pedido!');
-      Exit;
-    end;
+      if not Assigned(FPedidoAtual) then
+      begin
+        ShowMessage('Selecione um pedido!');
+        Exit;
+      end;
 
-    Self.FControllerPedidos.DeletarPedido(Self.FPedidoAtual.ID);
+      Self.FControllerPedidos.DeletarPedido(Self.FPedidoAtual.ID);
 
-    Self.FOperacao := '';
-    Self.RestarEstadoForm;
+      Self.FOperacao := '';
+      Self.RestarEstadoForm;
 
-    ShowMessage('Pedido Excluído!');
+      ShowMessage('Pedido Excluído!');
+
+    end);
   end;
 
 
@@ -348,22 +353,28 @@ implementation
   //CONFIRMAR AÇÕES
   procedure TFormPedidos.BtnConfirmarClick(Sender: TObject);
   begin
-    if Self.FOperacao = '' then
-      ShowMessage('Nenhuma operacao iniciada')
-    else if Self.FOperacao = 'INSERT' then
-    begin
-      Self.FControllerPedidos.CriarPedidoComTransacao(Self.FPedidoAtual,Self.FItensPedido);
-      ShowMessage('Pedido Cadastrado!');
-    end
-    else if Self.FOperacao = 'UPDATE' then
-    begin
-      Self.FControllerPedidos.AtualizarPedidoComTransacao(Self.FPedidoAtual,Self.FItensPedido);
-      ShowMessage('Pedido Alterado!');
-    end;
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        if Self.FOperacao = '' then
+          ShowMessage('Nenhuma operacao iniciada')
 
-    //REINICIAR FORMULÁRIO
-    Self.BtnConfirmar.Enabled := False;
-    Self.RestarEstadoForm;
+        else if Self.FOperacao = 'INSERT' then
+        begin
+          Self.FControllerPedidos.CriarPedidoComTransacao(Self.FPedidoAtual,Self.FItensPedido);
+          ShowMessage('Pedido Cadastrado!');
+        end
+        else if Self.FOperacao = 'UPDATE' then
+        begin
+          Self.FControllerPedidos.AtualizarPedidoComTransacao(Self.FPedidoAtual,Self.FItensPedido);
+          ShowMessage('Pedido Alterado!');
+        end;
+
+        //REINICIAR FORMULÁRIO
+        Self.BtnConfirmar.Enabled := False;
+        Self.RestarEstadoForm;
+      end
+    );
   end;
 
   //CANCELAR AÇÕES

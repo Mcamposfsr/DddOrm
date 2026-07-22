@@ -23,7 +23,6 @@ object FormBuscarPedido: TFormBuscarPedido
     Height = 407
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 373
     object Label1: TLabel
       Left = 16
       Top = 16

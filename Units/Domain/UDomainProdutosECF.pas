@@ -36,7 +36,7 @@ uses
     FAliqCofins: Double;
     FDescontoMax: Double;
 
-    procedure ValidarCodBarras(AError:EErrorFormInput;var AEstado: Boolean);
+    procedure ValidarCodBarras(AError:EValidationError;var AEstado: Boolean);
 
   public
 
@@ -136,7 +136,7 @@ implementation
   // ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES ############## VALIDAÇÕES
 
   //VALIDAÇÃO CÓDIGO DE BARRAS
-  procedure TProdutosECF.ValidarCodBarras(AError:EErrorFormInput;var AEstado: Boolean);
+  procedure TProdutosECF.ValidarCodBarras(AError:EValidationError;var AEstado: Boolean);
   begin
     //VAZIO
     if FCodigoDeBarras  = '' then
@@ -167,10 +167,10 @@ implementation
    LTelefones: TStringList;
    LEmails: TStringList;
    LDocumento: String;
-   LErrorCadastro: EErrorFormInput;
+   LErrorCadastro: EValidationError;
    LEstado: Boolean;
    begin
-    LErrorCadastro := EErrorFormInput.Create;
+    LErrorCadastro := EValidationError.Create;
     LEstado := True;
 
     Self.ValidarCodBarras(LErrorCadastro,LEstado);

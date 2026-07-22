@@ -327,7 +327,6 @@ object FormCadastroClientes: TFormCadastroClientes
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 8
-      OnClick = GroupBox2Click
       object EditTelefone: TEdit
         Left = 16
         Top = 32

@@ -217,43 +217,19 @@ implementation
   //BUSCAR
   function TControllerPedidos.BuscarPedido(AID:Integer):TPedidos;
   begin
-    try
-      Result := FAppPedidos.BuscarPedidoByID(AID);
-    except
-    //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Result := FAppPedidos.BuscarPedidoByID(AID);
   end;
 
    //EXIBIR PEDIDOS DATASET
   procedure TControllerPedidos.ExibirPedidos;
   begin
-    try
-      Self.FAppPedidos.BuscarPedidosLegado;
-    except
-    //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FAppPedidos.BuscarPedidosLegado;
   end;
 
   //BUSCAR PELO COD PEDIDO
   function TControllerPedidos.BuscarPedidoPeloCodigo(ACod:String):TPedidos;
   begin
-    try
-      Result := FAppPedidos.BuscarPedidoPeloCodigo(ACod);
-    except
-    //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Result := FAppPedidos.BuscarPedidoPeloCodigo(ACod);
   end;
 
   //CADASTRAR
@@ -267,23 +243,11 @@ implementation
   LTotalLiquido: Currency;
   LDataEmissao: TDate;
   begin
-    try
-      //RETIRAR O '.' ANTES DA CONVERSÃO PARA EVITAR ERROS DE CONVERSÃO
-      LTotalLiquido := StrToFloatDef(StringReplace(ATotalLiquido, '.', '', [rfReplaceAll]),0);
-      LDataEmissao := StrToDate(ADataEmissao);
-      Self.FAppPedidos.InserirPedido(AIDCliente,LDataEmissao,LTotalLiquido,ACodPedido);
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao cadastrar cliente.' + FFormatErrorText(E.FCampos,E.FValores));
-      end;
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    //CONVERSÕES
+    LTotalLiquido := StrToFloatDef(StringReplace(ATotalLiquido, '.', '', [rfReplaceAll]),0);
+    LDataEmissao := StrToDate(ADataEmissao);
+
+    Self.FAppPedidos.InserirPedido(AIDCliente,LDataEmissao,LTotalLiquido,ACodPedido);
   end;
 
   //ALTERAR
@@ -298,49 +262,21 @@ implementation
   LTotalLiquido: Currency;
   LDataEmissao: TDate;
   begin
-    try
-      LTotalLiquido := StrToFloatDef(StringReplace(ATotalLiquido, '.', '', [rfReplaceAll]),0);
-      LDataEmissao := StrToDate(ADataEmissao);
-      Self.FAppPedidos.AtualizarPedido(AID,AIDCliente,LDataEmissao,LTotalLiquido,ACodPedido);
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao cadastrar cliente.' +  FFormatErrorText(E.FCampos,E.FValores));
-      end;
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    LTotalLiquido := StrToFloatDef(StringReplace(ATotalLiquido, '.', '', [rfReplaceAll]),0);
+    LDataEmissao := StrToDate(ADataEmissao);
+    Self.FAppPedidos.AtualizarPedido(AID,AIDCliente,LDataEmissao,LTotalLiquido,ACodPedido);
   end;
 
   //DELETAR
   procedure TControllerPedidos.DeletarPedido(AID:Integer);
   begin
-    try
-      Self.FAppPedidos.DeletarPedido(AID);
-    except
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FAppPedidos.DeletarPedido(AID);
   end;
 
   //FILTRAR
   procedure TControllerPedidos.FiltrarPedido(AFiltro:String);
   begin
-    try
-      Self.FRepPedidos.FiltrarDataSetLegado('CLI_NOME',AFiltro);
-    except
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FRepPedidos.FiltrarDataSetLegado('CLI_NOME',AFiltro);
   end;
 
   // ***** ITENS PEDIDO *****
@@ -348,28 +284,12 @@ implementation
   //BUSCAR
   function TControllerPedidos.BuscarItemPedido(AID:Integer):TItensPedidos;
   begin
-    try
-      Result := FAppItensPedidos.BuscarItemPedidoByID(AID);
-    except
-    //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Result := FAppItensPedidos.BuscarItemPedidoByID(AID);
   end;
 
   function TControllerPedidos.BuscarItensPedidos(AID:Integer):TObjectList<TItensPedidos>;
   begin
-    try
-      Result := FAppItensPedidos.BuscarITensDoPedido(AID);
-    except
-    //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Result := FAppItensPedidos.BuscarITensDoPedido(AID);
   end;
 
   //EXIBIR ITENS PEDIDOS
@@ -377,15 +297,7 @@ implementation
   var LID: String;
   begin
     LID := IntToStr(AID);
-    try
-      Self.FAppItensPedidos.BuscarPedidosLegado(LID);
-    except
-    //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FAppItensPedidos.BuscarPedidosLegado(LID);
   end;
 
   //CADASTRAR
@@ -405,37 +317,22 @@ implementation
   LDescontoValor: Currency;
   LTotal: Currency;
   begin
-    try
-      //RETIRAR O '.' ANTES DA CONVERSÃO PARA EVITAR ERROS DE CONVERSÃO
-      LQuantidade := StrToFloatDef(StringReplace(AQuantidade, '.', '', [rfReplaceAll]),0);
-      LPrecoUnit := StrToFloatDef(StringReplace(APrecoUnit, '.', '', [rfReplaceAll]),0);
-      LDescontoPercent := StrToFloatDef(StringReplace(ADescontoPercent, '.', '', [rfReplaceAll]),0);
-      LDescontoValor := StrToFloatDef(StringReplace(ADescontoValor, '.', '', [rfReplaceAll]),0);
-      LTotal := StrToFloatDef(StringReplace(ATotal, '.', '', [rfReplaceAll]),0);
+    //CONVERSÕES
+    LQuantidade := StrToFloatDef(StringReplace(AQuantidade, '.', '', [rfReplaceAll]),0);
+    LPrecoUnit := StrToFloatDef(StringReplace(APrecoUnit, '.', '', [rfReplaceAll]),0);
+    LDescontoPercent := StrToFloatDef(StringReplace(ADescontoPercent, '.', '', [rfReplaceAll]),0);
+    LDescontoValor := StrToFloatDef(StringReplace(ADescontoValor, '.', '', [rfReplaceAll]),0);
+    LTotal := StrToFloatDef(StringReplace(ATotal, '.', '', [rfReplaceAll]),0);
 
-      Self.FAppItensPedidos.InserirItemPedido(
-      AIDPedido,
-      AIDProduto,
-      LQuantidade,
-      LPrecoUnit,
-      LDescontoPercent,
-      LDescontoValor,
-      LTotal
-      );
-
-//      Self.FRepItensPedidos.AtualizarDataSet;
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao cadastrar cliente.' + FFormatErrorText(E.FCampos,E.FValores));
-      end;
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FAppItensPedidos.InserirItemPedido(
+    AIDPedido,
+    AIDProduto,
+    LQuantidade,
+    LPrecoUnit,
+    LDescontoPercent,
+    LDescontoValor,
+    LTotal
+    );
   end;
 
   //ALTERAR
@@ -456,65 +353,36 @@ implementation
   LDescontoValor: Currency;
   LTotal: Currency;
   begin
-    try
-      LQuantidade := StrToFloatDef(StringReplace(AQuantidade, '.', '', [rfReplaceAll]),0);
-      LPrecoUnit := StrToFloatDef(StringReplace(APrecoUnit, '.', '', [rfReplaceAll]),0);
-      LDescontoPercent := StrToFloatDef(StringReplace(ADescontoPercent, '.', '', [rfReplaceAll]),0);
-      LDescontoValor := StrToFloatDef(StringReplace(ADescontoValor, '.', '', [rfReplaceAll]),0);
-      LTotal := StrToFloatDef(StringReplace(ATotal, '.', '', [rfReplaceAll]),0);
+    //CONVERSÕES
+    LQuantidade := StrToFloatDef(StringReplace(AQuantidade, '.', '', [rfReplaceAll]),0);
+    LPrecoUnit := StrToFloatDef(StringReplace(APrecoUnit, '.', '', [rfReplaceAll]),0);
+    LDescontoPercent := StrToFloatDef(StringReplace(ADescontoPercent, '.', '', [rfReplaceAll]),0);
+    LDescontoValor := StrToFloatDef(StringReplace(ADescontoValor, '.', '', [rfReplaceAll]),0);
+    LTotal := StrToFloatDef(StringReplace(ATotal, '.', '', [rfReplaceAll]),0);
 
-      Self.FAppItensPedidos.AtualizarItemPedido(
-      AID,
-      AIDPedido,
-      AIDProduto,
-      LQuantidade,
-      LPrecoUnit,
-      LDescontoPercent,
-      LDescontoValor,
-      LTotal
-      );
-
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao cadastrar cliente.' +  FFormatErrorText(E.FCampos,E.FValores));
-      end;
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FAppItensPedidos.AtualizarItemPedido(
+    AID,
+    AIDPedido,
+    AIDProduto,
+    LQuantidade,
+    LPrecoUnit,
+    LDescontoPercent,
+    LDescontoValor,
+    LTotal
+    );
   end;
 
    //DELETAR
   procedure TControllerPedidos.DeletarItemPedido(AID:Integer);
   begin
-    try
-      Self.FAppItensPedidos.DeletarItemPedido(AID);
-//      Self.FRepItensPedidos.AtualizarDataSet;
-    except
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FAppItensPedidos.DeletarItemPedido(AID);
   end;
 
 
   //FILTRAR
   procedure TControllerPedidos.FiltrarItemPedido(AFiltro:String);
   begin
-    try
-      Self.FRepItensPedidos.FiltrarDataSet('ID_ITEM',AFiltro);
-    except
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FRepItensPedidos.FiltrarDataSet('ID_ITEM',AFiltro);
   end;
 
   // ########### CRUD C/ TRANSAÇÃO ########### CRUD C/ TRANSAÇÃO ########### CRUD C/ TRANSAÇÃO ########### CRUD C/ TRANSAÇÃO ########### CRUD C/ TRANSAÇÃO
@@ -527,35 +395,19 @@ implementation
 
   begin
     Self.FConn.StartTransaction;
-    try
-      //INSERIR PEDIDO
-      Self.FAppPedidos.InserirPedido(APedido);
 
-      LID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
+    //INSERIR PEDIDO
+    Self.FAppPedidos.InserirPedido(APedido);
 
-      //ALTERAR ID_PEDIDO PARA ID ATUAL
-      for LITemPedido in AItensPedido do
-        LITemPedido.IDPedido := LID;
+    LID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
 
-      //INSERIR ITENS
-      Self.FAppItensPedidos.InserirItensPedido(AItensPedido);
-      Self.FConn.Commit;
-    except
+    //ALTERAR ID_PEDIDO PARA ID ATUAL
+    for LITemPedido in AItensPedido do
+      LITemPedido.IDPedido := LID;
 
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        Self.FConn.Rollback;
-        raise Exception.Create('Falha ao cadastrar pedido.' +  FFormatErrorText(E.FCampos,E.FValores));
-      end;
-
-     //ERROS GENÉRICOS
-     on E: Exception do
-     begin
-       Self.FConn.Rollback;
-       raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-     end;
-    end;
+    //INSERIR ITENS
+    Self.FAppItensPedidos.InserirItensPedido(AItensPedido);
+    Self.FConn.Commit;
   end;
 
   //ATUALIZAR PEDIDO COMPLETO C/ TRANSAÇÃO (PEDIDO + ITENS)
@@ -564,35 +416,21 @@ implementation
   LITemPedido: TItensPedidos;
   begin
     Self.FConn.StartTransaction;
-    try
-      //BUSCAR ID DO PEDIDO
-      APedido.ID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
 
-      //ALTERAR ID_PEDIDO PARA ID ATUAL
-      for LITemPedido in AItensPedido do
-        LITemPedido.IDPedido := APedido.ID;
+    //BUSCAR ID DO PEDIDO
+    APedido.ID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
 
-      //ATUALIZAR PEDIDO
-      Self.FAppPedidos.AtualizarPedido(APedido);
+    //ALTERAR ID_PEDIDO PARA ID ATUAL
+    for LITemPedido in AItensPedido do
+      LITemPedido.IDPedido := APedido.ID;
 
-      //ATUALIZAR ITENS
-      Self.FAppItensPedidos.AtualizarItensPedido(AItensPedido);
+    //ATUALIZAR PEDIDO
+    Self.FAppPedidos.AtualizarPedido(APedido);
 
-      Self.FConn.Commit;
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        Self.FConn.Rollback;
-        raise Exception.Create('Falha ao cadastrar pedido.' +  FFormatErrorText(E.FCampos,E.FValores));
-      end;
+    //ATUALIZAR ITENS
+    Self.FAppItensPedidos.AtualizarItensPedido(AItensPedido);
 
-      //ERROS GENÉRICOS
-      on E: Exception do
-      begin
-        Self.FConn.Rollback;
-      end;
-    end;
+    Self.FConn.Commit;
   end;
 
 
@@ -612,33 +450,19 @@ implementation
   LData: TDate;
   LTotalLiquido: Currency;
   begin
+    //CONVERSÕES
     LData := StrToDate(ADataEmissao);
     LTotalLiquido := StrToCurrDef(ATotalLiquido,0);
 
-    try
-      //GERAR O PEDIDO EM MEMÓRIA
-      Result := Self.FAppPedidos.CriarDTOPedido(
-        -1,
-        AIDCliente,
-        ACodPedido,
-        LTotalLiquido,
-        LData,
-        ACliente
-      );
-
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao criar pedido.' +  FFormatErrorText(E.FCampos,E.FValores));
-      end;
-
-      //ERROS GENÉRICOS
-      on E: Exception do
-      begin
-         raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    //GERAR O PEDIDO EM MEMÓRIA
+    Result := Self.FAppPedidos.CriarDTOPedido(
+      -1,
+      AIDCliente,
+      ACodPedido,
+      LTotalLiquido,
+      LData,
+      ACliente
+    );
   end;
 
   //GERAR CÓDIGO PEDIDO
@@ -649,40 +473,24 @@ implementation
   LDataPedido:String;
   LTemp: String;
   begin
-    try
-      LResultSet := Self.FRepPedidos.Open('SELECT GEN_ID(GEN_COD_PEDIDO,1) AS COD FROM RDB$DATABASE;');
-      LIDPedido := LResultSet.DataSet.FieldByName('COD').AsString;
+    LResultSet := Self.FRepPedidos.Open('SELECT GEN_ID(GEN_COD_PEDIDO,1) AS COD FROM RDB$DATABASE;');
+    LIDPedido := LResultSet.DataSet.FieldByName('COD').AsString;
 
-      //COLOCAR '0' NA FRENTE
-      while Length(LIDPedido) < 6 do
-      begin
-        LTemp :=  LIDPedido;
-        LIDPedido := '0' + LTemp;
-      end;
-
-      LDataPedido := FormatDateTime('ddmmyy',now);
-      Result := LDataPedido + '-' +LIDPedido;
-    except
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
+    //COLOCAR '0' NA FRENTE
+    while Length(LIDPedido) < 6 do
+    begin
+      LTemp :=  LIDPedido;
+      LIDPedido := '0' + LTemp;
     end;
+
+    LDataPedido := FormatDateTime('ddmmyy',now);
+    Result := LDataPedido + '-' +LIDPedido;
   end;
 
   //PASSAR VALOR TOTAL
   procedure TControllerPedidos.AtualizarValorTotalPedido(AID:Integer;AValorTotal:String);
   begin
-    try
-      Self.FAppPedidos.AtualizarTotalPedido(AID,AValorTotal);
-    except
-    //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FAppPedidos.AtualizarTotalPedido(AID,AValorTotal);
   end;
 
   // ***** ITENS PEDIDOS *****
@@ -705,40 +513,25 @@ implementation
   LDescontoValor: Currency;
   LTotal: Currency;
   begin
-    try
-      //RETIRAR O '.' ANTES DA CONVERSÃO PARA EVITAR ERROS DE CONVERSÃO
-      LPrecoUnit := StrToCurrDef(StringReplace(APrecoUnit, '.', '', [rfReplaceAll]),0);
-      LDescontoValor := StrToCurrDef(StringReplace(ADescontoValor, '.', '', [rfReplaceAll]),0);
-      LTotal := StrToCurrDef(StringReplace(ATotal, '.', '', [rfReplaceAll]),0);
-      LQuantidade := StrToFloatDef(StringReplace(AQuantidade, '.', '', [rfReplaceAll]),0);
-      LDescontoPercent := StrToFloatDef(StringReplace(ADescontoPercent, '.', '', [rfReplaceAll]),0);
+    //CONVERSÕES
+    LPrecoUnit := StrToCurrDef(StringReplace(APrecoUnit, '.', '', [rfReplaceAll]),0);
+    LDescontoValor := StrToCurrDef(StringReplace(ADescontoValor, '.', '', [rfReplaceAll]),0);
+    LTotal := StrToCurrDef(StringReplace(ATotal, '.', '', [rfReplaceAll]),0);
+    LQuantidade := StrToFloatDef(StringReplace(AQuantidade, '.', '', [rfReplaceAll]),0);
+    LDescontoPercent := StrToFloatDef(StringReplace(ADescontoPercent, '.', '', [rfReplaceAll]),0);
 
-      //GERAR O PEDIDO EM MEMÓRIA
-        Self.FAppItensPedidos.CriarDTOItensPedido(
-        AItens,
-        -1,
-        AIDPedido,
-        LPrecoUnit,
-        LDescontoValor,
-        LTotal,
-        LDescontoPercent,
-        LQuantidade,
-        AProduto
-      );
-
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao criar item do pedido.' +  FFormatErrorText(E.FCampos,E.FValores));
-      end;
-
-      //ERROS GENÉRICOS
-      on E: Exception do
-      begin
-         raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    //GERAR O PEDIDO EM MEMÓRIA
+      Self.FAppItensPedidos.CriarDTOItensPedido(
+      AItens,
+      -1,
+      AIDPedido,
+      LPrecoUnit,
+      LDescontoValor,
+      LTotal,
+      LDescontoPercent,
+      LQuantidade,
+      AProduto
+    );
   end;
 
   procedure TControllerPedidos.AtualizarItemPedidoEmMemoria(
@@ -764,64 +557,35 @@ implementation
   LTotal: Currency;
   LITemPedidos: TItensPedidos;
   begin
-    try
-      //RETIRAR O '.' ANTES DA CONVERSÃO PARA EVITAR ERROS DE CONVERSÃO
-      LPrecoUnit := StrToCurrDef(StringReplace(APrecoUnit, '.', '', [rfReplaceAll]),0);
-      LDescontoValor := StrToCurrDef(StringReplace(ADescontoValor, '.', '', [rfReplaceAll]),0);
-      LTotal := StrToCurrDef(StringReplace(ATotal, '.', '', [rfReplaceAll]),0);
-      LQuantidade := StrToFloatDef(StringReplace(AQuantidade, '.', '', [rfReplaceAll]),0);
-      LDescontoPercent := StrToFloatDef(StringReplace(ADescontoPercent, '.', '', [rfReplaceAll]),0);
+    //CONVERSÕES
+    LPrecoUnit := StrToCurrDef(StringReplace(APrecoUnit, '.', '', [rfReplaceAll]),0);
+    LDescontoValor := StrToCurrDef(StringReplace(ADescontoValor, '.', '', [rfReplaceAll]),0);
+    LTotal := StrToCurrDef(StringReplace(ATotal, '.', '', [rfReplaceAll]),0);
+    LQuantidade := StrToFloatDef(StringReplace(AQuantidade, '.', '', [rfReplaceAll]),0);
+    LDescontoPercent := StrToFloatDef(StringReplace(ADescontoPercent, '.', '', [rfReplaceAll]),0);
 
-      //ATUALIZAR ITENS
-      Self.FAppItensPedidos.AtualizarDTOItensPedido(
-        //ITEM ANTIGO
-        AIndiceItemOriginal,
-        AItens,
-        //NOVO ITEM
-        AIDItemPedido,
-        AIDPedido,
-        AIDProduto,
-        LPrecoUnit,
-        LDescontoValor,
-        LTotal,
-        LDescontoPercent,
-        LQuantidade,
-        AProduto
-      );
-
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao criar item do pedido.' +  FFormatErrorText(E.FCampos,E.FValores));
-      end;
-
-      //ERROS GENÉRICOS
-      on E: Exception do
-      begin
-         raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    //ATUALIZAR ITENS
+    Self.FAppItensPedidos.AtualizarDTOItensPedido(
+      //ITEM ANTIGO
+      AIndiceItemOriginal,
+      AItens,
+      //NOVO ITEM
+      AIDItemPedido,
+      AIDPedido,
+      AIDProduto,
+      LPrecoUnit,
+      LDescontoValor,
+      LTotal,
+      LDescontoPercent,
+      LQuantidade,
+      AProduto
+    );
   end;
 
 
   procedure TControllerPedidos.DeletarItemPedidoEmMemoria(AItem:TItensPedidos);
   begin
-    try
-      Self.FAppItensPedidos.DeletarDTOItensPedido(AITem);
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao criar item do pedido.' +  FFormatErrorText(E.FCampos,E.FValores));
-      end;
-
-      //ERROS GENÉRICOS
-      on E: Exception do
-      begin
-         raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FAppItensPedidos.DeletarDTOItensPedido(AITem);
   end;
 
 

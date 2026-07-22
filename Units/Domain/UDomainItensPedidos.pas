@@ -149,10 +149,10 @@ implementation
 
   procedure TItensPedidos.Validar;
   var
-  LErrorCadastro: EErrorFormInput;
+  LErrorCadastro: EValidationError;
   LEstado: Boolean;
   begin
-    LErrorCadastro := EErrorFormInput.Create;
+    LErrorCadastro := EValidationError.Create;
     LEstado := True;
 
     //VALIDAR LIMITE DE DESCONTO

@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, NumericEdit, Vcl.StdCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, NumericEdit, Vcl.StdCtrls,UErros,
 
 
   UControllerFormasPGTO,UDomainFormasPGTO;
@@ -80,30 +80,30 @@ constructor TFormCadastroPGTO.Create(
   procedure TFormCadastroPGTO.FormShow(Sender: TObject);
   var LFormaPagamento: TFormasPGTO;
   begin
-    //VERIFICAR OPERA플O PASSADA PARA FORM E DEFINIR ESTADO.
-    if FOperacao = 'SELECT' then
-    begin
-      LFormaPagamento := FController.BuscarFormaPGTO(Self.FCODPGTO);
-      Self.ReceberValores(LFormaPagamento);
-      Self.FormControl(False);
-    end
-    else if FOperacao = 'INSERT' then
-    begin
-      //NADA A FAZER
-    end
-    else if FOperacao = 'UPDATE' then
-    begin
-      LFormaPagamento := FController.BuscarFormaPGTO(Self.FCODPGTO);
-      Self.ReceberValores(LFormaPagamento);
-      Self.FormControl(True);
-    end
-    else if FOperacao = 'DELETE' then
-    begin
-      LFormaPagamento := FController.BuscarFormaPGTO(Self.FCODPGTO);
-      Self.ReceberValores(LFormaPagamento);
-      Self.FormControl(FALSE);
-      BtnConfirmar.Enabled := True;
-    end;
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        if FOperacao <> 'INSERT' then
+        begin
+          LFormaPagamento := FController.BuscarFormaPGTO(Self.FCODPGTO);
+          Self.ReceberValores(LFormaPagamento);
+        end;
+        //VERIFICAR OPERA플O PASSADA PARA FORM E DEFINIR ESTADO.
+        if FOperacao = 'SELECT' then
+        begin
+          Self.FormControl(False);
+        end
+        else if FOperacao = 'UPDATE' then
+        begin
+          Self.FormControl(True);
+        end
+        else if FOperacao = 'DELETE' then
+        begin
+          Self.FormControl(FALSE);
+          BtnConfirmar.Enabled := True;
+        end;
+      end
+    );
   end;
 
   // ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS
@@ -115,38 +115,35 @@ constructor TFormCadastroPGTO.Create(
 
   procedure TFormCadastroPGTO.BtnConfirmarClick(Sender: TObject);
   begin
-    try
-      //VERIFICAR OPERA플O PASSADA PARA FORM E DEFINIR ESTADO.
-      if FOperacao = 'INSERT' then
+     TTratamentoDeErros.ExecutarOnForm(
+      procedure
       begin
-        FController.CadastrarFormaPGTO(
-        EditNome.Text,
-        EditParcelas.Text,
-        EditJuros.Text
-        );
-        Self.Close;
+        //VERIFICAR OPERA플O PASSADA PARA FORM E DEFINIR ESTADO.
+        if FOperacao = 'INSERT' then
+        begin
+          FController.CadastrarFormaPGTO(
+          EditNome.Text,
+          EditParcelas.Text,
+          EditJuros.Text
+          );
+          Self.Close;
+        end
+        else if FOperacao = 'UPDATE' then
+        begin
+          FController.AlterarFormaPGTO(
+          Self.FCODPGTO,
+          EditNome.Text,
+          EditParcelas.Text,
+          EditJuros.Text);
+          Self.Close;
+        end
+        else if FOperacao = 'DELETE' then
+        begin
+          FController.DeletarFormaPGTO(Self.FCODPGTO);
+          Self.Close;
+        end;
       end
-      else if FOperacao = 'UPDATE' then
-      begin
-        FController.AlterarFormaPGTO(
-        Self.FCODPGTO,
-        EditNome.Text,
-        EditParcelas.Text,
-        EditJuros.Text);
-        Self.Close;
-      end
-      else if FOperacao = 'DELETE' then
-      begin
-        FController.DeletarFormaPGTO(Self.FCODPGTO);
-        Self.Close;
-      end;
-    except
-      on E: Exception do
-      begin
-        ShowMessage(E.Message);
-      end;
-
-    end;
+    );
   end;
 
 

@@ -8,6 +8,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
+  UErros,
 
   UDomainClientesPGTO,UControllerClientesPGTO,UIRepository
   ;
@@ -60,7 +61,13 @@ implementation
     FControllerClientes := AControllerClientes;
 
     FRepositoryClientes.ReceberDataSet(Self.FDMemTable);
-    FRepositoryClientes.AtualizarDataSet;
+
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        FRepositoryClientes.AtualizarDataSet
+      end
+    );
   end;
 
 
@@ -69,22 +76,32 @@ implementation
   procedure TFormBuscarClientePGTO.ButtonSelectClick(Sender: TObject);
    var LID: Integer;
   begin
-    if Self.FDMemTable.IsEmpty then
+    TTratamentoDeErros.ExecutarOnForm(
+    procedure
     begin
-      ShowMessage('Selecione um Cliente!');
-      Exit;
-    end;
+      if Self.FDMemTable.IsEmpty then
+      begin
+        ShowMessage('Selecione um Cliente!');
+        Exit;
+      end;
 
-    LID := Self.FDMemTable.FieldByName('CLI_CODIGO').AsInteger;
-    FCliente := FControllerClientes.BuscarClientePGTO(LID);
+      LID := Self.FDMemTable.FieldByName('CLI_CODIGO').AsInteger;
+      FCliente := FControllerClientes.BuscarClientePGTO(LID);
 
-    ModalResult := mrOk;
+      ModalResult := mrOk;
+    end
+    );
   end;
 
   //FILTRAR CLIENTE
   procedure TFormBuscarClientePGTO.EditFiltrarDatasetChange(Sender: TObject);
   begin
-    Self.FControllerClientes.FiltrarClientesPGTO(EditFiltrarDataset.Text);
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        Self.FControllerClientes.FiltrarClientesPGTO(EditFiltrarDataset.Text)
+      end
+    );
   end;
 
   //CANCELAR

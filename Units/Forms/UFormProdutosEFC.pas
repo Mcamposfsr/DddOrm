@@ -10,7 +10,7 @@ uses
   FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
 
 
-  UIRepository,UDomainProdutosECF,UControllerProdutosECF,UAppProdutosECF,UGenericRep,UDM,UFormCadastroProdutosEFC;
+  UIRepository,UDomainProdutosECF,UControllerProdutosECF,UAppProdutosECF,UGenericRep,UDM,UFormCadastroProdutosEFC,UErros;
 
 type
   TFormProdutosEFC = class(TForm)
@@ -70,7 +70,13 @@ procedure TFormProdutosEFC.FormCreate(Sender: TObject);
     TFloatField(FDMemTable.FieldByName('ALIQ_COFINS')).DisplayFormat := '0.0 %';
     TFloatField(FDMemTable.FieldByName('DESCONTO_MAX')).DisplayFormat := '0.0 %';
 
-    FRepository.AtualizarDataSet;
+
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        FRepository.AtualizarDataSet
+      end
+    );
   end;
 
 // ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
@@ -78,13 +84,23 @@ procedure TFormProdutosEFC.FormCreate(Sender: TObject);
   //ATUALIZAR SEMPRE QUE ABERTO
   procedure TFormProdutosEFC.FormShow(Sender: TObject);
   begin
-    FRepository.AtualizarDataSet;
+    TTratamentoDeErros.ExecutarOnForm(
+    procedure
+      begin
+        FRepository.AtualizarDataSet
+      end
+    );
   end;
 
   //FILTRAR
   procedure TFormProdutosEFC.EditFiltroChange(Sender: TObject);
   begin
-    Self.FController.FiltrarProdutoECF(EditFiltro.Text);
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        Self.FController.FiltrarProdutoECF(EditFiltro.Text)
+      end
+    );
   end;
 
   //FECHAR FORM

@@ -77,11 +77,11 @@ implementation
    LTelefones: TStringList;
    LEmails: TStringList;
    LDocumento: String;
-   LErrorCadastro: EErrorFormInput;
+   LErrorCadastro: EValidationError;
    LEstado: Boolean;
 
    begin
-    LErrorCadastro := EErrorFormInput.Create;
+    LErrorCadastro := EValidationError.Create;
     LEstado := True;
 
     //VALIDAÇÃO NOME

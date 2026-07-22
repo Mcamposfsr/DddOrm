@@ -13,6 +13,7 @@ object FormCadastroPedido: TFormCadastroPedido
   OldCreateOrder = False
   Position = poScreenCenter
   OnKeyDown = FormKeyDown
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object TPanel: TPanel

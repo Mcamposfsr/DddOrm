@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.Grids,
-  Vcl.DBGrids, Vcl.ExtCtrls,
+  Vcl.DBGrids, Vcl.ExtCtrls,UErros,
 
   UDomainProdutosECF,UGenericRep,UIRepository,UControllerProdutosECF,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
@@ -60,7 +60,12 @@ implementation
 
     //PASSAR DATASET
     FRepositoryProdutosECF.ReceberDataSet(Self.FDMemTable);
-    FRepositoryProdutosECF.AtualizarDataSet;
+    TTratamentoDeErros.ExecutarOnForm(
+    procedure
+    begin
+      FRepositoryProdutosECF.AtualizarDataSet
+    end
+    );
   end;
 
 
@@ -69,15 +74,19 @@ implementation
   procedure TFormBuscarProdutos.ButtonSelectClick(Sender: TObject);
   var LID: Integer;
   begin
-    if Self.FDMemTable.IsEmpty then
+    TTratamentoDeErros.ExecutarOnForm(
+    procedure
     begin
-      ShowMessage('Selecione um Cliente!');
-      Exit;
-    end;
+      if Self.FDMemTable.IsEmpty then
+      begin
+        ShowMessage('Selecione um Cliente!');
+        Exit;
+      end;
 
-    LID := Self.FDMemTable.FieldByName('PRO_CODIGO').AsInteger;
-    FProduto := FControllerProdutosECF.BuscarProdutoECF(LID);
-    ModalResult := mrOK;
+      LID := Self.FDMemTable.FieldByName('PRO_CODIGO').AsInteger;
+      FProduto := FControllerProdutosECF.BuscarProdutoECF(LID);
+      ModalResult := mrOK;
+    end);
   end;
 
   //FILTRAR CLIENTES

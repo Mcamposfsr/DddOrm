@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
 
-  UControllerProdutosECF,UDomainProdutosECF;
+  UControllerProdutosECF,UDomainProdutosECF,UErros;
 
 type
   TFormCadastroProdutosEFC = class(TForm)
@@ -99,30 +99,31 @@ implementation
   procedure TFormCadastroProdutosEFC.FormShow(Sender: TObject);
   var LProdutos: TProdutosECF;
   begin
-    //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
-    if FOperacao = 'SELECT' then
+    TTratamentoDeErros.ExecutarOnForm(
+    procedure
     begin
-      LProdutos := FController.BuscarProdutoECF(FCodProduto);
-      Self.ReceberValores(LProdutos);
-      Self.FormControl(False);
+      if FOperacao <> 'INSERT' then
+      begin
+        LProdutos := FController.BuscarProdutoECF(FCodProduto);
+        Self.ReceberValores(LProdutos);
+      end;
+
+      //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
+      if FOperacao = 'SELECT' then
+      begin
+        Self.FormControl(False);
+      end
+      else if FOperacao = 'UPDATE' then
+      begin
+        Self.FormControl(True);
+      end
+      else if FOperacao = 'DELETE' then
+      begin
+        Self.FormControl(false);
+        BtnConfirmar.Enabled := True;
+      end;
     end
-    else if FOperacao = 'INSERT' then
-    begin
-      //NADA A FAZER
-    end
-    else if FOperacao = 'UPDATE' then
-    begin
-      LProdutos := FController.BuscarProdutoECF(FCodProduto);
-      Self.ReceberValores(LProdutos);
-      Self.FormControl(True);
-    end
-    else if FOperacao = 'DELETE' then
-    begin
-      LProdutos := FController.BuscarProdutoECF(FCodProduto);
-      Self.ReceberValores(LProdutos);
-      Self.FormControl(FALSE);
-      BtnConfirmar.Enabled := True;
-    end;
+    );
   end;
 
 
@@ -136,8 +137,10 @@ procedure TFormCadastroProdutosEFC.ButtonCancelarClick(Sender: TObject);
 //    ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof:String
   procedure TFormCadastroProdutosEFC.BtnConfirmarClick(Sender: TObject);
   begin
-    try
-       //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
+    TTratamentoDeErros.ExecutarOnForm(
+    procedure
+    begin
+      //VERIFICAR OPERAÇÃO PASSADA PARA FORM E DEFINIR ESTADO.
       if FOperacao = 'INSERT' then
       begin
         FController.CadastrarProdutoECF(
@@ -173,13 +176,7 @@ procedure TFormCadastroProdutosEFC.ButtonCancelarClick(Sender: TObject);
         FController.DeletarProdutoECF(Self.FCODProduto);
         Self.Close;
       end;
-
-    except
-      on E: Exception do
-      begin
-        ShowMessage(E.Message);
-      end;
-    end;
+    end);
   end;
 
 // ########## MÉTODOS AUXÍLIARES ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES

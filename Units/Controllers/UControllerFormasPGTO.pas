@@ -48,25 +48,12 @@ implementation
   LParcelas: Integer;
   LJuros: Currency;
   begin
-    try
-      LParcelas := StrToIntDef(AParcelas, -1);
+    //CONVERSÕES
+    LParcelas := StrToIntDef(AParcelas, -1);
+    LJuros := StrToCurr(StringReplace(AJuros, '%', '', [rfReplaceAll]));
 
-      LJuros := StrToCurr(StringReplace(AJuros, '%', '', [rfReplaceAll]));
-
-      Self.FApp.InserirFormasPGTO(ANome,LParcelas,LJuros);
-      Self.FRep.AtualizarDataSet;
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao cadastrar pagamento.' + FFormatErrorText(E.FCampos,E.FValores));
-      end;
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FApp.InserirFormasPGTO(ANome,LParcelas,LJuros);
+    Self.FRep.AtualizarDataSet;
   end;
 
   //ALTERAR
@@ -75,50 +62,24 @@ implementation
   LParcelas: Integer;
   LJuros: Currency;
   begin
-    try
-      LParcelas := StrToInt(AParcelas);
-      LJuros := StrToCurr(StringReplace(AJuros, '%', '', [rfReplaceAll]));
+    //CONVERSÕES
+    LParcelas := StrToInt(AParcelas);
+    LJuros := StrToCurr(StringReplace(AJuros, '%', '', [rfReplaceAll]));
 
-      Self.FApp.AtualizarFormasPGTO(ACOD,ANome,LParcelas,LJuros);
-      Self.FRep.AtualizarDataSet;
-    except
-      //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EErrorFormInput do
-      begin
-        raise Exception.Create('Falha ao cadastrar pagamento.' + FFormatErrorText(E.FCampos,E.FValores));
-      end;
-      //ERROS INESPERADOS
-      on E: Exception do
-      begin
-        raise Exception.Create('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FApp.AtualizarFormasPGTO(ACOD,ANome,LParcelas,LJuros);
+    Self.FRep.AtualizarDataSet;
   end;
 
   //DELETAR
   procedure TControllerFormasPGTO.DeletarFormaPGTO(ACOD:Integer);
   begin
-    try
-      Self.FApp.DeletarFormasPGTO(ACOD);
-      Self.FRep.AtualizarDataSet;
-    except
-      on E: Exception do
-      begin
-        ShowMessage('Ocorreu um erro: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FApp.DeletarFormasPGTO(ACOD);
+    Self.FRep.AtualizarDataSet;
   end;
 
   //FILTRAR
   procedure TControllerFormasPGTO.FiltrarClientesPGTO(AFiltro:String);
   begin
-    try
-      Self.FRep.FiltrarDataSet('FIN_NOME',AFiltro);
-    except
-      on E: Exception do
-      begin
-        ShowMessage('Ocorreu um erro: ' +  sLineBreak + E.Message);
-      end;
-    end;
+    Self.FRep.FiltrarDataSet('FIN_NOME',AFiltro);
   end;
 end.

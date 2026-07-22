@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB, Vcl.StdCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB, Vcl.StdCtrls,UErros,
   Vcl.Grids, Vcl.DBGrids,
 
 
@@ -79,7 +79,12 @@ procedure TFormClientesPGTO.FormCreate(Sender: TObject);
     //CONTROLLER
     FController := TControllerClientesPGTO.Create(FApp,FRepository);
 
-    FRepository.AtualizarDataSet;
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        FRepository.AtualizarDataSet
+      end
+    );
   end;
 
 
@@ -90,7 +95,12 @@ procedure TFormClientesPGTO.FormCreate(Sender: TObject);
   //FILTRAR
   procedure TFormClientesPGTO.EditFiltroNomeChange(Sender: TObject);
   begin
-    Self.FController.FiltrarClientesPGTO(Self.EditFiltroNome.Text);
+    TTratamentoDeErros.ExecutarOnForm(
+    procedure
+      begin
+        Self.FController.FiltrarClientesPGTO(Self.EditFiltroNome.Text)
+      end
+    );
   end;
 
   //FECHAR
