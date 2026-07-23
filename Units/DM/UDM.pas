@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Error,FireDac.Phys.FB,FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.VCLUI.Wait,
-  Data.DB, FireDAC.Comp.Client, UGenericRep,
+  Data.DB, FireDAC.Comp.Client, UGenericRep,Vcl.Dialogs,
 
   //INTERFACE DM
   UIDM;
@@ -67,8 +67,15 @@ implementation
   // CONFIGURAR/INICIAR CONEXÃO
   procedure TDM.ConectarBD;
   begin
-    if not Self.FConnection.Connected then
-      Self.FConnection.Connected := True;
+    try
+      if not Self.FConnection.Connected then
+        Self.FConnection.Connected := True;
+    except
+      on E: Exception do
+      begin
+         ShowMessage(E.ClassName);
+      end;
+    end;
   end;
 
   // DESCONECTAR DO BANCO DE DADOS

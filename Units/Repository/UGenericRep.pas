@@ -7,7 +7,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Comp.DataSet, DateUtils, System.Classes,
   System.Generics.Collections, UIRepository, dbebr.factory.interfaces,
   dbebr.factory.firedac, ormbr.dml.generator.firebird,
-  ormbr.container.fdmemtable, ormbr.container.dataset.interfaces,ormbr.form.monitor,
+  ormbr.container.fdmemtable, ormbr.container.dataset.interfaces,ormbr.form.monitor,UErros,
 
   //INTERFACE DM
   UIDM,
@@ -91,9 +91,15 @@ implementation
     //SELECIONAR TODOS
   function TRepository<T>.SelectAll: TObjectList<T>;
   begin
-    Result := FObjectContainer.Find;
+    Result :=  TTratamentoDeErros.ExecutarOnRepository<TObjectList<T>>(
+    function: TObjectList<T>
+    begin
+      Result := FObjectContainer.Find
+    end
+    );
   end;
 
+  //SELECIONAR TODOS DE UMA COLUNA
   function TRepository<T>.SelectAllByColumn(AColumn:String;AFilter:String): TObjectList<T>;
   var LWhere: String;
   begin
@@ -102,7 +108,12 @@ implementation
       
     LWhere := AColumn + ' = ' + AFilter;
 
-    Result := FObjectContainer.FindWhere(LWhere);
+    Result := TTratamentoDeErros.ExecutarOnRepository<TObjectList<T>>(
+    function: TObjectList<T>
+    begin
+      Result := FObjectContainer.FindWhere(LWhere);
+    end);
+
   end;
 
   procedure TRepository<T>.SetConexaoAtual(const Value: IDBConnection);
@@ -113,13 +124,22 @@ implementation
   //SELECIONAR POR ID
   function TRepository<T>.Select(AID: string): T;
   begin
-    Result := FObjectContainer.Find(AID);
+    Result := TTratamentoDeErros.ExecutarOnRepository<T>(
+    function: T
+    begin
+      Result := FObjectContainer.Find(AID);
+    end
+    );
   end;
 
-    //INSERIR
+  //INSERIR
   procedure TRepository<T>.Insert(AClass: T);
   begin
-    FObjectContainer.Insert(AClass);
+    TTratamentoDeErros.ExecutarOnRepository(
+    procedure
+    begin
+      FObjectContainer.Insert(AClass);
+    end);
   end;
 
     //ATUALIZAR
@@ -129,10 +149,14 @@ implementation
   begin
     LCurrentClass := nil;
     try
+      TTratamentoDeErros.ExecutarOnRepository(
+      procedure
+      begin
         //BUSCAR CLIENTE ATUAL
-      LCurrentClass := FObjectContainer.Find(AID);
-      FObjectContainer.Modify(LCurrentClass);
-      FObjectContainer.Update(ANewClass);
+        LCurrentClass := FObjectContainer.Find(AID);
+        FObjectContainer.Modify(LCurrentClass);
+        FObjectContainer.Update(ANewClass);
+      end);
     finally
         //LIBERAR APENAS A CLASSE ATUAL, CLASSE NOVA, CHAMADOR DA FUNÇÃO LIBERA.
       LCurrentClass.Free;
@@ -142,7 +166,11 @@ implementation
     //DELETAR
   procedure TRepository<T>.Delete(AClass: T);
   begin
-    FObjectContainer.Delete(AClass);
+    TTratamentoDeErros.ExecutarOnRepository(
+    procedure
+    begin
+      FObjectContainer.Delete(AClass);
+    end);
   end;
 
   function TRepository<T>.GetConexaoAtual: IDBConnection;
@@ -156,21 +184,30 @@ implementation
   //FILTRAR DATASET
   procedure TRepository<T>.FiltrarDataSet(AColumn,AFilter:String);
   begin
-    if AFilter = '' then
+    TTratamentoDeErros.ExecutarOnRepository(
+    procedure
     begin
-     Self.FContainerDataSet.DataSet.Filtered := False;
-     Self.FContainerDataSet.DataSet.Filter := '';
-     Exit
-    end;
-    Self.FContainerDataSet.DataSet.FilterOptions := [foCaseInsensitive];
-    Self.FContainerDataSet.DataSet.Filter := Format('%s like ''%%%s%%''', [AColumn, AFilter]);
-    Self.FContainerDataSet.DataSet.Filtered := True;
+      if AFilter = '' then
+      begin
+       Self.FContainerDataSet.DataSet.Filtered := False;
+       Self.FContainerDataSet.DataSet.Filter := '';
+       Exit
+      end;
+      Self.FContainerDataSet.DataSet.FilterOptions := [foCaseInsensitive];
+      Self.FContainerDataSet.DataSet.Filter := Format('%s like ''%%%s%%''', [AColumn, AFilter]);
+      Self.FContainerDataSet.DataSet.Filtered := True;
+    end);
+
   end;
 
   //PASSAR CONTROLE DO DATA-SET PARA ORM REPOSITORY
   procedure TRepository<T>.ReceberDataSet(ADataSet: TDataSet);
   begin
-    Self.FContainerDataSet := TContainerFDMemTable<T>.Create(FConn, ADataSet);
+    TTratamentoDeErros.ExecutarOnRepository(
+    procedure
+    begin
+      Self.FContainerDataSet := TContainerFDMemTable<T>.Create(FConn, ADataSet);
+    end);
   end;
 
   procedure TRepository<T>.AtualizarDataSetWhere(AColumn: string; AValue: Integer);
@@ -178,21 +215,29 @@ implementation
     LSQL: string;
     LID: string;
   begin
-    LID := IntToStr(AValue);
-    LSQL := AColumn + '=' + LID;
-    if Assigned(Self.FContainerDataSet) then
-      Self.FContainerDataSet.OpenWhere(LSQL)
-    else
-      raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
+    TTratamentoDeErros.ExecutarOnRepository(
+    procedure
+    begin
+      LID := IntToStr(AValue);
+      LSQL := AColumn + '=' + LID;
+      if Assigned(Self.FContainerDataSet) then
+        Self.FContainerDataSet.OpenWhere(LSQL)
+      else
+        raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
+    end);
   end;
 
     //ATUALIZAR DATASET
   procedure TRepository<T>.AtualizarDataSet;
   begin
-    if Assigned(Self.FContainerDataSet) then
-      Self.FContainerDataSet.Open
-    else
-      raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
+    TTratamentoDeErros.ExecutarOnRepository(
+    procedure
+    begin
+      if Assigned(Self.FContainerDataSet) then
+        Self.FContainerDataSet.Open
+      else
+        raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
+    end);
   end;
 
  // ################# DATASET FB 1.5 LEGADO ################# DATASET FB 1.5 LEGADO ################# DATASET FB 1.5 LEGADO ################# DATASET FB 1.5 LEGADO ################# DATASET FB 1.5 LEGADO
@@ -208,38 +253,46 @@ implementation
   procedure TRepository<T>.OpenFirebirdLegado(ASQL:String);
   var LDataSet: IDBResultSet;
   begin
-    if not assigned(Self.FDataSet) then
-      raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
-    
-    //RECEBER RESULTADO DA BUSCA
-    LDataSet := Self.Open(ASQL);
-    Self.FDataSet.DisableControls;
-    try
-      Self.FDataSet.Close;
-      Self.FDataSet.CopyDataSet(
-        LDataSet.DataSet,
-        [coStructure, coRestart, coAppend]
-      );
-    finally
-      Self.FDataSet.EnableControls;
-    end;
+    TTratamentoDeErros.ExecutarOnRepository(
+    procedure
+    begin
+      if not assigned(Self.FDataSet) then
+        raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
+
+      //RECEBER RESULTADO DA BUSCA
+      LDataSet := Self.Open(ASQL);
+      Self.FDataSet.DisableControls;
+      try
+        Self.FDataSet.Close;
+        Self.FDataSet.CopyDataSet(
+          LDataSet.DataSet,
+          [coStructure, coRestart, coAppend]
+        );
+      finally
+        Self.FDataSet.EnableControls;
+      end;
+    end);
   end;
 
     //FILTRAR DATASET
   procedure TRepository<T>.FiltrarDataSetLegado(AColumn,AFilter:String);
   begin
-    if not assigned(Self.FDataSet) then
+    TTratamentoDeErros.ExecutarOnRepository(
+    procedure
+    begin
+      if not assigned(Self.FDataSet) then
       raise Exception.Create('ERROR: NÃO FOI POSSÍVEL FILTRAR O DATASET: DATASET NÃO ATRIBUÍDO');
 
-    if AFilter = '' then
-    begin
-     Self.FDataSet.Filtered := False;
-     Self.FDataSet.Filter := '';
-     Exit
-    end;
-    Self.FDataSet.FilterOptions := [foCaseInsensitive];
-    Self.FDataSet.Filter := Format('%s like ''%%%s%%''', [AColumn, AFilter]);
-    Self.FDataSet.Filtered := True;
+      if AFilter = '' then
+      begin
+       Self.FDataSet.Filtered := False;
+       Self.FDataSet.Filter := '';
+       Exit
+      end;
+      Self.FDataSet.FilterOptions := [foCaseInsensitive];
+      Self.FDataSet.Filter := Format('%s like ''%%%s%%''', [AColumn, AFilter]);
+      Self.FDataSet.Filtered := True;
+    end);
   end;
 
   // ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS
@@ -247,13 +300,22 @@ implementation
   // EXECUTAR SELECT
   function TRepository<T>.Open(ASQL:String): IDBResultSet;
   begin
-    Result := Self.FConn.CreateResultSet(ASQL);
+    Result := TTratamentoDeErros.ExecutarOnRepository<IDBResultSet>(
+    function: IDBResultSet
+    begin
+      Result := Self.FConn.CreateResultSet(ASQL);
+    end
+    );
   end;
 
   // EXECUTAR SCRIPT QUE NÃO RETORNA NADA
  procedure TRepository<T>.ExecSQL(ASQL:String);
  begin
-  Self.FConn.ExecuteScript(ASQL);
+  TTratamentoDeErros.ExecutarOnRepository(
+  procedure
+  begin
+    Self.FConn.ExecuteScript(ASQL);
+  end);
  end;
 
 end.
