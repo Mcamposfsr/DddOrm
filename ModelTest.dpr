@@ -52,37 +52,37 @@ begin
   Application.MainFormOnTaskbar := True;
 
   try
+    TTratamentoDeErros.ExecutarOnStart(
+    procedure
+    begin
+      // para banco Firebird 5
+      LLocationDB := ExtractFilePath(ParamStr(0)) + '..\..\DataBase\TESTE1-5.FDB';
+
+      // para banco Firebird 1.5
+      // LLocationDB := TPath.GetFullPath(ExtractFilePath(ParamStr(0)) + '\..\..\..\TESTE_ORM.FDB');
+
+      GDM := TDM.Create(
+      'SYSDBA',
+      'masterkey',
+      'localhost',
+      '3050',
+      LLocationDB
+      );
 
 
-    // para banco Firebird 5
-    LLocationDB := ExtractFilePath(ParamStr(0)) + '..\..\DataBase\TESTE1-5.FDB';
-
-    // para banco Firebird 1.5
-//    LLocationDB := TPath.GetFullPath(ExtractFilePath(ParamStr(0)) + '\..\..\..\TESTE_ORM.FDB');
-
-    GDM := TDM.Create(
-    'SYSDBA',
-    'masterkey',
-    'localhost',
-    '3050',
-    LLocationDB
-    );
+      GDM.ConectarBD;
 
 
-    GDM.ConectarBD;
+    Application.CreateForm(TFormPrincipal, FormPrincipal);
+    Application.CreateForm(TFormPedidos, FormPedidos);
+    Application.CreateForm(TFormProdutosEFC, FormProdutosEFC);
+    Application.CreateForm(TFormClientesPGTO, FormClientesPGTO);
+    Application.CreateForm(TFormFormasPGTO, FormFormasPGTO);
+    Application.Run;
 
-
-  Application.CreateForm(TFormPrincipal, FormPrincipal);
-  Application.CreateForm(TFormPedidos, FormPedidos);
-  Application.CreateForm(TFormProdutosEFC, FormProdutosEFC);
-  Application.CreateForm(TFormClientesPGTO, FormClientesPGTO);
-  Application.CreateForm(TFormFormasPGTO, FormFormasPGTO);
-  Application.Run;
+    end);
 
   finally
     GDM.Free;
   end;
-
-
-
 end.

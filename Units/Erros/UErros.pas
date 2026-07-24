@@ -23,6 +23,15 @@ type EDataError = class(Exception)
     constructor Create(AError:Exception);
 end;
 
+//ABSTRAIR ERROS DE CONEXÃO AO BANCO
+type EDataConnectionError = Class(Exception)
+  private
+   FInnerException: Exception;
+  public
+    property InnerException: Exception read FInnerException;
+    constructor Create(AError:Exception);
+end;
+
 type TTratamentoDeErros = class
   public
     //TRATAMENTO NO FORMULÁRIO
@@ -31,6 +40,10 @@ type TTratamentoDeErros = class
     //TRATAMENTO NO REPOSITORY
     class procedure ExecutarOnRepository(AProcedure: TProc) overload;
     class function ExecutarOnRepository<T>(AFunction: TFunc<T>):T overload;
+    //TRATAMENTO DM
+    class procedure ExecutarOnDM(AProcedure: TProc);
+    //TRATAMENTO SOURCE
+    class procedure ExecutarOnStart(AProcedure: TProc);
 
 end;
 
@@ -61,6 +74,13 @@ implementation
     Self.FInnerException := AError;
   end;
 
+  //ERRO DE CONEXÃO AO BANCO DE DADOS
+  constructor EDataConnectionError.Create(AError:Exception);
+  begin
+    inherited Create('Falha ao tentar conectar ao banco');
+    Self.FInnerException := AError;
+  end;
+
 
   // ########## TRATAMENTO ########## TRATAMENTO ########## TRATAMENTO ########## TRATAMENTO ########## TRATAMENTO ########## TRATAMENTO ########## TRATAMENTO
 
@@ -76,6 +96,11 @@ implementation
       on E: EValidationError do
       begin
         ShowMessage('Falha ao validar valores.' + FFormatErrorText(E.FCampos,E.FValores));
+      end;
+      //TRATAMENTO ERROS CONEXÃO AO BANCO
+      on E: EDataConnectionError do
+      begin
+        ShowMessage('Falha ao tentar se conectar ao banco' + sLineBreak + E.InnerException.Message);
       end;
       //TRATAMENTO ERROS DO BANCO
       on E: EDataError do
@@ -101,6 +126,11 @@ implementation
       on E: EValidationError do
       begin
         ShowMessage('Falha ao validar valores.' + FFormatErrorText(E.FCampos,E.FValores));
+      end;
+      //TRATAMENTO ERROS CONEXÃO AO BANCO
+      on E: EDataConnectionError do
+      begin
+        ShowMessage('Falha ao tentar se conectar ao banco. Error:' + sLineBreak + E.InnerException.Message);
       end;
       //TRATAMENTO ERROS DO BANCO
       on E: EDataError do
@@ -137,6 +167,44 @@ implementation
       //TRADUÇÃO DE ERROS DO FIREDAC
       on E: EFDDBEngineException do
         raise EDataError.Create(E);
+    end;
+  end;
+
+  // ***** TRATAMENTO CONEXÃO DM *****
+
+  class procedure TTratamentoDeErros.ExecutarOnDM(AProcedure: TProc) overload;
+  begin
+    try
+      //EXECUTAR MÉTODO
+      AProcedure();
+    except
+      //TRADUÇÃO DE ERROS CONEXÃO
+      on E: Exception do
+      begin
+        raise EDataConnectionError.Create(E);
+      end;
+
+    end;
+  end;
+
+  // ***** TRATAMENTO *****
+
+  class procedure TTratamentoDeErros.ExecutarOnStart(AProcedure: TProc);
+  begin
+    try
+      //EXECUTAR MÉTODO
+      AProcedure();
+    except
+      //TRATAMENTO ERROS CONEXÃO AO BANCO
+      on E: EDataConnectionError do
+      begin
+        ShowMessage('Falha ao tentar se conectar ao banco. Error:' + sLineBreak + E.InnerException.Message);
+      end;
+
+      on E: Exception do
+      begin
+        ShowMessage('Falha na inicialização do programa. Error:' + sLineBreak + E.Message);
+      end;
     end;
   end;
 
