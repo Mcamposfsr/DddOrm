@@ -4,6 +4,15 @@ interface
 
 uses System.SysUtils,System.Classes,UFormatErrorText,Vcl.Dialogs,FireDAC.Stan.Error;
 
+type ECustomException = class(Exception)
+  private
+    FInnerMessage: String;
+    FInnerClass: String;
+  public
+    property InnerMessage: String read FInnerMessage;
+    property InnerClass: String read FInnerClass;
+    constructor Create(AError: Exception;AMSG:String = '');
+end;
 
 type EValidationError = class(Exception)
   public
@@ -15,22 +24,11 @@ type EValidationError = class(Exception)
 end;
 
 //ABSTRAIR ERROS DO FIREDAC DAS DEMAIS PARTES DA APLICAÇÃO
-type EDataError = class(Exception)
-  private
-   FInnerException: Exception;
-  public
-    property InnerException: Exception read FInnerException;
-    constructor Create(AError:Exception);
-end;
+type EDataError = Class(ECustomException);
 
 //ABSTRAIR ERROS DE CONEXÃO AO BANCO
-type EDataConnectionError = Class(Exception)
-  private
-   FInnerException: Exception;
-  public
-    property InnerException: Exception read FInnerException;
-    constructor Create(AError:Exception);
-end;
+type EDataConnectionError = Class(ECustomException);
+
 
 type TTratamentoDeErros = class
   public
@@ -67,20 +65,13 @@ implementation
     inherited;
   end;
 
-  //ERROS DO BANCO DE DADOS
-  constructor EDataError.Create(AError:Exception);
+  //ERROS CUSTOM
+  constructor ECustomException.Create(AError: Exception;AMSG:String = '');
   begin
-    inherited Create('Falha interna no banco de dados');
-    Self.FInnerException := AError;
+    inherited Create(AMSG);
+    FInnerMessage := AError.Message;
+    FInnerClass := AError.ClassName;
   end;
-
-  //ERRO DE CONEXÃO AO BANCO DE DADOS
-  constructor EDataConnectionError.Create(AError:Exception);
-  begin
-    inherited Create('Falha ao tentar conectar ao banco');
-    Self.FInnerException := AError;
-  end;
-
 
   // ########## TRATAMENTO ########## TRATAMENTO ########## TRATAMENTO ########## TRATAMENTO ########## TRATAMENTO ########## TRATAMENTO ########## TRATAMENTO
 
@@ -100,12 +91,12 @@ implementation
       //TRATAMENTO ERROS CONEXÃO AO BANCO
       on E: EDataConnectionError do
       begin
-        ShowMessage('Falha ao tentar se conectar ao banco' + sLineBreak + E.InnerException.Message);
+        ShowMessage('Falha ao tentar se conectar ao banco' + sLineBreak + E.InnerMessage);
       end;
       //TRATAMENTO ERROS DO BANCO
       on E: EDataError do
       begin
-        ShowMessage('Falha interna no banco. Error:' + sLineBreak + E.InnerException.Message);
+        ShowMessage('Falha interna no banco. Error:' + sLineBreak + E.InnerMessage);
       end;
       //ERROS INESPERADOS
       on E: Exception do
@@ -130,12 +121,12 @@ implementation
       //TRATAMENTO ERROS CONEXÃO AO BANCO
       on E: EDataConnectionError do
       begin
-        ShowMessage('Falha ao tentar se conectar ao banco. Error:' + sLineBreak + E.InnerException.Message);
+        ShowMessage('Falha ao tentar se conectar ao banco. Error:' + sLineBreak + E.InnerMessage);
       end;
       //TRATAMENTO ERROS DO BANCO
       on E: EDataError do
       begin
-        ShowMessage('Falha interna no banco. Error:' + sLineBreak + E.InnerException.Message);
+        ShowMessage('Falha interna no banco. Error:' + sLineBreak + E.InnerMessage);
       end;
       //ERROS INESPERADOS
       on E: Exception do
@@ -198,7 +189,7 @@ implementation
       //TRATAMENTO ERROS CONEXÃO AO BANCO
       on E: EDataConnectionError do
       begin
-        ShowMessage('Falha ao tentar se conectar ao banco. Error:' + sLineBreak + E.InnerException.Message);
+        ShowMessage('Falha ao tentar se conectar ao banco. Error:' + sLineBreak + E.InnerMessage);
       end;
 
       on E: Exception do
