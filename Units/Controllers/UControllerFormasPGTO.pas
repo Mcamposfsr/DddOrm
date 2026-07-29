@@ -3,7 +3,7 @@ unit UControllerFormasPGTO;
 interface
 
 uses UDomainFormasPGTO,UIRepository,UAppFormasPGTO, System.Generics.Collections,
-System.Classes, System.SysUtils, Vcl.Dialogs, System.StrUtils,UErros,UFormatErrorText;
+System.Classes, System.SysUtils, Vcl.Dialogs, System.StrUtils,UErros,UFormatErrorText,Data.DB;
 
 type IControllerFormasPGTO = interface
     function BuscarFormaPGTO(ACOD:Integer):TFormasPGTO;
@@ -11,6 +11,9 @@ type IControllerFormasPGTO = interface
     procedure AlterarFormaPGTO(ACOD:Integer;ANome,AParcelas,AJuros:String);
     procedure DeletarFormaPGTO(ACOD:Integer);
     procedure FiltrarClientesPGTO(AFiltro:String);
+
+    procedure ReceberDataset(ADataSet: TDataSet);
+    procedure AtualizarDataSet;
 end;
 
 //CONTROLLER FORM CLIENTES PAGAMENTO
@@ -21,6 +24,9 @@ type TControllerFormasPGTO = class(TInterfacedObject,IControllerFormasPGTO)
     procedure AlterarFormaPGTO(ACOD:Integer;ANome,AParcelas,AJuros:String);
     procedure DeletarFormaPGTO(ACOD:Integer);
     procedure FiltrarClientesPGTO(AFiltro:String);
+
+    procedure ReceberDataset(ADataSet: TDataSet);
+    procedure AtualizarDataSet;
 
     constructor Create(AApp:IAppFormasPGTO;ARep:IRepository<TFormasPGTO>);
   private
@@ -34,6 +40,18 @@ implementation
   begin
     Self.FApp := AApp;
     Self.FRep := ARep;
+  end;
+
+  //PASSAR DATASET PARA REPOSITORY
+  procedure TControllerFormasPGTO.ReceberDataset(ADataSet: TDataSet);
+  begin
+    FRep.ReceberDataSet(ADataSet);
+  end;
+
+  //ATUALIZAR DATASET
+  procedure TControllerFormasPGTO.AtualizarDataSet;
+  begin
+    FRep.AtualizarDataSet;
   end;
 
   //BUSCAR

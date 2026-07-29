@@ -1,7 +1,7 @@
-object FormCadastroProdutosEFC: TFormCadastroProdutosEFC
+object FormCadastroProdutosECF: TFormCadastroProdutosECF
   Left = 0
   Top = 0
-  Caption = 'FormCadastroProdutosEFC'
+  Caption = 'FormCadastroProdutosECF'
   ClientHeight = 250
   ClientWidth = 572
   Color = clBtnFace

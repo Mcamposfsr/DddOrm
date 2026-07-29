@@ -12,7 +12,7 @@ uses
   UIDM;
 
 type
-  TDM = class(TInterfacedObject,IDM)
+  TDM = class
   private
     //CONEXÃO
     FConnection: TFDConnection;

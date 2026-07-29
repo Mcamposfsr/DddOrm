@@ -27,16 +27,13 @@ type
     procedure EditFiltrarDatasetChange(Sender: TObject);
   private
     //FERRAMENTAS
-    FRepositoryProdutosECF: IRepository<TProdutosECF>;
     FControllerProdutosECF: IControllerProdutosECF;
   public
     //VAR CONTROLE
     FProduto: TProdutosECF;
 
-
     constructor Create(
       AOwner: TComponent;
-      ARepositoryProdutosECF: IRepository<TProdutosECF>;
       AControllerProdutosECF: IControllerProdutosECF
     );
   end;
@@ -50,25 +47,21 @@ implementation
 
   constructor TFormBuscarProdutos.Create(
     AOwner: TComponent;
-    ARepositoryProdutosECF: IRepository<TProdutosECF>;
     AControllerProdutosECF: IControllerProdutosECF
   );
   begin
     inherited Create(AOwner);
-    FRepositoryProdutosECF := ARepositoryProdutosECF;
     FControllerProdutosECF := AControllerProdutosECF;
 
     //PASSAR DATASET
-    FRepositoryProdutosECF.ReceberDataSet(Self.FDMemTable);
+    FControllerProdutosECF.ReceberDataSet(Self.FDMemTable);
     TTratamentoDeErros.ExecutarOnForm(
     procedure
     begin
-      FRepositoryProdutosECF.AtualizarDataSet
+      FControllerProdutosECF.AtualizarDataSet;
     end
     );
   end;
-
-
 
   //BUSCAR
   procedure TFormBuscarProdutos.ButtonSelectClick(Sender: TObject);

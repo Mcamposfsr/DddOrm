@@ -2,7 +2,7 @@ object FormPrincipal: TFormPrincipal
   Left = 0
   Top = 0
   Caption = 'DDDORM'
-  ClientHeight = 533
+  ClientHeight = 453
   ClientWidth = 1072
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -259,7 +259,7 @@ object FormPrincipal: TFormPrincipal
       Layout = blGlyphTop
       ParentFont = False
       TabOrder = 0
-      OnClick = BitBtnCadastrarClienteClick
+      OnClick = OpenFormClientesPGTO
     end
     object BitBtnCadastrarPagamento: TBitBtn
       Left = 101
@@ -495,7 +495,7 @@ object FormPrincipal: TFormPrincipal
       Layout = blGlyphTop
       ParentFont = False
       TabOrder = 1
-      OnClick = BitBtnCadastrarPagamentoClick
+      OnClick = OpenFormFormasPGTO
     end
     object BitBtnCadastrarProduto: TBitBtn
       Left = 201
@@ -731,7 +731,7 @@ object FormPrincipal: TFormPrincipal
       Layout = blGlyphTop
       ParentFont = False
       TabOrder = 2
-      OnClick = BitBtnCadastrarProdutoClick
+      OnClick = OpenFormProdutosECF
     end
     object BitBtnCadastrarPedido: TBitBtn
       Left = 301
@@ -967,14 +967,14 @@ object FormPrincipal: TFormPrincipal
       Layout = blGlyphTop
       ParentFont = False
       TabOrder = 3
-      OnClick = BitBtnCadastrarPedidoClick
+      OnClick = OpenFormPedidos
     end
   end
   object Panel2: TPanel
     Left = 0
     Top = 100
     Width = 1072
-    Height = 433
+    Height = 353
     Align = alClient
     Caption = 'DDDORM'
     Font.Charset = ANSI_CHARSET
@@ -992,19 +992,15 @@ object FormPrincipal: TFormPrincipal
       Caption = 'CADASTROS'
       object CLIENTES1: TMenuItem
         Caption = 'CLIENTES'
-        OnClick = CLIENTES1Click
       end
       object PAGAMENTOS1: TMenuItem
         Caption = 'PAGAMENTOS'
-        OnClick = PAGAMENTOS1Click
       end
       object PRODUTOS1: TMenuItem
         Caption = 'PRODUTOS'
-        OnClick = BitBtnCadastrarProdutoClick
       end
       object PEDIDOS1: TMenuItem
         Caption = 'PEDIDOS'
-        OnClick = BitBtnCadastrarPedidoClick
       end
     end
   end

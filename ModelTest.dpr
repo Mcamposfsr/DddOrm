@@ -26,7 +26,7 @@ uses
   UDomainProdutosECF in 'Units\Domain\UDomainProdutosECF.pas',
   UAppProdutosECF in 'Units\Application\UAppProdutosECF.pas',
   UControllerProdutosECF in 'Units\Controllers\UControllerProdutosECF.pas',
-  UFormProdutosEFC in 'Units\Forms\UFormProdutosEFC.pas' {FormProdutosEFC},
+  UFormProdutosECF in 'Units\Forms\UFormProdutosECF.pas' {FormProdutosECF},
   UDomainPedidos in 'Units\Domain\UDomainPedidos.pas',
   UDomainItensPedidos in 'Units\Domain\UDomainItensPedidos.pas',
   UAppPedidos in 'Units\Application\UAppPedidos.pas',
@@ -38,10 +38,14 @@ uses
   UFormCadastroClientePGTO in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroClientePGTO.pas' {FormCadastroClientes},
   UFormCadastroFormaPGTO in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroFormaPGTO.pas' {FormCadastroPGTO},
   UFormCadastroPedido in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroPedido.pas' {FormCadastroPedido},
-  UFormCadastroProdutosEFC in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroProdutosEFC.pas' {FormCadastroProdutosEFC},
   UFormCadastroItemPedido in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroItemPedido.pas' {FormItensPedido},
   UFormBuscarProdutos in 'Units\Forms\FormsSecundarios\Busca\UFormBuscarProdutos.pas' {FormBuscarProdutos},
-  UDataSetColumnSum in 'Units\Utils\UDataSetColumnSum.pas';
+  UDataSetColumnSum in 'Units\Utils\UDataSetColumnSum.pas',
+  UBootstrapProdutosECF in 'Units\Bootstraps\UBootstrapProdutosECF.pas',
+  UBootstrapClientesPGTO in 'Units\Bootstraps\UBootstrapClientesPGTO.pas',
+  UBootstrapFormasPGTO in 'Units\Bootstraps\UBootstrapFormasPGTO.pas',
+  UFormCadastroProdutosECF in 'Units\Forms\FormsSecundarios\Cadastro\UFormCadastroProdutosECF.pas' {FormCadastroProdutosECF},
+  UBootstrapPedidos in 'Units\Bootstraps\UBootstrapPedidos.pas';
 
 //VARIÁVEL DE AJUSTE PARA BANCO.
   var LLocationDB: String;
@@ -72,14 +76,9 @@ begin
 
       GDM.ConectarBD;
 
-
-    Application.CreateForm(TFormPrincipal, FormPrincipal);
-    Application.CreateForm(TFormPedidos, FormPedidos);
-    Application.CreateForm(TFormProdutosEFC, FormProdutosEFC);
-    Application.CreateForm(TFormClientesPGTO, FormClientesPGTO);
-    Application.CreateForm(TFormFormasPGTO, FormFormasPGTO);
-    Application.Run;
-
+      Application.CreateForm(TFormPrincipal, FormPrincipal);
+  Application.CreateForm(TFormCadastroProdutosECF, FormCadastroProdutosECF);
+  Application.Run;
     end);
 
   finally

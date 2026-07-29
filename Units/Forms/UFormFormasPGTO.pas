@@ -38,7 +38,6 @@ type
     EditFiltro: TEdit;
     DataSource: TDataSource;
     FDMemTable: TFDMemTable;
-    procedure FormCreate(Sender: TObject);
     procedure BtnFecharClick(Sender: TObject);
     procedure BtnCadastrarClick(Sender: TObject);
     procedure BtnAlterarClick(Sender: TObject);
@@ -52,7 +51,7 @@ type
 
     procedure VerificarSelecao;
   public
-    { Public declarations }
+    constructor Create(AOwner: Tcomponent;AController: IControllerFormasPGTO); Reintroduce;
   end;
 
 var
@@ -62,19 +61,17 @@ implementation
 
 {$R *.dfm}
 
+  constructor TFormFormasPGTO.Create(
+  AOwner: Tcomponent;
+  AController: IControllerFormasPGTO
+  );
+  begin
+    inherited Create(AOwner);
 
-procedure TFormFormasPGTO.FormCreate(Sender: TObject);
- begin
-    //CRIAR REPOSITORY
-    FRepository := TRepository<TFormasPGTO>.Create(GDM.GetConnection);
+    FController := AController;
+
     //PASSAR DATASET PARA LIGAR AO ORM
-    FRepository.ReceberDataSet(Self.FDMemTable);
-
-    //CRIAR APPLICATION
-    FApp := TAppFormasPGTO.Create(FRepository);
-
-    //CONTROLLER
-    FController := TControllerFormasPGTO.Create(FApp,FRepository);
+    FController.ReceberDataset(Self.FDMemTable);
 
     //CONFIGURAR FORMATO CAMPO DATASET
     TFloatField(FDMemTable.FieldByName('FIN_JUROS')).DisplayFormat := '0.0 %';
@@ -82,13 +79,10 @@ procedure TFormFormasPGTO.FormCreate(Sender: TObject);
     TTratamentoDeErros.ExecutarOnForm(
       procedure
       begin
-        FRepository.AtualizarDataSet
+        FController.AtualizarDataSet;
       end
     );
   end;
-
-
-
 
 // ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
 

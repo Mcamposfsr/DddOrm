@@ -38,9 +38,7 @@ type
 
 
     //FERRAMENTAS
-    FRepositoryPedidos: IRepository<TPedidos>;
     FControllerPedidos: IControllerPedidos;
-    FRepositoryClientes: IRepository<TClientePGTO>;
     FControllerClientes: IControllerClientesPGTO;
 
     procedure PreencherPedido(ACliente:TClientePGTO);
@@ -53,9 +51,7 @@ type
 
     constructor Create(
     AOwner: TComponent;
-    ARepositoryPedidos: IRepository<TPedidos>;
     AControllerPedidos: IControllerPedidos;
-    ARepositoryClientes: IRepository<TClientePGTO>;
     AControllerClientes: IControllerClientesPGTO
     ); Reintroduce;
   end;
@@ -70,17 +66,13 @@ implementation
 
 constructor TFormCadastroPedido.Create(
     AOwner: TComponent;
-    ARepositoryPedidos: IRepository<TPedidos>;
     AControllerPedidos: IControllerPedidos;
-    ARepositoryClientes: IRepository<TClientePGTO>;
     AControllerClientes: IControllerClientesPGTO
     );
     var LTESTE: IDBResultSet;
     begin
       Inherited Create(AOwner);
-      FRepositoryPedidos := ARepositoryPedidos;
       FControllerPedidos := AControllerPedidos;
-      FRepositoryClientes := ARepositoryClientes;
       FControllerClientes := AControllerClientes;
 
       //PASSAR DATA ATUAL PARA EDIT
@@ -105,7 +97,7 @@ constructor TFormCadastroPedido.Create(
   begin
     LFORM := nil;
     try
-      LFORM := TFormBuscarClientePGTO.Create(nil,FRepositoryClientes,FControllerClientes);
+      LFORM := TFormBuscarClientePGTO.Create(nil,FControllerClientes);
       if LFORM.ShowModal = mrOk then
       begin
         Self.FClienteAtual := LFORM.FCliente;

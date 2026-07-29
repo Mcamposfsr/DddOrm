@@ -17,7 +17,8 @@ UAppPedidos,
 UAppItensPedidos,
 UDomainItensPedidos,
 dbebr.factory.interfaces,
-dbebr.factory.firedac
+dbebr.factory.firedac,
+Data.DB
 
 ;
 
@@ -37,6 +38,7 @@ type IControllerPedidos = interface
   procedure AtualizarValorTotalPedido(AID:Integer;AValorTotal:String);
   //OPÇÃO DE EXIBIÇÃO LEGADO PARA FIREBIRD 1.5
   procedure ExibirPedidos;
+  procedure ReceberDataset(ADataSet: TFDMemTable);
 
 
   // ***** ITENS PEDIDOS *****
@@ -108,6 +110,7 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
     procedure AtualizarValorTotalPedido(AID:Integer;AValorTotal:String);
     //OPÇÃO DE EXIBIÇÃO LEGADO PARA FIREBIRD 1.5
     procedure ExibirPedidos;
+    procedure ReceberDataset(ADataSet: TFDMemTable);
 
 
     // ***** ITENS PEDIDOS *****
@@ -164,7 +167,7 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
     AAppItensPedidos:IAppItensPedidos;
     ARepItensPedidos:IRepository<TItensPedidos>;
     AAppProdutos:IAppProdutosECF;
-    ARepProdutosEFC:Irepository<TProdutosECF>
+    ARepProdutosECF:Irepository<TProdutosECF>
     );
   private
     //CONEXÃO
@@ -179,7 +182,7 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
 
     //PRODUTOS
     FAppProdutos: IAppProdutosECF;
-    FRepProdutosEFC: Irepository<TProdutosECF>;
+    FRepProdutosECF: Irepository<TProdutosECF>;
 end;
 
 implementation
@@ -191,7 +194,7 @@ implementation
     AAppItensPedidos:IAppItensPedidos;
     ARepItensPedidos:IRepository<TItensPedidos>;
     AAppProdutos:IAppProdutosECF;
-    ARepProdutosEFC:Irepository<TProdutosECF>
+    ARepProdutosECF:Irepository<TProdutosECF>
     );
   begin
     //CONEXÃO - TRABALHAR COM TRANSAÇÕES
@@ -207,7 +210,7 @@ implementation
 
     //PRODUTOS
     FAppProdutos := AAppProdutos;
-    FRepProdutosEFC := ARepProdutosEFC;
+    FRepProdutosECF := ARepProdutosECF;
   end;
 
   // ################## CRUD ################## CRUD ################## CRUD ################## CRUD ################## CRUD ################## CRUD
@@ -220,7 +223,13 @@ implementation
     Result := FAppPedidos.BuscarPedidoByID(AID);
   end;
 
-   //EXIBIR PEDIDOS DATASET
+  //RECEBER DATASET
+  procedure TControllerPedidos.ReceberDataset(ADataSet: TFDMemTable);
+  begin
+    Self.FRepPedidos.ReceberDataSetFirebirdLegado(ADataSet);
+  end;
+
+  //EXIBIR PEDIDOS DATASET
   procedure TControllerPedidos.ExibirPedidos;
   begin
     Self.FAppPedidos.BuscarPedidosLegado;

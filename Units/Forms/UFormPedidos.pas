@@ -45,7 +45,6 @@ type
     BtnConfirmar: TButton;
     BtnCancelar: TButton;
     BitBtnAlterarPedido: TBitBtn;
-    procedure FormCreate(Sender: TObject);
     procedure BitBtnBuscarPedidoClick(Sender: TObject);
     procedure BitBtnCriarPedidoClick(Sender: TObject);
     procedure BitBtnRemoverPedidoClick(Sender: TObject);
@@ -63,20 +62,6 @@ type
     FItensPedido: TObjectList<TItensPedidos>;
     FOperacao: String;
 
-    //FERRAMENTAS
-
-    //REPOSITORY
-    FRepositoryPedidos: IRepository<TPedidos>;
-    FRepositoryItensPedidos: IRepository<TItensPedidos>;
-    FRepositoryClientesPGTO: IRepository<TClientePGTO>;
-    FRepositoryProdutos: IRepository<TProdutosECF>;
-
-    //APPS
-    FAppPedidos: IAppPedidos;
-    FAppItensPedidos: IAppItensPedidos;
-    FAppClientes: IAppClientesPGTO;
-    FAppProdutos: IAppProdutosECF;
-
     //CONTROLLERS
     FControllerPedidos: IControllerPedidos;
     FControllerClientes: IControllerClientesPGTO;
@@ -91,7 +76,12 @@ type
     procedure EstadoControlesItens(AState:Boolean);
     procedure RestarEstadoForm;
   public
-    { Public declarations }
+    constructor Create(
+    AOwner: Tcomponent;
+    AControllerClientes: IControllerClientesPGTO;
+    AControllerProdutos: IControllerProdutosECF;
+    AControllerPedidos: IControllerPedidos
+    ); Reintroduce;
   end;
 
 var
@@ -102,39 +92,25 @@ implementation
 {$R *.dfm}
 
   // CONSTRUCTOR
-  procedure TFormPedidos.FormCreate(Sender: TObject);
+  constructor TFormPedidos.Create(
+  AOwner: Tcomponent;
+  AControllerClientes: IControllerClientesPGTO;
+  AControllerProdutos: IControllerProdutosECF;
+  AControllerPedidos: IControllerPedidos
+  );
   begin
+    inherited Create(AOwner);
+
     //SEM OPERAÇÃO INICIAL
     FOperacao := '';
 
     //LISTA DE ITENS INTERNA
     FItensPedido := TObjectList<TItensPedidos>.Create(True);
 
-    //CRIAR REPOSITORY
-    FRepositoryPedidos := TRepository<TPedidos>.Create(GDM.GetConnection);
-    FRepositoryItensPedidos := TRepository<TItensPedidos>.Create(GDM.GetConnection);
-    FRepositoryClientesPGTO := TRepository<TClientePGTO>.Create(GDM.GetConnection);
-    FRepositoryProdutos := TRepository<TProdutosECF>.Create(GDM.GetConnection);
-
-    //CRIAR APPLICATION
-    FAppPedidos := TAppPedidos.Create(FRepositoryPedidos,FRepositoryClientesPGTO);
-    FAppItensPedidos := TAppItensPedidos.Create(FRepositoryItensPedidos,FRepositoryProdutos);
-    FAppClientes := TAppClientesPGTO.Create(FRepositoryClientesPGTO);
-    FAppProdutos := TAppProdutosECF.Create(FRepositoryProdutos);
-
-    //CONTROLLER
-    FControllerPedidos := TControllerPedidos.Create(
-    GDM.GetConnection,
-    FAppPedidos,
-    FRepositoryPedidos,
-    FAppItensPedidos,
-    FRepositoryItensPedidos,
-    FAppProdutos,
-    FRepositoryProdutos
-    );
-
-    FControllerClientes := TControllerClientesPGTO.Create(FAppClientes,FRepositoryClientesPGTO);
-    FControllerProdutos := TControllerProdutosECF.Create(FAppProdutos,FRepositoryProdutos);
+    //PASSAR CONTROLLERS
+    FControllerPedidos := AControllerPedidos;
+    FControllerClientes := AControllerClientes;
+    FControllerProdutos := AControllerProdutos;
 
     //CONFIGURAR EXIBIÇÃO DO DATASET
     Self.ConfigurarDataset;
@@ -160,7 +136,7 @@ implementation
   begin
     LFORM := nil;
     try
-      LFORM := TFormBuscarPedido.Create(nil,FRepositoryPedidos,FControllerPedidos);
+      LFORM := TFormBuscarPedido.Create(nil,FControllerPedidos);
       Self.RestarEstadoForm;
       if LFORM.ShowModal = mrOk then
       begin
@@ -185,7 +161,11 @@ implementation
   begin
     LFORM := nil;
     try
-      LFORM := TFormCadastroPedido.Create(nil,FRepositoryPedidos,FControllerPedidos,FRepositoryClientesPGTO,FControllerClientes);
+      LFORM := TFormCadastroPedido.Create(
+      nil,
+      FControllerPedidos,
+      FControllerClientes
+      );
       if LFORM.ShowModal = mrOk then
       begin
         Self.RestarEstadoForm;
@@ -252,9 +232,7 @@ implementation
       Self.FPedidoAtual.ID,
       -1,
       'INSERT',
-      FRepositoryItensPedidos,
       FControllerPedidos,
-      FRepositoryProdutos,
       FControllerProdutos,
       //PASSAR LISTA PARA FORM TRABALHAR NA MESMA
       Self.FItensPedido
@@ -290,9 +268,7 @@ implementation
       Self.FPedidoAtual.ID,
       LIndiceItem,
       'UPDATE',
-      FRepositoryItensPedidos,
       FControllerPedidos,
-      FRepositoryProdutos,
       FControllerProdutos,
       //PASSAR LISTA PARA FORM TRABALHAR NA MESMA
       Self.FItensPedido
@@ -330,9 +306,7 @@ implementation
       Self.FPedidoAtual.ID,
       LIndiceItem,
       'DELETE',
-      FRepositoryItensPedidos,
       FControllerPedidos,
-      FRepositoryProdutos,
       FControllerProdutos,
       //PASSAR LISTA PARA FORM TRABALHAR NA MESMA
       Self.FItensPedido

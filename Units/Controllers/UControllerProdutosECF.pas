@@ -2,7 +2,7 @@ unit UControllerProdutosECF;
 
 interface
 
-uses UDomainProdutosECF,UIRepository,UAppProdutosECF, System.Generics.Collections,System.Classes,UFormatErrorText, System.SysUtils, Vcl.Dialogs,UErros;
+uses UDomainProdutosECF,UIRepository,UAppProdutosECF,Data.DB, System.Generics.Collections,System.Classes,UFormatErrorText, System.SysUtils, Vcl.Dialogs,UErros;
 
 type IControllerProdutosECF = interface
   function BuscarProdutoECF(ACOD:Integer):TProdutosECF;
@@ -10,6 +10,9 @@ type IControllerProdutosECF = interface
   procedure AlterarProdutoECF(ACOD:Integer;ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof,ADescontoMax:String);
   procedure DeletarProdutoECF(ACOD:Integer);
   procedure FiltrarProdutoECF(AFiltro:String);
+
+  procedure ReceberDataset(ADataSet: TDataSet);
+  procedure AtualizarDataSet;
 end;
 
 //CONTROLLER FORM CLIENTES PAGAMENTO
@@ -20,6 +23,9 @@ type TControllerProdutosECF = class(TInterfacedObject,IControllerProdutosECF)
     procedure AlterarProdutoECF(ACOD:Integer;ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof,ADescontoMax:String);
     procedure DeletarProdutoECF(ACOD:Integer);
     procedure FiltrarProdutoECF(AFiltro:String);
+
+    procedure ReceberDataset(ADataSet: TDataSet);
+    procedure AtualizarDataSet;
 
     constructor Create(AApp:IAppProdutosECF;ARep:IRepository<TProdutosECF>);
   private
@@ -33,6 +39,18 @@ implementation
   begin
     Self.FApp := AApp;
     Self.FRep := ARep;
+  end;
+
+  //PASSAR DATASET PARA REPOSITORY
+  procedure TControllerProdutosECF.ReceberDataset(ADataSet: TDataSet);
+  begin
+    FRep.ReceberDataSet(ADataSet);
+  end;
+
+  //ATUALIZAR DATASET
+  procedure TControllerProdutosECF.AtualizarDataSet;
+  begin
+    FRep.AtualizarDataSet;
   end;
 
   //BUSCAR

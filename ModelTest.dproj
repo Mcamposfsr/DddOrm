@@ -160,8 +160,8 @@
         <DCCReference Include="Units\Domain\UDomainProdutosECF.pas"/>
         <DCCReference Include="Units\Application\UAppProdutosECF.pas"/>
         <DCCReference Include="Units\Controllers\UControllerProdutosECF.pas"/>
-        <DCCReference Include="Units\Forms\UFormProdutosEFC.pas">
-            <Form>FormProdutosEFC</Form>
+        <DCCReference Include="Units\Forms\UFormProdutosECF.pas">
+            <Form>FormProdutosECF</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Units\Domain\UDomainPedidos.pas"/>
@@ -193,10 +193,6 @@
             <Form>FormCadastroPedido</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="Units\Forms\FormsSecundarios\Cadastro\UFormCadastroProdutosEFC.pas">
-            <Form>FormCadastroProdutosEFC</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="Units\Forms\FormsSecundarios\Cadastro\UFormCadastroItemPedido.pas">
             <Form>FormItensPedido</Form>
             <FormType>dfm</FormType>
@@ -206,6 +202,14 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Units\Utils\UDataSetColumnSum.pas"/>
+        <DCCReference Include="Units\Bootstraps\UBootstrapProdutosECF.pas"/>
+        <DCCReference Include="Units\Bootstraps\UBootstrapClientesPGTO.pas"/>
+        <DCCReference Include="Units\Bootstraps\UBootstrapFormasPGTO.pas"/>
+        <DCCReference Include="Units\Forms\FormsSecundarios\Cadastro\UFormCadastroProdutosECF.pas">
+            <Form>FormCadastroProdutosECF</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Units\Bootstraps\UBootstrapPedidos.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

@@ -1,4 +1,4 @@
-unit UFormCadastroProdutosEFC;
+ unit UFormCadastroProdutosECF;
 
 interface
 
@@ -9,7 +9,7 @@ uses
   UControllerProdutosECF,UDomainProdutosECF,UErros;
 
 type
-  TFormCadastroProdutosEFC = class(TForm)
+  TFormCadastroProdutosECF = class(TForm)
     PanelPrincipal: TPanel;
     Label1: TLabel;
     Label3: TLabel;
@@ -47,10 +47,6 @@ type
     //MÉTODOS AUXÍLIARES
     procedure ReceberValores(AProdutos:TProdutosECF);
     procedure FormControl(AEstado:Boolean);
-
-
-
-
   public
     constructor Create(
     AOWner: TComponent;
@@ -63,14 +59,14 @@ type
   end;
 
 var
-  FormCadastroProdutosEFC: TFormCadastroProdutosEFC;
+  FormCadastroProdutosECF: TFormCadastroProdutosECF;
 
 implementation
 
 {$R *.dfm}
 
   //INICIALIZAÇÃO DE FERRAMENTAS
-  constructor TFormCadastroProdutosEFC.Create(
+  constructor TFormCadastroProdutosECF.Create(
     AOWner: TComponent;
     AController: IControllerProdutosECF;
     ACOD: Integer;
@@ -86,7 +82,7 @@ implementation
 
 
 //FILTRAR CARACTERES
-  procedure TFormCadastroProdutosEFC.FiltrarCaracteres(Sender: TObject;
+  procedure TFormCadastroProdutosECF.FiltrarCaracteres(Sender: TObject;
   var Key: Char);
   begin
     if not (Key in ['0'..'9', ',', '.', #8]) then
@@ -96,7 +92,7 @@ implementation
 //INICIALIZAÇÃO VISUAL
 
 
-  procedure TFormCadastroProdutosEFC.FormShow(Sender: TObject);
+  procedure TFormCadastroProdutosECF.FormShow(Sender: TObject);
   var LProdutos: TProdutosECF;
   begin
     TTratamentoDeErros.ExecutarOnForm(
@@ -129,13 +125,13 @@ implementation
 
 // ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
 
-procedure TFormCadastroProdutosEFC.ButtonCancelarClick(Sender: TObject);
+procedure TFormCadastroProdutosECF.ButtonCancelarClick(Sender: TObject);
   begin
     Self.Close;
   end;
 
 //    ACodBarras,ANome,AUniSigla,ASitVenda,AEstoque,APrecoVenda,AALIQPis,AALIQCof:String
-  procedure TFormCadastroProdutosEFC.BtnConfirmarClick(Sender: TObject);
+  procedure TFormCadastroProdutosECF.BtnConfirmarClick(Sender: TObject);
   begin
     TTratamentoDeErros.ExecutarOnForm(
     procedure
@@ -182,7 +178,7 @@ procedure TFormCadastroProdutosEFC.ButtonCancelarClick(Sender: TObject);
 // ########## MÉTODOS AUXÍLIARES ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES  ########## MÉTODOS AUXÍLIARES
 
   // PASSAR VALORES DDO PARA FORM
-  procedure TFormCadastroProdutosEFC.ReceberValores(AProdutos:TProdutosECF);
+  procedure TFormCadastroProdutosECF.ReceberValores(AProdutos:TProdutosECF);
   begin
     EditNome.Text := AProdutos.Nome;
     EditCodigoBarras.Text := AProdutos.CodigoDeBarras;
@@ -195,7 +191,7 @@ procedure TFormCadastroProdutosEFC.ButtonCancelarClick(Sender: TObject);
   end;
 
   // ATIVAR/DESATIVAR ELEMENTOS
-  procedure TFormCadastroProdutosEFC.FormControl(AEstado:Boolean);
+  procedure TFormCadastroProdutosECF.FormControl(AEstado:Boolean);
   begin
     EditNome.Enabled := AEstado;
     EditCodigoBarras.Enabled := AEstado;
@@ -208,7 +204,7 @@ procedure TFormCadastroProdutosEFC.ButtonCancelarClick(Sender: TObject);
     EditDescontoMax.Enabled := AEstado;
   end;
 
-  procedure TFormCadastroProdutosEFC.FormKeyPress(Sender: TObject; var Key: Char);
+  procedure TFormCadastroProdutosECF.FormKeyPress(Sender: TObject; var Key: Char);
   begin
     if Key = #13 then
     begin

@@ -39,22 +39,19 @@ type
     BtnFechar: TButton;
     DataSource: TDataSource;
     FDMemTable: TFDMemTable;
-    procedure FormCreate(Sender: TObject);
     procedure BtnFecharClick(Sender: TObject);
     procedure BtnCadastrarClick(Sender: TObject);
     procedure BtnAlterarClick(Sender: TObject);
     procedure BtnDeletarClick(Sender: TObject);
     procedure EditFiltroNomeChange(Sender: TObject);
   private
-
-    //FERRAMENTAS
-    FRepository: IRepository<TClientePGTO>;
-    FApp: IAppClientesPGTO;
     FController: IControllerClientesPGTO;
-
     procedure VerificarSelecao;
   public
-    { Public declarations }
+    constructor Create(
+    AOwner: Tcomponent;
+    AController: IControllerClientesPGTO
+    ); Reintroduce;
   end;
 
 var
@@ -64,33 +61,27 @@ implementation
 
 {$R *.dfm}
 
-
-
-procedure TFormClientesPGTO.FormCreate(Sender: TObject);
+  constructor TFormClientesPGTO.Create(
+  AOwner: Tcomponent;
+  AController: IControllerClientesPGTO
+  );
   begin
-    //CRIAR REPOSITORY
-    FRepository := TRepository<TClientePGTO>.Create(GDM.GetConnection);
+    inherited Create(AOwner);
+
+    FController := AController;
+
     //PASSAR DATASET PARA LIGAR AO ORM
-    FRepository.ReceberDataSet(Self.FDMemTable);
-
-    //CRIAR APPLICATION
-    FApp := TAppClientesPGTO.Create(FRepository);
-
-    //CONTROLLER
-    FController := TControllerClientesPGTO.Create(FApp,FRepository);
+    FController.ReceberDataset(Self.FDMemTable);
 
     TTratamentoDeErros.ExecutarOnForm(
       procedure
       begin
-        FRepository.AtualizarDataSet
+        FController.AtualizarDataSet;
       end
     );
   end;
 
-
-
 // ########## EVENTOS FORM ########## EVENTOS FORM ########## EVENTOS FORM ########## EVENTOS FORM ########## EVENTOS FORM ########## EVENTOS FORM
-
 
   //FILTRAR
   procedure TFormClientesPGTO.EditFiltroNomeChange(Sender: TObject);

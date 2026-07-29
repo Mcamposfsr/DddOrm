@@ -30,7 +30,6 @@ type
     procedure EditFiltrarDatasetChange(Sender: TObject);
   private
     //FERRAMENTAS
-    FRepositoryClientes: IRepository<TClientePGTO>;
     FControllerClientes: IControllerClientesPGTO;
   public
     //VAR CONTROLE
@@ -38,7 +37,6 @@ type
 
     constructor Create(
     AOwner: Tcomponent;
-    ARepositoryClientes: IRepository<TClientePGTO>;
     AControllerClientes: IControllerClientesPGTO
     ); Reintroduce;
   end;
@@ -52,20 +50,18 @@ implementation
 
   constructor TFormBuscarClientePGTO.Create(
     AOwner: Tcomponent;
-    ARepositoryClientes: IRepository<TClientePGTO>;
     AControllerClientes: IControllerClientesPGTO
     );
   begin
     inherited Create(AOwner);
-    FRepositoryClientes := ARepositoryClientes;
     FControllerClientes := AControllerClientes;
 
-    FRepositoryClientes.ReceberDataSet(Self.FDMemTable);
+    FControllerClientes.ReceberDataset(Self.FDMemTable);
 
     TTratamentoDeErros.ExecutarOnForm(
       procedure
       begin
-        FRepositoryClientes.AtualizarDataSet
+        FControllerClientes.AtualizarDataSet
       end
     );
   end;

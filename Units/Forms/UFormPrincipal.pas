@@ -4,10 +4,20 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Menus, Vcl.StdCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Menus, Vcl.StdCtrls,UDM,
   Vcl.Buttons,
 
-  UFormFormasPGTO,UFormClientesPGTO,UFormPedidos,UFormProdutosEFC;
+  // ***FORMS***
+  UFormFormasPGTO,
+  UFormProdutosECF,
+  UFormClientesPGTO,
+  UFormPedidos,
+
+  // ***BOOTSTRAPS***
+  UBootsTrapFormasPGTO,
+  UBootsTrapClientesPGTO,
+  UBootstrapProdutosECF,
+  UBootstrapPedidos;
 
 type
   TFormPrincipal = class(TForm)
@@ -24,14 +34,19 @@ type
     PRODUTOS1: TMenuItem;
     PEDIDOS1: TMenuItem;
     procedure FormCreate(Sender: TObject);
-    procedure BitBtnCadastrarClienteClick(Sender: TObject);
-    procedure CLIENTES1Click(Sender: TObject);
-    procedure BitBtnCadastrarPagamentoClick(Sender: TObject);
-    procedure PAGAMENTOS1Click(Sender: TObject);
-    procedure BitBtnCadastrarProdutoClick(Sender: TObject);
-    procedure BitBtnCadastrarPedidoClick(Sender: TObject);
+
+    //EVENTOS
+    procedure OpenFormFormasPGTO(Sender: TObject);
+    procedure OpenFormClientesPGTO(Sender: TObject);
+    procedure OpenFormProdutosECF(Sender: TObject);
+    procedure OpenFormPedidos(Sender: TObject);
   private
-    { Private declarations }
+    //BOOTSTRAPS
+    FBootstrapFormasPGTO: IBootstrapFormasPGTO;
+    FBootstrapClientesPGTO: IBootstrapClientesPGTO;
+    FBootstrapProdutosECF: IBootstrapProdutosEFC;
+    FBootstrapPedidos: IBootstrapPedidos;
+    procedure ConfigurarBotoes;
   public
     { Public declarations }
   end;
@@ -43,7 +58,77 @@ implementation
 
 {$R *.dfm}
 
-procedure TFormPrincipal.FormCreate(Sender: TObject);
+  procedure TFormPrincipal.FormCreate(Sender: TObject);
+  var LDM: TDM;
+  begin
+    Self.ConfigurarBotoes;
+    //CRIAR BOOTSTRAP PASSANDO CONEXÃO GLOBAL
+    FBootstrapFormasPGTO := TBootstrapFormasPGTO.Create(GDM);
+    FBootstrapClientesPGTO := TBootstrapClientesPGTO.Create(GDM);
+    FBootstrapProdutosECF := TBootstrapProdutosEFC.Create(GDM);
+    FBootstrapPedidos :=  TBootstrapPedidos.Create(GDM);
+  end;
+
+// ############### EVENTOS ############### EVENTOS ############### EVENTOS ############### EVENTOS ############### EVENTOS ############### EVENTOS ############### EVENTOS
+
+  //ABERTURA FORMAS DE PAGAMENTOS
+  procedure TFormPrincipal.OpenFormFormasPGTO(Sender: TObject);
+  var
+  LFORM: TFormFormasPGTO;
+  begin
+    try
+      LFORM := TFormFormasPGTO.Create(nil,FBootstrapFormasPGTO.Controller);
+      LFORM.ShowModal;
+    finally
+      LFORM.Free;
+    end;
+  end;
+
+  //ABERTURA CLIENTES
+  procedure TFormPrincipal.OpenFormClientesPGTO(Sender: TObject);
+  var
+  LFORM: TFormClientesPGTO;
+  begin
+    try
+      LFORM := TFormClientesPGTO.Create(nil,FBootstrapClientesPGTO.Controller);
+      LFORM.ShowModal;
+    finally
+      LFORM.Free;
+    end;
+  end;
+
+  //ABERTURA PRODUTOS
+  procedure TFormPrincipal.OpenFormProdutosECF(Sender: TObject);
+  var
+  LFORM: TFormProdutosECF;
+  begin
+    try
+      LFORM := TFormProdutosECF.Create(nil,FBootstrapProdutosECF.Controller);
+      LFORM.ShowModal;
+    finally
+      LFORM.Free;
+    end;
+  end;
+
+  //ABERTURA PEDIDOS
+  procedure TFormPrincipal.OpenFormPedidos(Sender: TObject);
+  var
+  LFORM: TFormPedidos;
+  begin
+    try
+      LFORM := TFormPedidos.Create(nil,
+      FBootstrapPedidos.ControllerClientes,
+      FBootstrapPedidos.ControllerProdutosECF,
+      FBootstrapPedidos.ControllerPedidos
+      );
+      LFORM.ShowModal;
+    finally
+      LFORM.Free;
+    end;
+  end;
+
+  // ############### FORM AUX ############### FORM AUX ############### FORM AUX ############### FORM AUX ############### FORM AUX ############### FORM AUX ############### FORM AUX
+  procedure TFormPrincipal.ConfigurarBotoes;
   begin
     Self.BitBtnCadastrarCliente.Caption := 'Cadastrar' + sLineBreak + 'Cliente';
     Self.BitBtnCadastrarPagamento.Caption := 'Cadastrar' + sLineBreak + 'Pagamento';
@@ -51,41 +136,7 @@ procedure TFormPrincipal.FormCreate(Sender: TObject);
     Self.BitBtnCadastrarPedido.Caption := 'Novo' + sLineBreak + 'Pedido';
   end;
 
-// ############### EVENTOS
-
-  //ABERTURA CADASTRO CLIENTES
-
-procedure TFormPrincipal.BitBtnCadastrarClienteClick(Sender: TObject);
-  begin
-    FormClientesPGTO.Show;
-  end;
+end.
 
 
-procedure TFormPrincipal.CLIENTES1Click(Sender: TObject);
-  begin
-    FormClientesPGTO.Show;
-  end;
 
-  //ABERTURA CADASTRO FORMAS PAGAMENTO
-  procedure TFormPrincipal.BitBtnCadastrarPagamentoClick(Sender: TObject);
-  begin
-    FormFormasPGTO.Show;
-  end;
-
-  procedure TFormPrincipal.BitBtnCadastrarPedidoClick(Sender: TObject);
-  begin
-    FormPedidos.Show;
-  end;
-
-procedure TFormPrincipal.PAGAMENTOS1Click(Sender: TObject);
-  begin
-    FormFormasPGTO.Show;
-  end;
-
-  //ABERTURA CADASTRO PRODUTOS
-  procedure TFormPrincipal.BitBtnCadastrarProdutoClick(Sender: TObject);
-  begin
-    FormProdutosEFC.Show;
-  end;
-
-  end.

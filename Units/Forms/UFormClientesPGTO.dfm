@@ -14,7 +14,6 @@ object FormClientesPGTO: TFormClientesPGTO
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object PainelPrincipal: TPanel

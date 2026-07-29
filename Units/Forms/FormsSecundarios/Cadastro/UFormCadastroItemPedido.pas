@@ -43,9 +43,7 @@ type
 
   private
     //FERRAMENTAS
-    FRepositoryItensPedido: IRepository<TItensPedidos>;
     FControllerItensPedido: IControllerPedidos;
-    FRepositoryProdutosECF: IRepository<TProdutosECF>;
     FControllerProdutosECF: IControllerProdutosECF;
 
 
@@ -68,9 +66,7 @@ type
     AIDPedido:Integer;
     AIndiceItem:Integer;
     AOperacao:String;
-    ARepositoryItensPedido: IRepository<TItensPedidos>;
     AControllerItensPedido: IControllerPedidos;
-    ARepositoryProdutosECF:IRepository<TProdutosECF>;
     AControllerProdutosECF:IControllerProdutosECF;
     AItensPedido: TObjectList<TItensPedidos> = nil
     );
@@ -88,9 +84,7 @@ constructor TFormItensPedido.Create(
     AIDPedido:Integer;
     AIndiceItem:Integer;
     AOperacao:String;
-    ARepositoryItensPedido: IRepository<TItensPedidos>;
     AControllerItensPedido: IControllerPedidos;
-    ARepositoryProdutosECF:IRepository<TProdutosECF>;
     AControllerProdutosECF:IControllerProdutosECF;
     AItensPedido: TObjectList<TItensPedidos> = nil
     );
@@ -99,9 +93,7 @@ constructor TFormItensPedido.Create(
     FIDPedido := AIDPedido;
     FIndiceItemPedido := AIndiceItem;
     FOperacao := AOperacao;
-    FRepositoryItensPedido := ARepositoryItensPedido;
     FControllerItensPedido := AControllerItensPedido;
-    FRepositoryProdutosECF := ARepositoryProdutosECF;
     FControllerProdutosECF := AControllerProdutosECF;
     FItensPedido := AItensPedido;
   end;
@@ -147,8 +139,6 @@ constructor TFormItensPedido.Create(
         Self.EditDesconto.Text := FloatToStr(Self.FItemPedido.DescontoPercent);
         Self.EditQuantidade.Text :=  FloatToStr(Self.FItemPedido.Quantidade);
 
-        //DESATIVAR CONTROLES
-
         //CALCULAR VALOR TOTAL
         Self.CalcularTotal;
       end;
@@ -164,7 +154,7 @@ constructor TFormItensPedido.Create(
   begin
     LFORM := nil;
     try
-      LFORM := TFormBuscarProdutos.Create(nil,FRepositoryProdutosECF,FControllerProdutosECF);
+      LFORM := TFormBuscarProdutos.Create(nil,FControllerProdutosECF);
       if LFORM.ShowModal = mrOk then
       begin
         //RECEBER PRODUTO SELECIONADO

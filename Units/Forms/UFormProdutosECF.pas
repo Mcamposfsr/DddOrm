@@ -1,4 +1,4 @@
-unit UFormProdutosEFC;
+unit UFormProdutosECF;
 
 interface
 
@@ -9,11 +9,19 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls,
 
-
-  UIRepository,UDomainProdutosECF,UControllerProdutosECF,UAppProdutosECF,UGenericRep,UDM,UFormCadastroProdutosEFC,UErros;
+  //FERRAMENTAS
+  UIRepository,
+  UDomainProdutosECF,
+  UControllerProdutosECF,
+  UAppProdutosECF,
+  UGenericRep,
+  UDM,
+  UErros,
+  //FORMS
+  UFormCadastroProdutosECF;
 
 type
-  TFormProdutosEFC = class(TForm)
+  TFormProdutosECF = class(TForm)
     PainelPrincipal: TPanel;
     Label1: TLabel;
     DBGrid1: TDBGrid;
@@ -25,75 +33,55 @@ type
     BtnFechar: TButton;
     FDMemTable: TFDMemTable;
     DataSource: TDataSource;
-    procedure FormCreate(Sender: TObject);
     procedure EditFiltroChange(Sender: TObject);
     procedure BtnFecharClick(Sender: TObject);
     procedure BtnCadastrarClick(Sender: TObject);
     procedure BtnAlterarClick(Sender: TObject);
     procedure BtnDeletarClick(Sender: TObject);
-    procedure FormShow(Sender: TObject);
   private
-    //FERRAMENTAS
-    FRepository: IRepository<TProdutosECF>;
-    FApp: IAppProdutosECF;
     FController: IControllerProdutosECF;
 
     procedure VerificarSelecao;
   public
-    { Public declarations }
+    constructor Create(AOwner: Tcomponent;AController: IControllerProdutosECF); Reintroduce;
   end;
 
 var
-  FormProdutosEFC: TFormProdutosEFC;
+  FormProdutosECF: TFormProdutosECF;
 
 implementation
 
 {$R *.dfm}
 
-
-
-procedure TFormProdutosEFC.FormCreate(Sender: TObject);
+  constructor TFormProdutosECF.Create(
+  AOwner: Tcomponent;
+  AController: IControllerProdutosECF
+  );
   begin
-    //CRIAR REPOSITORY
-    FRepository := TRepository<TProdutosECF>.Create(GDM.GetConnection);
+    inherited Create(AOwner);
+
+    FController := AController;
+
     //PASSAR DATASET PARA LIGAR AO ORM
-    FRepository.ReceberDataSet(Self.FDMemTable);
-
-    //CRIAR APPLICATION
-    FApp := TAppProdutosECF.Create(FRepository);
-
-    //CONTROLLER
-    FController := TControllerProdutosECF.Create(FApp,FRepository);
+    FController.ReceberDataSet(Self.FDMemTable);
 
     //CONFIGURAR FORMATO CAMPO DATASET
     TFloatField(FDMemTable.FieldByName('ALIQ_PIS')).DisplayFormat := '0.0 %';
     TFloatField(FDMemTable.FieldByName('ALIQ_COFINS')).DisplayFormat := '0.0 %';
     TFloatField(FDMemTable.FieldByName('DESCONTO_MAX')).DisplayFormat := '0.0 %';
 
-
     TTratamentoDeErros.ExecutarOnForm(
       procedure
       begin
-        FRepository.AtualizarDataSet
+        FController.AtualizarDataSet
       end
     );
   end;
 
 // ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM ######### EVENTOS FORM
 
-  //ATUALIZAR SEMPRE QUE ABERTO
-  procedure TFormProdutosEFC.FormShow(Sender: TObject);
-  begin
-    TTratamentoDeErros.ExecutarOnForm(
-    procedure
-      begin
-        FRepository.AtualizarDataSet
-      end
-    );
-  end;
-
   //FILTRAR
-  procedure TFormProdutosEFC.EditFiltroChange(Sender: TObject);
+  procedure TFormProdutosECF.EditFiltroChange(Sender: TObject);
   begin
     TTratamentoDeErros.ExecutarOnForm(
       procedure
@@ -104,21 +92,21 @@ procedure TFormProdutosEFC.FormCreate(Sender: TObject);
   end;
 
   //FECHAR FORM
-  procedure TFormProdutosEFC.BtnFecharClick(Sender: TObject);
+  procedure TFormProdutosECF.BtnFecharClick(Sender: TObject);
   begin
     Self.Close;
   end;
 
 
   //CADASTRO
-  procedure TFormProdutosEFC.BtnCadastrarClick(Sender: TObject);
+  procedure TFormProdutosECF.BtnCadastrarClick(Sender: TObject);
   var
-  LFORMCadastroProduto: TFormCadastroProdutosEFC;
+  LFORMCadastroProduto: TFormCadastroProdutosECF;
   LCOD: Integer;
   begin
     LCOD := Self.FDMemTable.FieldByName('PRO_CODIGO').AsInteger;
     try
-      LFORMCadastroProduto := TFormCadastroProdutosEFC.Create(nil,FController,LCOD,'INSERT');
+      LFORMCadastroProduto := TFormCadastroProdutosECF.Create(nil,FController,LCOD,'INSERT');
       LFORMCadastroProduto.ShowModal;
     finally
       LFORMCadastroProduto.Free;
@@ -128,16 +116,16 @@ procedure TFormProdutosEFC.FormCreate(Sender: TObject);
 
 
   //ALTERAR
-  procedure TFormProdutosEFC.BtnAlterarClick(Sender: TObject);
+  procedure TFormProdutosECF.BtnAlterarClick(Sender: TObject);
   var
-  LFORMCadastroProduto: TFormCadastroProdutosEFC;
+  LFORMCadastroProduto: TFormCadastroProdutosECF;
   LCOD: Integer;
   begin
     try
       Self.VerificarSelecao;
       LCOD := Self.FDMemTable.FieldByName('PRO_CODIGO').AsInteger;
       try
-        LFORMCadastroProduto := TFormCadastroProdutosEFC.Create(nil,FController,LCOD,'UPDATE');
+        LFORMCadastroProduto := TFormCadastroProdutosECF.Create(nil,FController,LCOD,'UPDATE');
         LFORMCadastroProduto.ShowModal;
       finally
         LFORMCadastroProduto.Free;
@@ -152,16 +140,16 @@ procedure TFormProdutosEFC.FormCreate(Sender: TObject);
 
 
   //DELETE
-  procedure TFormProdutosEFC.BtnDeletarClick(Sender: TObject);
+  procedure TFormProdutosECF.BtnDeletarClick(Sender: TObject);
   var
-  LFORMCadastroProduto: TFormCadastroProdutosEFC;
+  LFORMCadastroProduto: TFormCadastroProdutosECF;
   LCOD: Integer;
   begin
     try
       Self.VerificarSelecao;
       LCOD := Self.FDMemTable.FieldByName('PRO_CODIGO').AsInteger;
       try
-        LFORMCadastroProduto := TFormCadastroProdutosEFC.Create(nil,FController,LCOD,'DELETE');
+        LFORMCadastroProduto := TFormCadastroProdutosECF.Create(nil,FController,LCOD,'DELETE');
         LFORMCadastroProduto.ShowModal;
       finally
         LFORMCadastroProduto.Free;
@@ -177,7 +165,7 @@ procedure TFormProdutosEFC.FormCreate(Sender: TObject);
 
    // ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES ########## METODOS AUXÍLIARES
 
-   procedure TFormProdutosEFC.VerificarSelecao;
+   procedure TFormProdutosECF.VerificarSelecao;
    begin
     if Self.FDMemTable.RecordCount = 0 then
     begin

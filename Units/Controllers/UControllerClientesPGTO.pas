@@ -2,7 +2,7 @@ unit UControllerClientesPGTO;
 
 interface
 
-uses UDomainClientesPGTO,UIRepository,UAppClientesPGTO, System.Generics.Collections,System.Classes,UFormatErrorText, System.SysUtils, Vcl.Dialogs,UErros;
+uses UDomainClientesPGTO,UIRepository,UAppClientesPGTO,Data.DB, System.Generics.Collections,System.Classes,UFormatErrorText, System.SysUtils, Vcl.Dialogs,UErros;
 
 type IControllerClientesPGTO = interface
   function BuscarClientePGTO(ACOD:Integer):TClientePGTO;
@@ -10,6 +10,9 @@ type IControllerClientesPGTO = interface
   procedure AlterarClientePGTO(ACOD:Integer;ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
   procedure DeletarClientePGTO(ACOD:Integer);
   procedure FiltrarClientesPGTO(AFiltro:String);
+
+  procedure ReceberDataset(ADataSet: TDataSet);
+  procedure AtualizarDataSet;
 end;
 
 //CONTROLLER FORM CLIENTES PAGAMENTO
@@ -20,6 +23,9 @@ type TControllerClientesPGTO = class(TInterfacedObject,IControllerClientesPGTO)
     procedure AlterarClientePGTO(ACOD:Integer;ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,ALimiteCredito:String);
     procedure DeletarClientePGTO(ACOD:Integer);
     procedure FiltrarClientesPGTO(AFiltro:String);
+
+    procedure ReceberDataset(ADataSet: TDataSet);
+    procedure AtualizarDataSet;
 
     constructor Create(AApp:IAppClientesPGTO;ARep:IRepository<TClientePGTO>);
   private
@@ -33,6 +39,18 @@ implementation
   begin
     Self.FApp := AApp;
     Self.FRep := ARep;
+  end;
+
+  //PASSAR DATASET PARA REPOSITORY
+  procedure TControllerClientesPGTO.ReceberDataset(ADataSet: TDataSet);
+  begin
+    FRep.ReceberDataSet(ADataSet);
+  end;
+
+  //ATUALIZAR DATASET
+  procedure TControllerClientesPGTO.AtualizarDataSet;
+  begin
+    FRep.AtualizarDataSet;
   end;
 
   //BUSCAR

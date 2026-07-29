@@ -1,4 +1,4 @@
-object FormProdutosEFC: TFormProdutosEFC
+object FormProdutosECF: TFormProdutosECF
   Left = 0
   Top = 0
   Caption = 'Produtos EFC'
@@ -12,8 +12,6 @@ object FormProdutosEFC: TFormProdutosEFC
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
-  OnCreate = FormCreate
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object PainelPrincipal: TPanel

@@ -38,7 +38,6 @@ type
 
     constructor Create(
     AOWner: TComponent;
-    ARepository: IRepository<TPedidos>;
     AController: IControllerPedidos
     ); Reintroduce;
   end;
@@ -52,7 +51,6 @@ implementation
 
 constructor TFormBuscarPedido.Create(
     AOWner: TComponent;
-    ARepository: IRepository<TPedidos>;
     AController: IControllerPedidos
  );
  var LDataSet: IDBResultSet;
@@ -60,12 +58,10 @@ constructor TFormBuscarPedido.Create(
   inherited Create(AOwner);
 
   FController := AController;
-  FRepository := ARepository;
   DBGrid1.DataSource := DataSource;
-  LDataSet := FRepository.Open('SELECT P.NUMERO_PEDIDO,C.CLI_NOME,C.CLI_DOCUMENTO,P.DATA_EMISSAO,P.TOTAL_LIQUIDO FROM PEDIDOS P INNER JOIN CLIENTES_PGTO C ON C.cli_codigo = P.id_cliente;');
 
   //BUSCA LEGADO - JOINS DO ORMBR NÃO FUNCIONAM NO FB 1.5;
-  FRepository.ReceberDataSetFirebirdLegado(Self.FDMemTable);
+  FController.ReceberDataSet(Self.FDMemTable);
 
   TTratamentoDeErros.ExecutarOnForm(
     procedure
