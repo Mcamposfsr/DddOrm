@@ -36,6 +36,7 @@ type IControllerPedidos = interface
   procedure FiltrarPedido(AFiltro:String);
   function GerarCodPedido:String;
   procedure AtualizarValorTotalPedido(AID:Integer;AValorTotal:String);
+
   //OPÇÃO DE EXIBIÇÃO LEGADO PARA FIREBIRD 1.5
   procedure ExibirPedidos;
   procedure ReceberDataset(ADataSet: TFDMemTable);
@@ -50,7 +51,7 @@ type IControllerPedidos = interface
   procedure AlterarItemPedido(AID,AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
   procedure DeletarItemPedido(AID:Integer);
   procedure ExibirItensPedidos(AID: Integer);
-  procedure FiltrarItemPedido(AFiltro:String);
+//  procedure FiltrarItemPedido(AFiltro:String);
 
   // CRUD EM MEMÓRIA
 
@@ -122,7 +123,7 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
     procedure AlterarItemPedido(AID,AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
     procedure DeletarItemPedido(AID:Integer);
     procedure ExibirItensPedidos(AID: Integer);
-    procedure FiltrarItemPedido(AFiltro:String);
+//    procedure FiltrarItemPedido(AFiltro:String);
 
     //INSERT
     procedure CriarItemPedidoEmMemoria(
@@ -163,26 +164,18 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
     constructor Create(
     AConn: TFDConnection;
     AAppPedidos:IAppPedidos;
-    ARepPedidos:IRepository<TPedidos>;
     AAppItensPedidos:IAppItensPedidos;
-    ARepItensPedidos:IRepository<TItensPedidos>;
-    AAppProdutos:IAppProdutosECF;
-    ARepProdutosECF:Irepository<TProdutosECF>
+    AAppProdutos:IAppProdutosECF
     );
   private
     //CONEXÃO
     FConn: IDBConnection;
     //PEDIDOS
     FAppPedidos: IAppPedidos;
-    FRepPedidos: IRepository<TPedidos>;
-
     //ITENS PEDIDOS
     FAppItensPedidos: IAppItensPedidos;
-    FRepItensPedidos: IRepository<TItensPedidos>;
-
     //PRODUTOS
     FAppProdutos: IAppProdutosECF;
-    FRepProdutosECF: Irepository<TProdutosECF>;
 end;
 
 implementation
@@ -190,11 +183,8 @@ implementation
   constructor TControllerPedidos.Create(
     AConn: TFDConnection;
     AAppPedidos:IAppPedidos;
-    ARepPedidos:IRepository<TPedidos>;
     AAppItensPedidos:IAppItensPedidos;
-    ARepItensPedidos:IRepository<TItensPedidos>;
-    AAppProdutos:IAppProdutosECF;
-    ARepProdutosECF:Irepository<TProdutosECF>
+    AAppProdutos:IAppProdutosECF
     );
   begin
     //CONEXÃO - TRABALHAR COM TRANSAÇÕES
@@ -202,15 +192,12 @@ implementation
 
     //PEDIDOS
     FAppPedidos := AAppPedidos;
-    FRepPedidos := ARepPedidos;
 
     //ITENS PEDIDOS
     FAppItensPedidos := AAppItensPedidos;
-    FRepItensPedidos := ARepItensPedidos;
 
     //PRODUTOS
     FAppProdutos := AAppProdutos;
-    FRepProdutosECF := ARepProdutosECF;
   end;
 
   // ################## CRUD ################## CRUD ################## CRUD ################## CRUD ################## CRUD ################## CRUD
@@ -226,7 +213,7 @@ implementation
   //RECEBER DATASET
   procedure TControllerPedidos.ReceberDataset(ADataSet: TFDMemTable);
   begin
-    Self.FRepPedidos.ReceberDataSetFirebirdLegado(ADataSet);
+    Self.FAppPedidos.ReceberDataSet(ADataSet);
   end;
 
   //EXIBIR PEDIDOS DATASET
@@ -285,7 +272,7 @@ implementation
   //FILTRAR
   procedure TControllerPedidos.FiltrarPedido(AFiltro:String);
   begin
-    Self.FRepPedidos.FiltrarDataSetLegado('CLI_NOME',AFiltro);
+    Self.FAppPedidos.FiltrarDataSet(AFiltro);
   end;
 
   // ***** ITENS PEDIDO *****
@@ -387,13 +374,6 @@ implementation
     Self.FAppItensPedidos.DeletarItemPedido(AID);
   end;
 
-
-  //FILTRAR
-  procedure TControllerPedidos.FiltrarItemPedido(AFiltro:String);
-  begin
-    Self.FRepItensPedidos.FiltrarDataSet('ID_ITEM',AFiltro);
-  end;
-
   // ########### CRUD C/ TRANSAÇÃO ########### CRUD C/ TRANSAÇÃO ########### CRUD C/ TRANSAÇÃO ########### CRUD C/ TRANSAÇÃO ########### CRUD C/ TRANSAÇÃO
 
   //CRIAR PEDIDO COMPLETO C/ TRANSAÇÃO (PEDIDO + ITENS)
@@ -482,18 +462,7 @@ implementation
   LDataPedido:String;
   LTemp: String;
   begin
-    LResultSet := Self.FRepPedidos.Open('SELECT GEN_ID(GEN_COD_PEDIDO,1) AS COD FROM RDB$DATABASE;');
-    LIDPedido := LResultSet.DataSet.FieldByName('COD').AsString;
-
-    //COLOCAR '0' NA FRENTE
-    while Length(LIDPedido) < 6 do
-    begin
-      LTemp :=  LIDPedido;
-      LIDPedido := '0' + LTemp;
-    end;
-
-    LDataPedido := FormatDateTime('ddmmyy',now);
-    Result := LDataPedido + '-' +LIDPedido;
+    Result := Self.FAppPedidos.GerarCodPedido;
   end;
 
   //PASSAR VALOR TOTAL

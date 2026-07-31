@@ -2,7 +2,16 @@ unit UAppPedidos;
 
 
 interface
- uses System.Generics.Collections,UDomainPedidos, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository,dbebr.factory.interfaces,UDomainClientesPGTO;
+ uses
+ System.Generics.Collections,
+ UDomainPedidos,
+ System.SysUtils,
+ Data.DB,
+ Vcl.Dialogs,
+ UIRepository,
+ dbebr.factory.interfaces,
+ UDomainClientesPGTO,
+ FireDAC.Comp.Client;
 
   type IAppPedidos = Interface
     //CRUD
@@ -36,9 +45,14 @@ interface
     //AUX
     procedure AtualizarTotalPedido(AID:Integer; ATotal:String);
     Function CriarDTOPedido(AIDPedido,AIDCliente:Integer;ACodPedido:String;ATotalLiquido:Currency;ADataEmissao:TDate;ACliente:TClientePGTO):TPedidos;
+    Function GerarCodPedido: String;
 
     //DATASET LEGADO
     procedure BuscarPedidosLegado;
+
+    procedure ReceberDataSet(ADataSet: TFDMemTable);
+    procedure AtualizarDataSet;
+    procedure FiltrarDataSet(AFiltro: String);
 
   End;
 
@@ -73,10 +87,14 @@ interface
     //AUX
     procedure AtualizarTotalPedido(AID:Integer; ATotal:String);
     Function CriarDTOPedido(AIDPedido,AIDCliente:Integer;ACodPedido:String;ATotalLiquido:Currency;ADataEmissao:TDate;ACliente:TClientePGTO):TPedidos;
-
+    Function GerarCodPedido: String;
 
     //DATASET LEGADO
     procedure BuscarPedidosLegado;
+
+    procedure ReceberDataSet(ADataSet: TFDMemTable);
+    procedure AtualizarDataSet;
+    procedure FiltrarDataSet(AFiltro: String);
 
     constructor Create(
     ARepPedidos:IRepository<TPedidos>;
@@ -98,6 +116,24 @@ implementation
   begin
     FRepPedidos := ARepPedidos;
     FRepClientes := ARepClientes;
+  end;
+
+  //RECEBERDATASET
+  procedure TAppPedidos.ReceberDataSet(ADataSet: TFDMemTable);
+  begin
+    FRepPedidos.ReceberDataSetFirebirdLegado(ADataSet);
+  end;
+
+  //ATUALIZAR DATASET
+  procedure TAppPedidos.AtualizarDataSet;
+  begin
+    FRepPedidos.AtualizarDataSet;
+  end;
+
+  //FILTRAR DATASET
+  procedure TAppPedidos.FiltrarDataSet(AFiltro: String);
+  begin
+    FRepPedidos.FiltrarDataSetLegado('CLI_NOME',AFiltro);
   end;
 
   //SELECT *
@@ -272,6 +308,28 @@ implementation
     LPedido.Validar;
 
     Result := LPedido;
+  end;
+
+  //GERAR CÓDIGO DO PEDIDO
+  Function TAppPedidos.GerarCodPedido: String;
+  var
+  LResultSet: IDBResultSet;
+  LIDPedido: String;
+  LDataPedido:String;
+  LTemp: String;
+  begin
+    LResultSet := Self.FRepPedidos.Open('SELECT GEN_ID(GEN_COD_PEDIDO,1) AS COD FROM RDB$DATABASE;');
+    LIDPedido := LResultSet.DataSet.FieldByName('COD').AsString;
+
+    //COLOCAR '0' NA FRENTE
+    while Length(LIDPedido) < 6 do
+    begin
+      LTemp :=  LIDPedido;
+      LIDPedido := '0' + LTemp;
+    end;
+
+    LDataPedido := FormatDateTime('ddmmyy',now);
+    Result := LDataPedido + '-' +LIDPedido;
   end;
 
   //DATASET LEGADO

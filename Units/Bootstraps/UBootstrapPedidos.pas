@@ -89,19 +89,15 @@ implementation
     FApplicationProdutosECF := TAppProdutosECF.Create(FRepositoryProdutosECF);
 
     //CONTROLLER
-    FControllerClientes := TControllerClientesPGTO.Create(FApplicationClientes,FRepositoryClientes);
-
+    FControllerClientes := TControllerClientesPGTO.Create(FApplicationClientes);
     FControllerPedidos := TControllerPedidos.Create(
     ADM.GetConnection,
     FApplicationPedidos,
-    FRepositoryPedidos,
     FApplicationItensPedidos,
-    FRepositoryItensPedidos,
-    FApplicationProdutosECF,
-    FRepositoryProdutosECF
+    FApplicationProdutosECF
     );
 
-    FControllerProdutosECF := TControllerProdutosECF.Create(FApplicationProdutosECF,FRepositoryProdutosECF);
+    FControllerProdutosECF := TControllerProdutosECF.Create(FApplicationProdutosECF);
   end;
 
   // *** GETTERS ***

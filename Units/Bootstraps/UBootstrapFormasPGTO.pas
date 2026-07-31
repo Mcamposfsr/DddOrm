@@ -39,7 +39,7 @@ implementation
     FApplication := TAppFormasPGTO.Create(FRepository);
 
     //CONTROLLER
-    FController := TControllerFormasPGTO.Create(FApplication,FRepository);
+    FController := TControllerFormasPGTO.Create(FApplication);
   end;
 
   // *** GETTERS ***

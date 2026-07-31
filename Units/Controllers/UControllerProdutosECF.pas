@@ -27,30 +27,28 @@ type TControllerProdutosECF = class(TInterfacedObject,IControllerProdutosECF)
     procedure ReceberDataset(ADataSet: TDataSet);
     procedure AtualizarDataSet;
 
-    constructor Create(AApp:IAppProdutosECF;ARep:IRepository<TProdutosECF>);
+    constructor Create(AApp:IAppProdutosECF);
   private
     FApp: IAppProdutosECF;
-    FRep: IRepository<TProdutosECF>;
 end;
 
 implementation
 
-  constructor TControllerProdutosECF.Create(AApp:IAppProdutosECF;ARep:IRepository<TProdutosECF>);
+  constructor TControllerProdutosECF.Create(AApp:IAppProdutosECF);
   begin
     Self.FApp := AApp;
-    Self.FRep := ARep;
   end;
 
   //PASSAR DATASET PARA REPOSITORY
   procedure TControllerProdutosECF.ReceberDataset(ADataSet: TDataSet);
   begin
-    FRep.ReceberDataSet(ADataSet);
+    FApp.ReceberDataSet(ADataSet);
   end;
 
   //ATUALIZAR DATASET
   procedure TControllerProdutosECF.AtualizarDataSet;
   begin
-    FRep.AtualizarDataSet;
+    FApp.AtualizarDataSet;
   end;
 
   //BUSCAR
@@ -86,7 +84,7 @@ implementation
     LDescontoMax := StrToFloatDef(StringReplace(ADescontoMax, '.', ',', [rfReplaceAll]),0);
 
     Self.FApp.InserirProdutoECF(ACodBarras,ANome,AUniSigla,ASitVenda,LEstoque,LPrecoVenda,LAliqPis,LAliqCofins,LDescontoMax);
-    Self.FRep.AtualizarDataSet;
+    Self.FApp.AtualizarDataSet;
   end;
 
   //ALTERAR
@@ -117,19 +115,19 @@ implementation
     LDescontoMax := StrToFloatDef(StringReplace(ADescontoMax, '.', ',', [rfReplaceAll]),0);
 
     Self.FApp.AtualizarProdutoECF(ACOD,ACodBarras,ANome,AUniSigla,ASitVenda,LEstoque,LPrecoVenda,LAliqPis,LAliqCofins,LDescontoMax);
-    Self.FRep.AtualizarDataSet;
+    Self.FApp.AtualizarDataSet;
   end;
 
   //DELETAR
   procedure TControllerProdutosECF.DeletarProdutoECF(ACOD:Integer);
   begin
     Self.FApp.DeletarProdutoECF(ACOD);
-    Self.FRep.AtualizarDataSet;
+    Self.FApp.AtualizarDataSet;
   end;
 
   //FILTRAR
   procedure TControllerProdutosECF.FiltrarProdutoECF(AFiltro:String);
   begin
-    Self.FRep.FiltrarDataSet('PRO_NOME',AFiltro);
+    Self.FApp.FiltrarDataSet(AFiltro);
   end;
 end.

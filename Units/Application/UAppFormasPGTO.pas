@@ -11,6 +11,9 @@ interface
     procedure AtualizarFormasPGTO(ACodigo:Integer;ANome:String;AParcelas:Integer;AJuros:Currency);
     procedure DeletarFormasPGTO(ACodigo:Integer);
 
+    procedure ReceberDataSet(ADataSet: TDataSet);
+    procedure AtualizarDataSet;
+    procedure FiltrarDataSet(AFiltro: String);
   End;
 
   type TAppFormasPGTO = class(TInterfacedObject,IAppFormasPGTO)
@@ -20,6 +23,10 @@ interface
       procedure InserirFormasPGTO(ANome:String;AParcelas:Integer;AJuros:Currency);
       procedure AtualizarFormasPGTO(ACodigo:Integer;ANome:String;AParcelas:Integer;AJuros:Currency);
       procedure DeletarFormasPGTO(ACodigo:Integer);
+
+      procedure ReceberDataSet(ADataSet: TDataSet);
+      procedure AtualizarDataSet;
+      procedure FiltrarDataSet(AFiltro: String);
 
       constructor Create(ARep:IRepository<TFormasPGTO>);
     private
@@ -34,6 +41,24 @@ implementation
   constructor TAppFormasPGTO.Create(ARep:IRepository<TFormasPGTO>);
   begin
     FRepository := ARep;
+  end;
+
+  //RECEBERDATASET
+  procedure TAppFormasPGTO.ReceberDataSet(ADataSet: TDataSet);
+  begin
+    FRepository.ReceberDataSet(ADataSet);
+  end;
+
+  //ATUALIZAR DATASET
+  procedure TAppFormasPGTO.AtualizarDataSet;
+  begin
+    FRepository.AtualizarDataSet;
+  end;
+
+  //FILTRAR DATASET
+  procedure TAppFormasPGTO.FiltrarDataSet(AFiltro: String);
+  begin
+    FRepository.FiltrarDataSet('FIN_NOME',AFiltro);
   end;
 
 

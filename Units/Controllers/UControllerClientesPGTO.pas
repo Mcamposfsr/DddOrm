@@ -27,30 +27,28 @@ type TControllerClientesPGTO = class(TInterfacedObject,IControllerClientesPGTO)
     procedure ReceberDataset(ADataSet: TDataSet);
     procedure AtualizarDataSet;
 
-    constructor Create(AApp:IAppClientesPGTO;ARep:IRepository<TClientePGTO>);
+    constructor Create(AApp:IAppClientesPGTO);
   private
     FApp: IAppClientesPGTO;
-    FRep: IRepository<TClientePGTO>;
 end;
 
 implementation
 
-  constructor TControllerClientesPGTO.Create(AApp:IAppClientesPGTO;ARep:IRepository<TClientePGTO>);
+  constructor TControllerClientesPGTO.Create(AApp:IAppClientesPGTO);
   begin
     Self.FApp := AApp;
-    Self.FRep := ARep;
   end;
 
   //PASSAR DATASET PARA REPOSITORY
   procedure TControllerClientesPGTO.ReceberDataset(ADataSet: TDataSet);
   begin
-    FRep.ReceberDataSet(ADataSet);
+    FApp.ReceberDataSet(ADataSet);
   end;
 
   //ATUALIZAR DATASET
   procedure TControllerClientesPGTO.AtualizarDataSet;
   begin
-    FRep.AtualizarDataSet;
+    FApp.AtualizarDataSet;
   end;
 
   //BUSCAR
@@ -78,7 +76,7 @@ implementation
     LLimiteCredito := StrToFloat(StringReplace(ALimiteCredito, '.', '', [rfReplaceAll]));
 
     Self.FApp.InserirClientePGTO(ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,LLimiteCredito);
-    Self.FRep.AtualizarDataSet;
+    Self.FApp.AtualizarDataSet;
   end;
 
   //ALTERAR
@@ -100,20 +98,20 @@ implementation
     LLimiteCredito := StrToFloat(StringReplace(ALimiteCredito, '.', '', [rfReplaceAll]));
 
     Self.FApp.AtualizarClientePGTO(ACOD,ANome,AEndereco,ANum,AFone,APessoa,ADocumento,AAtivo,AEmail,LLimiteCredito);
-    Self.FRep.AtualizarDataSet;
+    Self.FApp.AtualizarDataSet;
   end;
 
   //DELETAR
   procedure TControllerClientesPGTO.DeletarClientePGTO(ACOD:Integer);
   begin
     Self.FApp.DeletarClientePGTO(ACOD);
-    Self.FRep.AtualizarDataSet;
+    Self.FApp.AtualizarDataSet;
   end;
 
   //FILTRAR
   procedure TControllerClientesPGTO.FiltrarClientesPGTO(AFiltro:String);
   begin
-    Self.FRep.FiltrarDataSet('CLI_NOME',AFiltro);
+    Self.FApp.FiltrarDataSet(AFiltro);
   end;
 
 end.

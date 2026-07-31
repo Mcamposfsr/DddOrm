@@ -11,6 +11,9 @@ interface
     procedure AtualizarClientePGTO(ACodigo:Integer;ANome,AEndereco,ANumero,ATelefone,APessoa,ADocumento,AAtivo,AEmail:String;ALimiteCredito:Currency);
     procedure DeletarClientePGTO(ACodigo:Integer);
 
+    procedure ReceberDataSet(ADataSet: TDataSet);
+    procedure AtualizarDataSet;
+    procedure FiltrarDataSet(AFiltro: String);
   End;
 
   type TAppClientesPGTO = class(TInterfacedObject,IAppClientesPGTO)
@@ -20,6 +23,10 @@ interface
       procedure InserirClientePGTO(ANome,AEndereco,ANumero,ATelefone,APessoa,ADocumento,AAtivo,AEmail:String;ALimiteCredito:Currency);
       procedure AtualizarClientePGTO(ACodigo:Integer;ANome,AEndereco,ANumero,ATelefone,APessoa,ADocumento,AAtivo,AEmail:String;ALimiteCredito:Currency);
       procedure DeletarClientePGTO(ACodigo:Integer);
+
+      procedure ReceberDataSet(ADataSet: TDataSet);
+      procedure AtualizarDataSet;
+      procedure FiltrarDataSet(AFiltro: String);
 
       constructor Create(ARep:IRepository<TClientePGTO>);
     private
@@ -34,6 +41,24 @@ implementation
   constructor TAppClientesPGTO.Create(ARep:IRepository<TClientePGTO>);
   begin
     FRepository := ARep;
+  end;
+
+  //RECEBERDATASET
+  procedure TAppClientesPGTO.ReceberDataSet(ADataSet: TDataSet);
+  begin
+    FRepository.ReceberDataSet(ADataSet);
+  end;
+
+  //ATUALIZAR DATASET
+  procedure TAppClientesPGTO.AtualizarDataSet;
+  begin
+    FRepository.AtualizarDataSet;
+  end;
+
+  //FILTRAR DATASET
+  procedure TAppClientesPGTO.FiltrarDataSet(AFiltro: String);
+  begin
+    FRepository.FiltrarDataSet('CLI_NOME',AFiltro);
   end;
 
   //SELECT *

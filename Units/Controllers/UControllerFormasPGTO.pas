@@ -28,30 +28,28 @@ type TControllerFormasPGTO = class(TInterfacedObject,IControllerFormasPGTO)
     procedure ReceberDataset(ADataSet: TDataSet);
     procedure AtualizarDataSet;
 
-    constructor Create(AApp:IAppFormasPGTO;ARep:IRepository<TFormasPGTO>);
+    constructor Create(AApp:IAppFormasPGTO);
   private
     FApp: IAppFormasPGTO;
-    FRep: IRepository<TFormasPGTO>;
 end;
 
 implementation
 
-  constructor TControllerFormasPGTO.Create(AApp:IAppFormasPGTO;ARep:IRepository<TFormasPGTO>);
+  constructor TControllerFormasPGTO.Create(AApp:IAppFormasPGTO);
   begin
     Self.FApp := AApp;
-    Self.FRep := ARep;
   end;
 
   //PASSAR DATASET PARA REPOSITORY
   procedure TControllerFormasPGTO.ReceberDataset(ADataSet: TDataSet);
   begin
-    FRep.ReceberDataSet(ADataSet);
+    FApp.ReceberDataSet(ADataSet);
   end;
 
   //ATUALIZAR DATASET
   procedure TControllerFormasPGTO.AtualizarDataSet;
   begin
-    FRep.AtualizarDataSet;
+    FApp.AtualizarDataSet;
   end;
 
   //BUSCAR
@@ -71,7 +69,7 @@ implementation
     LJuros := StrToCurr(StringReplace(AJuros, '%', '', [rfReplaceAll]));
 
     Self.FApp.InserirFormasPGTO(ANome,LParcelas,LJuros);
-    Self.FRep.AtualizarDataSet;
+    Self.FApp.AtualizarDataSet;
   end;
 
   //ALTERAR
@@ -85,19 +83,19 @@ implementation
     LJuros := StrToCurr(StringReplace(AJuros, '%', '', [rfReplaceAll]));
 
     Self.FApp.AtualizarFormasPGTO(ACOD,ANome,LParcelas,LJuros);
-    Self.FRep.AtualizarDataSet;
+    Self.FApp.AtualizarDataSet;
   end;
 
   //DELETAR
   procedure TControllerFormasPGTO.DeletarFormaPGTO(ACOD:Integer);
   begin
     Self.FApp.DeletarFormasPGTO(ACOD);
-    Self.FRep.AtualizarDataSet;
+    Self.FApp.AtualizarDataSet;
   end;
 
   //FILTRAR
   procedure TControllerFormasPGTO.FiltrarClientesPGTO(AFiltro:String);
   begin
-    Self.FRep.FiltrarDataSet('FIN_NOME',AFiltro);
+    Self.FApp.FiltrarDataSet(AFiltro);
   end;
 end.

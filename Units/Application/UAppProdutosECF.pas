@@ -32,6 +32,10 @@ interface
     );
     procedure DeletarProdutoECF(ACodigo:Integer);
 
+    procedure ReceberDataSet(ADataSet: TDataSet);
+    procedure AtualizarDataSet;
+    procedure FiltrarDataSet(AFiltro: String);
+
   End;
 
   type TAppProdutosECF = class(TInterfacedObject,IAppProdutosECF)
@@ -64,6 +68,10 @@ interface
     );
     procedure DeletarProdutoECF(ACodigo:Integer);
 
+    procedure ReceberDataSet(ADataSet: TDataSet);
+    procedure AtualizarDataSet;
+    procedure FiltrarDataSet(AFiltro: String);
+
       constructor Create(ARep:IRepository<TProdutosECF>);
     private
 
@@ -77,6 +85,24 @@ implementation
   constructor TAppProdutosECF.Create(ARep:IRepository<TProdutosECF>);
   begin
     FRepository := ARep;
+  end;
+
+  //RECEBERDATASET
+  procedure TAppProdutosECF.ReceberDataSet(ADataSet: TDataSet);
+  begin
+    FRepository.ReceberDataSet(ADataSet);
+  end;
+
+  //ATUALIZAR DATASET
+  procedure TAppProdutosECF.AtualizarDataSet;
+  begin
+    FRepository.AtualizarDataSet;
+  end;
+
+  //FILTRAR DATASET
+  procedure TAppProdutosECF.FiltrarDataSet(AFiltro: String);
+  begin
+    FRepository.FiltrarDataSet('PRO_NOME',AFiltro);
   end;
 
   //SELECT *

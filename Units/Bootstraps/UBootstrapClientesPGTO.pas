@@ -38,7 +38,7 @@ implementation
     FApplication := TAppClientesPGTO.Create(FRepository);
 
     //CONTROLLER
-    FController := TControllerClientesPGTO.Create(FApplication,FRepository);
+    FController := TControllerClientesPGTO.Create(FApplication);
   end;
 
   // *** GETTERS ***

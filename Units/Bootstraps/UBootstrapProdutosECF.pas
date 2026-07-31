@@ -37,7 +37,7 @@ implementation
     FApplication := TAppProdutosECF.Create(FRepository);
 
     //CONTROLLER
-    FController := TControllerProdutosECF.Create(FApplication,FRepository);
+    FController := TControllerProdutosECF.Create(FApplication);
   end;
 
   function TBootstrapProdutosEFC.GetController: IControllerProdutosECF;
