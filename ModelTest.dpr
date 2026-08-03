@@ -77,8 +77,8 @@ begin
       GDM.ConectarBD;
 
       Application.CreateForm(TFormPrincipal, FormPrincipal);
-  Application.CreateForm(TFormCadastroProdutosECF, FormCadastroProdutosECF);
-  Application.Run;
+      Application.CreateForm(TFormCadastroProdutosECF, FormCadastroProdutosECF);
+      Application.Run;
     end);
 
   finally

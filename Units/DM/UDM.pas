@@ -49,7 +49,7 @@ implementation
     Self.FConnection.Params.Values['Port'] := APort;
     Self.FConnection.Params.Database := ADataBasePath;
     Self.FConnection.LoginPrompt := False;
-    Self.FConnection.TxOptions.AutoCommit := False;
+//    Self.FConnection.TxOptions.AutoCommit := False;
   end;
 
   // DESTRUCTOR

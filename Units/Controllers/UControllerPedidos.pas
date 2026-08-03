@@ -383,20 +383,29 @@ implementation
   LITemPedido: TItensPedidos;
 
   begin
-    Self.FConn.StartTransaction;
+    try
+      Self.FConn.StartTransaction;
 
-    //INSERIR PEDIDO
-    Self.FAppPedidos.InserirPedido(APedido);
+      //INSERIR PEDIDO
+      Self.FAppPedidos.InserirPedido(APedido);
 
-    LID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
+      LID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
 
-    //ALTERAR ID_PEDIDO PARA ID ATUAL
-    for LITemPedido in AItensPedido do
-      LITemPedido.IDPedido := LID;
+      //ALTERAR ID_PEDIDO PARA ID ATUAL
+      for LITemPedido in AItensPedido do
+        LITemPedido.IDPedido := LID;
 
-    //INSERIR ITENS
-    Self.FAppItensPedidos.InserirItensPedido(AItensPedido);
-    Self.FConn.Commit;
+      //INSERIR ITENS
+      Self.FAppItensPedidos.InserirItensPedido(AItensPedido);
+      Self.FConn.Commit;
+    except
+      //FAZER ROLLBACK E DEIXAR EXCEPTION SEGUIR FLUXO
+      on E: Exception do
+      begin
+        Self.FConn.RollBack;
+        raise E;
+      end;
+    end;
   end;
 
   //ATUALIZAR PEDIDO COMPLETO C/ TRANSAÇÃO (PEDIDO + ITENS)
@@ -404,22 +413,32 @@ implementation
   var
   LITemPedido: TItensPedidos;
   begin
-    Self.FConn.StartTransaction;
+    try
+      Self.FConn.StartTransaction;
 
-    //BUSCAR ID DO PEDIDO
-    APedido.ID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
+      //BUSCAR ID DO PEDIDO
+      APedido.ID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
 
-    //ALTERAR ID_PEDIDO PARA ID ATUAL
-    for LITemPedido in AItensPedido do
-      LITemPedido.IDPedido := APedido.ID;
+      //ALTERAR ID_PEDIDO PARA ID ATUAL
+      for LITemPedido in AItensPedido do
+        LITemPedido.IDPedido := APedido.ID;
 
-    //ATUALIZAR PEDIDO
-    Self.FAppPedidos.AtualizarPedido(APedido);
+      //ATUALIZAR PEDIDO
+      Self.FAppPedidos.AtualizarPedido(APedido);
 
-    //ATUALIZAR ITENS
-    Self.FAppItensPedidos.AtualizarItensPedido(AItensPedido);
+      //ATUALIZAR ITENS
+      Self.FAppItensPedidos.AtualizarItensPedido(AItensPedido);
 
-    Self.FConn.Commit;
+      Self.FConn.Commit;
+
+    except
+      //FAZER ROLLBACK E DEIXAR EXCEPTION SEGUIR FLUXO
+      on E: Exception do
+      begin
+        Self.FConn.RollBack;
+        raise E;
+      end;
+    end;
   end;
 
 
