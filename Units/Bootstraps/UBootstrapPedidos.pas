@@ -91,7 +91,6 @@ implementation
     //CONTROLLER
     FControllerClientes := TControllerClientesPGTO.Create(FApplicationClientes);
     FControllerPedidos := TControllerPedidos.Create(
-    ADM.GetConnection,
     FApplicationPedidos,
     FApplicationItensPedidos,
     FApplicationProdutosECF

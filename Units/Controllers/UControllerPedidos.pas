@@ -16,8 +16,6 @@ UAppPedidos,
 
 UAppItensPedidos,
 UDomainItensPedidos,
-dbebr.factory.interfaces,
-dbebr.factory.firedac,
 Data.DB
 
 ;
@@ -51,7 +49,6 @@ type IControllerPedidos = interface
   procedure AlterarItemPedido(AID,AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
   procedure DeletarItemPedido(AID:Integer);
   procedure ExibirItensPedidos(AID: Integer);
-//  procedure FiltrarItemPedido(AFiltro:String);
 
   // CRUD EM MEMÓRIA
 
@@ -123,7 +120,6 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
     procedure AlterarItemPedido(AID,AIDPedido,AIDProduto:Integer;AQuantidade,APrecoUnit,ADescontoPercent,ADescontoValor,ATotal:String);
     procedure DeletarItemPedido(AID:Integer);
     procedure ExibirItensPedidos(AID: Integer);
-//    procedure FiltrarItemPedido(AFiltro:String);
 
     //INSERT
     procedure CriarItemPedidoEmMemoria(
@@ -162,14 +158,11 @@ type TControllerPedidos = class(TInterfacedObject,IControllerPedidos)
     procedure AtualizarPedidoComTransacao(APedido:TPedidos;AItensPedido:TOBjectList<TItensPedidos>);
 
     constructor Create(
-    AConn: TFDConnection;
     AAppPedidos:IAppPedidos;
     AAppItensPedidos:IAppItensPedidos;
     AAppProdutos:IAppProdutosECF
     );
   private
-    //CONEXÃO
-    FConn: IDBConnection;
     //PEDIDOS
     FAppPedidos: IAppPedidos;
     //ITENS PEDIDOS
@@ -181,15 +174,11 @@ end;
 implementation
 
   constructor TControllerPedidos.Create(
-    AConn: TFDConnection;
     AAppPedidos:IAppPedidos;
     AAppItensPedidos:IAppItensPedidos;
     AAppProdutos:IAppProdutosECF
     );
   begin
-    //CONEXÃO - TRABALHAR COM TRANSAÇÕES
-    FConn := TFactoryFireDAC.Create(AConn, dnFirebird);
-
     //PEDIDOS
     FAppPedidos := AAppPedidos;
 
@@ -378,67 +367,46 @@ implementation
 
   //CRIAR PEDIDO COMPLETO C/ TRANSAÇÃO (PEDIDO + ITENS)
   procedure TControllerPedidos.CriarPedidoComTransacao(APedido:TPedidos;AItensPedido:TOBjectList<TItensPedidos>);
-  var
-  LID: Integer;
-  LITemPedido: TItensPedidos;
-
   begin
-    try
-      Self.FConn.StartTransaction;
-
-      //INSERIR PEDIDO
-      Self.FAppPedidos.InserirPedido(APedido);
-
-      LID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
-
-      //ALTERAR ID_PEDIDO PARA ID ATUAL
-      for LITemPedido in AItensPedido do
-        LITemPedido.IDPedido := LID;
-
-      //INSERIR ITENS
-      Self.FAppItensPedidos.InserirItensPedido(AItensPedido);
-      Self.FConn.Commit;
-    except
-      //FAZER ROLLBACK E DEIXAR EXCEPTION SEGUIR FLUXO
-      on E: Exception do
+    Self.FAppPedidos.TrabalharPedidoEmTransacao(
+      procedure
+      var
+       LITemPedido: TItensPedidos;
+       LID: Integer;
       begin
-        Self.FConn.RollBack;
-        raise E;
-      end;
-    end;
+        //INSERIR PEDIDO
+        Self.FAppPedidos.InserirPedido(APedido);
+
+        LID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
+
+        //ALTERAR ID_PEDIDO PARA ID ATUAL
+        for LITemPedido in AItensPedido do
+          LITemPedido.IDPedido := LID;
+
+        //INSERIR ITENS
+        Self.FAppItensPedidos.InserirItensPedido(AItensPedido);
+      end
+    );
   end;
 
   //ATUALIZAR PEDIDO COMPLETO C/ TRANSAÇÃO (PEDIDO + ITENS)
   procedure TControllerPedidos.AtualizarPedidoComTransacao(APedido:TPedidos;AItensPedido:TOBjectList<TItensPedidos>);
-  var
-  LITemPedido: TItensPedidos;
   begin
-    try
-      Self.FConn.StartTransaction;
-
-      //BUSCAR ID DO PEDIDO
-      APedido.ID := Self.FAppPedidos.BuscarPedidoPeloCodigo(APedido.CodPedido).ID;
-
-      //ALTERAR ID_PEDIDO PARA ID ATUAL
-      for LITemPedido in AItensPedido do
-        LITemPedido.IDPedido := APedido.ID;
-
-      //ATUALIZAR PEDIDO
-      Self.FAppPedidos.AtualizarPedido(APedido);
-
-      //ATUALIZAR ITENS
-      Self.FAppItensPedidos.AtualizarItensPedido(AItensPedido);
-
-      Self.FConn.Commit;
-
-    except
-      //FAZER ROLLBACK E DEIXAR EXCEPTION SEGUIR FLUXO
-      on E: Exception do
+    Self.FAppPedidos.TrabalharPedidoEmTransacao(
+      procedure
+      var LITemPedido: TItensPedidos;
       begin
-        Self.FConn.RollBack;
-        raise E;
-      end;
-    end;
+        //ALTERAR ID_PEDIDO PARA ID ATUAL
+        for LITemPedido in AItensPedido do
+          LITemPedido.IDPedido := APedido.ID;
+
+        //ATUALIZAR PEDIDO
+        Self.FAppPedidos.AtualizarPedido(APedido);
+
+        //ATUALIZAR ITENS
+        Self.FAppItensPedidos.AtualizarItensPedido(AItensPedido);
+      end
+    );
   end;
 
 
@@ -476,7 +444,6 @@ implementation
   //GERAR CÓDIGO PEDIDO
   function TControllerPedidos.GerarCodPedido:String;
   var
-  LResultSet: IDBResultSet;
   LIDPedido: String;
   LDataPedido:String;
   LTemp: String;

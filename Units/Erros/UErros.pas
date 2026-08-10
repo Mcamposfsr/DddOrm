@@ -2,14 +2,20 @@ unit UErros;
 
 interface
 
-uses System.SysUtils,System.Classes,UFormatErrorText,Vcl.Dialogs,FireDAC.Stan.Error;
+uses
+//SYSTEM
+System.SysUtils,
+System.Classes,
+UFormatErrorText,
+Vcl.Dialogs,
+//ERRORS LIBS
+FireDAC.Stan.Error,
+FireDAC.Phys.IBWrapper;
 
 type ECustomException = class(Exception)
   private
-    FInnerMessage: String;
     FInnerClass: String;
   public
-    property InnerMessage: String read FInnerMessage;
     property InnerClass: String read FInnerClass;
     constructor Create(AError: Exception;AMSG:String = '');
 end;
@@ -24,10 +30,19 @@ type EValidationError = class(Exception)
 end;
 
 //ABSTRAIR ERROS DO FIREDAC DAS DEMAIS PARTES DA APLICAÇÃO
-type EDataError = Class(ECustomException);
+type TRepositoryErrorOperation = (opInsert,opSelect,opUpdate,opDelete,opGeneric);
+
+type ERepositoryError = Class(ECustomException)
+  private
+    FErrorOperation: TRepositoryErrorOperation;
+  public
+    Property ErrorType: TRepositoryErrorOperation Read FErrorOperation Write FErrorOperation;
+    Constructor Create(AError: Exception;AMSG:String;ATypeError:TRepositoryErrorOperation);
+End;
+
 
 //ABSTRAIR ERROS DE CONEXÃO AO BANCO
-type EDataConnectionError = Class(ECustomException);
+type EDMError = Class(ECustomException);
 
 
 type TTratamentoDeErros = class
@@ -35,9 +50,11 @@ type TTratamentoDeErros = class
     //TRATAMENTO NO FORMULÁRIO
     class procedure ExecutarOnForm(AProcedure: TProc) overload;
     class function ExecutarOnForm<T>(AFunction: TFunc<T>):T overload;
+
     //TRATAMENTO NO REPOSITORY
-    class procedure ExecutarOnRepository(AProcedure: TProc) overload;
-    class function ExecutarOnRepository<T>(AFunction: TFunc<T>):T overload;
+    class procedure ExecutarOnRepository(AProcedure: TProc; AOperation: TRepositoryErrorOperation) overload;
+    class function ExecutarOnRepository<T>(AFunction: TFunc<T>; AOperation: TRepositoryErrorOperation):T overload;
+
     //TRATAMENTO DM
     class procedure ExecutarOnDM(AProcedure: TProc);
     //TRATAMENTO SOURCE
@@ -68,8 +85,23 @@ implementation
   //ERROS CUSTOM
   constructor ECustomException.Create(AError: Exception;AMSG:String = '');
   begin
-    inherited Create(AMSG);
-    FInnerMessage := AError.Message;
+    //VERIFICAR QUAL MSG VAI SER PASSADA
+    if AMSG = '' then
+      inherited Create(AError.Message)
+    else if AMSG <> '' then
+      inherited Create(AMSG);
+
+
+    FInnerClass := AError.ClassName;
+  end;
+
+  //ERROS REPOSITORY
+  Constructor ERepositoryError.Create(AError: Exception;AMSG:String;ATypeError:TRepositoryErrorOperation);
+  begin
+    //VERIFICAR QUAL MSG VAI SER PASSADA
+    inherited Create(AError,AMSG);
+
+    FErrorOperation := ATypeError;
     FInnerClass := AError.ClassName;
   end;
 
@@ -89,14 +121,42 @@ implementation
         ShowMessage('Falha ao validar valores.' + FFormatErrorText(E.FCampos,E.FValores));
       end;
       //TRATAMENTO ERROS CONEXÃO AO BANCO
-      on E: EDataConnectionError do
+      on E: EDMError do
       begin
-        ShowMessage('Falha ao tentar se conectar ao banco' + sLineBreak + E.InnerMessage);
+        ShowMessage('Falha ao tentar se conectar ao banco' + sLineBreak + E.Message);
       end;
-      //TRATAMENTO ERROS DO BANCO
-      on E: EDataError do
+      //TRATAMENTO ERROS REPOSITORY
+      on E: ERepositoryError do
       begin
-        ShowMessage('Falha interna no banco. Error:' + sLineBreak + E.InnerMessage);
+        //INSERT
+        if E.FErrorOperation = opInsert then
+        begin
+          ShowMessage('Falha ao criar registro: ' +  sLineBreak + E.Message);
+        end
+        //SELECT
+        else if E.FErrorOperation = opSelect then
+        begin
+          ShowMessage('Falha ao buscar registro: ' +  sLineBreak + E.Message);
+        end
+        //UPDATE
+        else if E.FErrorOperation = opUpdate then
+        begin
+          ShowMessage('Falha ao atualizar registro: ' +  sLineBreak + E.Message);
+        end
+        //DELETE
+        else if E.FErrorOperation = opDelete then
+        begin
+          //EXCLUSÃO COM FK REFERENCIADA
+          if E.Message.Contains('violation of FOREIGN KEY constraint') then
+            ShowMessage('Falha ao deletar registro: ' +  sLineBreak + 'Registro em uso por outra operação. altere seu status para inativo')
+          else
+            ShowMessage('Falha ao deletar registro: ' +  sLineBreak + E.Message);
+        end
+        else if E.FErrorOperation = opGeneric then
+        begin
+          ShowMessage('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+        end
+
       end;
       //ERROS INESPERADOS
       on E: Exception do
@@ -119,14 +179,14 @@ implementation
         ShowMessage('Falha ao validar valores.' + FFormatErrorText(E.FCampos,E.FValores));
       end;
       //TRATAMENTO ERROS CONEXÃO AO BANCO
-      on E: EDataConnectionError do
+      on E: EDMError do
       begin
-        ShowMessage('Falha ao tentar se conectar ao banco. Error:' + sLineBreak + E.InnerMessage);
+        ShowMessage('Falha ao tentar se conectar ao banco. Error:' + sLineBreak + E.Message);
       end;
       //TRATAMENTO ERROS DO BANCO
-      on E: EDataError do
+      on E: ERepositoryError do
       begin
-        ShowMessage('Falha interna no banco. Error:' + sLineBreak + E.InnerMessage);
+        ShowMessage('Falha interna no banco. Error:' + sLineBreak + E.Message);
       end;
       //ERROS INESPERADOS
       on E: Exception do
@@ -137,27 +197,31 @@ implementation
   end;
 
   // ***** TRATAMENTO NO REPOSITORY *****
-  class procedure TTratamentoDeErros.ExecutarOnRepository(AProcedure: TProc) overload;
+  class procedure TTratamentoDeErros.ExecutarOnRepository(AProcedure: TProc; AOperation: TRepositoryErrorOperation) overload;
   begin
     try
       //EXECUTAR MÉTODO
       AProcedure();
     except
       //TRADUÇÃO DE ERROS DO FIREDAC
-      on E: EFDDBEngineException do
-        raise EDataError.Create(E);
+      on E: Exception do
+      begin
+        raise ERepositoryError.Create(E,'',AOperation);
+      end;
     end;
   end;
 
-  class function TTratamentoDeErros.ExecutarOnRepository<T>(AFunction: TFunc<T>):T overload;
+  class function TTratamentoDeErros.ExecutarOnRepository<T>(AFunction: TFunc<T>;AOperation: TRepositoryErrorOperation):T overload;
   begin
     try
       //EXECUTAR MÉTODO
       Result := AFunction();
     except
       //TRADUÇÃO DE ERROS DO FIREDAC
-      on E: EFDDBEngineException do
-        raise EDataError.Create(E);
+      on E: Exception do
+      begin
+        raise ERepositoryError.Create(E,'',AOperation);;
+      end;
     end;
   end;
 
@@ -172,7 +236,7 @@ implementation
       //TRADUÇÃO DE ERROS CONEXÃO
       on E: Exception do
       begin
-        raise EDataConnectionError.Create(E);
+        raise EDMError.Create(E);
       end;
 
     end;
@@ -187,9 +251,9 @@ implementation
       AProcedure();
     except
       //TRATAMENTO ERROS CONEXÃO AO BANCO
-      on E: EDataConnectionError do
+      on E: EDMError do
       begin
-        ShowMessage('Falha ao tentar se conectar ao banco. Error:' + sLineBreak + E.InnerMessage);
+        ShowMessage('Falha ao tentar se conectar ao banco. Error:' + sLineBreak + E.Message);
       end;
 
       on E: Exception do

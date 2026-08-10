@@ -12,16 +12,8 @@ uses
   //CLASSE MODELO ORM
   UDomainClientesPGTO,UDM,UGenericRep,UAppClientesPGTO,UControllerClientesPGTO,UIRepository,UFormCadastroClientePGTO,
 
-  dbebr.factory.interfaces,
-  dbebr.factory.firedac,
-  ormbr.dml.generator.firebird,
-  ormbr.container.fdmemtable,
-  ormbr.container.dataset.interfaces,
 
-
-  //OBJECT SET
-  ormbr.container.objectset.interfaces,
-  ormbr.container.objectset, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+   FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client
   ;

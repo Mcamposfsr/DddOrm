@@ -2,7 +2,7 @@ unit UIRepository;
 
 interface
 
-  Uses Data.DB, System.Generics.Collections, dbebr.factory.interfaces, FireDAC.Comp.Client;
+  Uses Data.DB, System.Generics.Collections,System.SysUtils, dbebr.factory.interfaces, FireDAC.Comp.Client;
 
  //ABSTRAÇÃO REPOSITÓRIO GENÉRICO
   type IRepository<T: class, constructor> = interface
@@ -17,7 +17,7 @@ interface
     procedure Insert(AClass: T);
     procedure Update(AID: string; ANewClass: T);
     procedure Delete(AClass: T);
-    function Open(ASQL:String): IDBResultSet;
+    function Open(ASQL:String): TFDMemTable;
     procedure ExecSQL(ASQL:String);
 
     //AUX PARA FIREBIRD 2.0 +++
@@ -28,8 +28,12 @@ interface
 
     //AUX PARA FIREBIRD LEGADO 1.5
     procedure ReceberDataSetFirebirdLegado(ADataSet: TFDMemTable);
-    procedure OpenFirebirdLegado(ASQL:String);
+    procedure AtualizarDataSetFirebirdLegado(ASQL:String);
     procedure FiltrarDataSetLegado(AColumn,AFilter:String);
+
+    //EXECUTAR EM TRANSAÇÃO MANUAL
+    procedure ExecuteInTransaction(AProcedure: TProc);
+
   end;
 
 implementation

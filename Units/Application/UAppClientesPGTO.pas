@@ -2,7 +2,15 @@ unit UAppClientesPGTO;
 
 
 interface
- uses System.Generics.Collections,UDomainClientesPGTO, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository;
+ uses
+ //SYSTEM
+ System.Generics.Collections,
+ System.SysUtils,
+ Data.DB,
+ Vcl.Dialogs,
+ //FERRAMENTAS
+ UDomainClientesPGTO,
+ UIRepository;
 
   type IAppClientesPGTO = Interface
     Function BuscarClientesPGTO:TObjectList<TClientePGTO>;

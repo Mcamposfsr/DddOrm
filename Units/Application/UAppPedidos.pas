@@ -9,7 +9,7 @@ interface
  Data.DB,
  Vcl.Dialogs,
  UIRepository,
- dbebr.factory.interfaces,
+// dbebr.factory.interfaces,
  UDomainClientesPGTO,
  FireDAC.Comp.Client;
 
@@ -46,6 +46,7 @@ interface
     procedure AtualizarTotalPedido(AID:Integer; ATotal:String);
     Function CriarDTOPedido(AIDPedido,AIDCliente:Integer;ACodPedido:String;ATotalLiquido:Currency;ADataEmissao:TDate;ACliente:TClientePGTO):TPedidos;
     Function GerarCodPedido: String;
+    procedure TrabalharPedidoEmTransacao(AProcedure: TProc);
 
     //DATASET LEGADO
     procedure BuscarPedidosLegado;
@@ -88,6 +89,7 @@ interface
     procedure AtualizarTotalPedido(AID:Integer; ATotal:String);
     Function CriarDTOPedido(AIDPedido,AIDCliente:Integer;ACodPedido:String;ATotalLiquido:Currency;ADataEmissao:TDate;ACliente:TClientePGTO):TPedidos;
     Function GerarCodPedido: String;
+    procedure TrabalharPedidoEmTransacao(AProcedure: TProc);
 
     //DATASET LEGADO
     procedure BuscarPedidosLegado;
@@ -152,6 +154,9 @@ implementation
     LIDPedido := IntToStr(ACodigo);
     //BUSCAR PEDIDO
     LTPedidos := FRepPedidos.Select(LIDPedido);
+
+    if LTPedidos = nil then
+      ShowMessage(LIDPedido);
 
     LIDCliente := IntToStr(LTPedidos.IDCliente);
 
@@ -254,13 +259,13 @@ implementation
   //BUSCAR PEDIDO PELO CÓDIGO DO PEDIDO
   Function TAppPedidos.BuscarPedidoPeloCodigo(ACod:String): TPedidos;
   var
-  LResultSet: IDBResultSet;
+  LResultSet: TDataSet;
   LPedido: TPedidos;
   LIDCliente: String;
   LIDPedido: Integer;
   begin
     LResultSet := FRepPedidos.Open('SELECT * FROM PEDIDOS WHERE NUMERO_PEDIDO = ''' + ACod + '''');
-    LIDPedido := LResultSet.DataSet.FieldByName('ID_PEDIDO').AsInteger;
+    LIDPedido := LResultSet.FieldByName('ID_PEDIDO').AsInteger;
     LPedido := Self.BuscarPedidoByID(LIDPedido);
 
 
@@ -313,13 +318,13 @@ implementation
   //GERAR CÓDIGO DO PEDIDO
   Function TAppPedidos.GerarCodPedido: String;
   var
-  LResultSet: IDBResultSet;
+  LResultSet: TDataSet;
   LIDPedido: String;
   LDataPedido:String;
   LTemp: String;
   begin
     LResultSet := Self.FRepPedidos.Open('SELECT GEN_ID(GEN_COD_PEDIDO,1) AS COD FROM RDB$DATABASE;');
-    LIDPedido := LResultSet.DataSet.FieldByName('COD').AsString;
+    LIDPedido := LResultSet.FieldByName('COD').AsString;
 
     //COLOCAR '0' NA FRENTE
     while Length(LIDPedido) < 6 do
@@ -332,6 +337,12 @@ implementation
     Result := LDataPedido + '-' +LIDPedido;
   end;
 
+  //CRIAR E CONTROLAR TRANSAÇÃO DO PEDIDO(PEDIDO + ITENS PEDIDOS)
+  procedure TAppPedidos.TrabalharPedidoEmTransacao(AProcedure: TProc);
+  begin
+    Self.FRepPedidos.ExecuteInTransaction(AProcedure);
+  end;
+
   //DATASET LEGADO
   procedure TAppPedidos.BuscarPedidosLegado;
   var LSQL: String;
@@ -339,7 +350,7 @@ implementation
     LSQL := 'SELECT P.ID_PEDIDO, P.NUMERO_PEDIDO,C.CLI_NOME,C.CLI_DOCUMENTO,P.DATA_EMISSAO,P.TOTAL_LIQUIDO ' +
     'FROM PEDIDOS P INNER JOIN CLIENTES_PGTO C ON C.cli_codigo = P.id_cliente';
 
-    Self.FRepPedidos.OpenFirebirdLegado(LSQL);
+    Self.FRepPedidos.AtualizarDataSetFirebirdLegado(LSQL);
   end;
 
 end.

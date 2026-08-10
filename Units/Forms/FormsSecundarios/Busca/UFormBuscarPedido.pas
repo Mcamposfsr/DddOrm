@@ -10,7 +10,10 @@ uses
   FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
   UErros,
 
-  UIRepository,UDomainPedidos,UDomainClientesPGTO,UControllerPedidos,dbebr.factory.interfaces;
+  UIRepository,
+  UDomainPedidos,
+  UDomainClientesPGTO,
+  UControllerPedidos;
 
 type
   TFormBuscarPedido = class(TForm)
@@ -53,23 +56,21 @@ constructor TFormBuscarPedido.Create(
     AOWner: TComponent;
     AController: IControllerPedidos
  );
- var LDataSet: IDBResultSet;
  begin
   inherited Create(AOwner);
 
   FController := AController;
   DBGrid1.DataSource := DataSource;
 
-  //BUSCA LEGADO - JOINS DO ORMBR NÃO FUNCIONAM NO FB 1.5;
+  //BUSCA LEGADO - JOINS AUTOMÁTICOS DO ORMBR NÃO FUNCIONAM NO FB 1.5;
   FController.ReceberDataSet(Self.FDMemTable);
 
   TTratamentoDeErros.ExecutarOnForm(
     procedure
     begin
-    FController.ExibirPedidos
+      FController.ExibirPedidos
     end
   );
-
   Self.ConfigurarDataSet;
  end;
 

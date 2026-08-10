@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,System.Generics.Collections,
 
-  dbebr.factory.interfaces,UErros,
+  UErros,
 
   UDomainPedidos,UDomainClientesPGTO,UControllerPedidos,UIRepository,UControllerClientesPGTO,
 
@@ -36,7 +36,6 @@ type
     procedure FormShow(Sender: TObject);
   private
 
-
     //FERRAMENTAS
     FControllerPedidos: IControllerPedidos;
     FControllerClientes: IControllerClientesPGTO;
@@ -64,30 +63,29 @@ implementation
 {$R *.dfm}
 
 
-constructor TFormCadastroPedido.Create(
-    AOwner: TComponent;
-    AControllerPedidos: IControllerPedidos;
-    AControllerClientes: IControllerClientesPGTO
+  constructor TFormCadastroPedido.Create(
+  AOwner: TComponent;
+  AControllerPedidos: IControllerPedidos;
+  AControllerClientes: IControllerClientesPGTO
+  );
+  begin
+    Inherited Create(AOwner);
+    FControllerPedidos := AControllerPedidos;
+    FControllerClientes := AControllerClientes;
+
+    //PASSAR DATA ATUAL PARA EDIT
+    Self.EditDataPedido.Text := FormatDateTime('dd/mm/yyyy',now);
+  end;
+
+  procedure TFormCadastroPedido.FormShow(Sender: TObject);
+  begin
+    TTratamentoDeErros.ExecutarOnForm(
+      procedure
+      begin
+        Self.EditNumeroPedido.Text := Self.FControllerPedidos.GerarCodPedido;
+      end
     );
-    var LTESTE: IDBResultSet;
-    begin
-      Inherited Create(AOwner);
-      FControllerPedidos := AControllerPedidos;
-      FControllerClientes := AControllerClientes;
-
-      //PASSAR DATA ATUAL PARA EDIT
-      Self.EditDataPedido.Text := FormatDateTime('dd/mm/yyyy',now);
-    end;
-
-    procedure TFormCadastroPedido.FormShow(Sender: TObject);
-    begin
-      TTratamentoDeErros.ExecutarOnForm(
-        procedure
-        begin
-          Self.EditNumeroPedido.Text := Self.FControllerPedidos.GerarCodPedido;
-        end
-      );
-    end;
+  end;
 
 
 // ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS ########## EVENTOS

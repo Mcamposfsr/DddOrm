@@ -3,54 +3,32 @@ unit UGenericRep;
 interface
 
 uses
-  Vcl.Dialogs, Firedac.comp.Client, FireDAC.Stan.Param, System.SysUtils, Data.DB,
-  FireDAC.Stan.Option, FireDAC.Comp.DataSet, DateUtils, System.Classes,
-  System.Generics.Collections, UIRepository, dbebr.factory.interfaces,
-  dbebr.factory.firedac, ormbr.dml.generator.firebird,
-  ormbr.container.fdmemtable, ormbr.container.dataset.interfaces,ormbr.form.monitor,UErros,
-
-  //INTERFACE DM
+  //SYSTEM
+  Vcl.Dialogs,
+  Firedac.comp.Client,
+  FireDAC.Stan.Param,
+  System.SysUtils,
+  Data.DB,
+  FireDAC.Stan.Option,
+  FireDAC.Comp.DataSet,
+  DateUtils,
+  System.Classes,
+  System.Generics.Collections,
+  //INTERFACES
+  UIRepository,
   UIDM,
-
-  //OBJECT SET
-  ormbr.container.objectset.interfaces, ormbr.container.objectset;
+  //ORM
+  dbebr.factory.interfaces,
+  dbebr.factory.firedac,
+  ormbr.dml.generator.firebird,
+  ormbr.container.fdmemtable,
+  ormbr.container.dataset.interfaces,
+  ormbr.form.monitor,UErros,
+  ormbr.container.objectset.interfaces,
+  ormbr.container.objectset;
 
 type
   TRepository<T: class, constructor> = class(TInterFacedObject, IRepository<T>)
-  private
-    FConexaoAtual: IDBConnection;
-    procedure SetConexaoAtual(const Value: IDBConnection);
-  private
-    function GetConexaoAtual: IDBConnection;
-
-  public
-    function Select(AID: string): T;
-    function SelectAll: TObjectList<T>;
-    function SelectAllByColumn(AColumn:String;AFilter:String): TObjectList<T>;
-    procedure Insert(AClass: T);
-    procedure Update(AID: string; ANewClass: T);
-    procedure Delete(AClass: T);
-    function Open(ASQL:String): IDBResultSet;
-    procedure ExecSQL(ASQL:String);
-
-    //PARA FIREBIRD 2.0 +++
-    procedure ReceberDataSet(ADataSet: TDataSet);
-    procedure FiltrarDataSet(AColumn,AFilter:String);
-    procedure AtualizarDataSet; overload;
-    procedure AtualizarDataSetWhere(AColumn: string; AValue: Integer); overload;
-
-
-    //PARA FIREBIRD LEGADO 1.5
-    procedure ReceberDataSetFirebirdLegado(ADataSet: TFDMemTable);
-    procedure OpenFirebirdLegado(ASQL:String);
-    procedure FiltrarDataSetLegado(AColumn,AFilter:String);
-
-
-
-    constructor Create(AConn: TFDConnection); overload;
-    constructor Create(AConn: IDBConnection); overload;
-
-    property ConexaoAtual: IDBConnection read GetConexaoAtual;
   private
     //ABSTRAÇÃO CONEXÃO ORMBr
     FConn: IDBConnection;
@@ -63,6 +41,41 @@ type
 
     //CONTAINER CRUD
     FObjectContainer: IContainerObjectSet<T>;
+
+    //SETTER / GETTER CONEXÃO
+    procedure SetConexaoAtual(const Value: IDBConnection);
+    function GetConexaoAtual: IDBConnection;
+
+    public
+    //CRUD
+    function Select(AID: string): T;
+    function SelectAll: TObjectList<T>;
+    function SelectAllByColumn(AColumn:String;AFilter:String): TObjectList<T>;
+    procedure Insert(AClass: T);
+    procedure Update(AID: string; ANewClass: T);
+    procedure Delete(AClass: T);
+    function Open(ASQL:String): TFDMemTable;
+    procedure ExecSQL(ASQL:String);
+
+    // ***** TRABALHAR DATASETS *****
+    //PARA FIREBIRD 2.0 +++
+    procedure ReceberDataSet(ADataSet: TDataSet);
+    procedure FiltrarDataSet(AColumn,AFilter:String);
+    procedure AtualizarDataSet; overload;
+    procedure AtualizarDataSetWhere(AColumn: string; AValue: Integer); overload;
+
+    //PARA FIREBIRD LEGADO 1.5
+    procedure ReceberDataSetFirebirdLegado(ADataSet: TFDMemTable);
+    procedure AtualizarDataSetFirebirdLegado(ASQL:String);
+    procedure FiltrarDataSetLegado(AColumn,AFilter:String);
+
+    //TRABALHAR COM TRANSAÇÕES MANUAIS
+    procedure ExecuteInTransaction(AProcedure: TProc);
+
+    constructor Create(AConn: TFDConnection); overload;
+    constructor Create(AConn: IDBConnection); overload;
+
+    property ConexaoAtual: IDBConnection read GetConexaoAtual;
   end;
 
 implementation
@@ -95,7 +108,8 @@ implementation
     function: TObjectList<T>
     begin
       Result := FObjectContainer.Find
-    end
+    end,
+    opSelect
     );
   end;
 
@@ -112,13 +126,15 @@ implementation
     function: TObjectList<T>
     begin
       Result := FObjectContainer.FindWhere(LWhere);
-    end);
+    end,
+    opSelect
+    );
 
   end;
 
   procedure TRepository<T>.SetConexaoAtual(const Value: IDBConnection);
   begin
-    FConexaoAtual := Value;
+    Self.FConn := Value;
   end;
 
   //SELECIONAR POR ID
@@ -128,7 +144,8 @@ implementation
     function: T
     begin
       Result := FObjectContainer.Find(AID);
-    end
+    end,
+    opSelect
     );
   end;
 
@@ -139,7 +156,9 @@ implementation
     procedure
     begin
       FObjectContainer.Insert(AClass);
-    end);
+    end,
+    opInsert
+    );
   end;
 
     //ATUALIZAR
@@ -156,7 +175,9 @@ implementation
         LCurrentClass := FObjectContainer.Find(AID);
         FObjectContainer.Modify(LCurrentClass);
         FObjectContainer.Update(ANewClass);
-      end);
+      end,
+      opUpdate
+      );
     finally
         //LIBERAR APENAS A CLASSE ATUAL, CLASSE NOVA, CHAMADOR DA FUNÇÃO LIBERA.
       LCurrentClass.Free;
@@ -170,7 +191,9 @@ implementation
     procedure
     begin
       FObjectContainer.Delete(AClass);
-    end);
+    end,
+    opDelete
+    );
   end;
 
   function TRepository<T>.GetConexaoAtual: IDBConnection;
@@ -196,7 +219,9 @@ implementation
       Self.FContainerDataSet.DataSet.FilterOptions := [foCaseInsensitive];
       Self.FContainerDataSet.DataSet.Filter := Format('%s like ''%%%s%%''', [AColumn, AFilter]);
       Self.FContainerDataSet.DataSet.Filtered := True;
-    end);
+    end,
+    opGeneric
+    );
 
   end;
 
@@ -207,7 +232,9 @@ implementation
     procedure
     begin
       Self.FContainerDataSet := TContainerFDMemTable<T>.Create(FConn, ADataSet);
-    end);
+    end,
+    opGeneric
+    );
   end;
 
   procedure TRepository<T>.AtualizarDataSetWhere(AColumn: string; AValue: Integer);
@@ -224,7 +251,9 @@ implementation
         Self.FContainerDataSet.OpenWhere(LSQL)
       else
         raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
-    end);
+    end,
+    opGeneric
+    );
   end;
 
     //ATUALIZAR DATASET
@@ -237,7 +266,9 @@ implementation
         Self.FContainerDataSet.Open
       else
         raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
-    end);
+    end,
+    opGeneric
+    );
   end;
 
  // ################# DATASET FB 1.5 LEGADO ################# DATASET FB 1.5 LEGADO ################# DATASET FB 1.5 LEGADO ################# DATASET FB 1.5 LEGADO ################# DATASET FB 1.5 LEGADO
@@ -250,8 +281,8 @@ implementation
   end;
 
   //FAZER BUSCAS PARA DATASET
-  procedure TRepository<T>.OpenFirebirdLegado(ASQL:String);
-  var LDataSet: IDBResultSet;
+  procedure TRepository<T>.AtualizarDataSetFirebirdLegado(ASQL:String);
+  var LDataSet: TFDMemTable;
   begin
     TTratamentoDeErros.ExecutarOnRepository(
     procedure
@@ -259,19 +290,25 @@ implementation
       if not assigned(Self.FDataSet) then
         raise Exception.Create('ERROR: NÃO FOI POSSÍVEL ATUALIZAR O DATASET: DATASET NÃO ATRIBUÍDO');
 
-      //RECEBER RESULTADO DA BUSCA
-      LDataSet := Self.Open(ASQL);
+
+
       Self.FDataSet.DisableControls;
       try
+        //RECEBER RESULTADO DA BUSCA
+        LDataSet := Self.Open(ASQL);
+
         Self.FDataSet.Close;
         Self.FDataSet.CopyDataSet(
-          LDataSet.DataSet,
-          [coStructure, coRestart, coAppend]
+          LDataSet,
+          [coStructure,coAppend]
         );
       finally
         Self.FDataSet.EnableControls;
+        LDataSet.Free;
       end;
-    end);
+    end,
+    opGeneric
+    );
   end;
 
     //FILTRAR DATASET
@@ -292,19 +329,37 @@ implementation
       Self.FDataSet.FilterOptions := [foCaseInsensitive];
       Self.FDataSet.Filter := Format('%s like ''%%%s%%''', [AColumn, AFilter]);
       Self.FDataSet.Filtered := True;
-    end);
+    end,
+    opGeneric
+    );
   end;
 
   // ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS ########## GENERICS
 
   // EXECUTAR SELECT
-  function TRepository<T>.Open(ASQL:String): IDBResultSet;
+  function TRepository<T>.Open(ASQL:String): TFDMemTable;
+  var
+  LResultSet: IDBResultSet;
+  LDataSet: TFDMemTable;
   begin
-    Result := TTratamentoDeErros.ExecutarOnRepository<IDBResultSet>(
-    function: IDBResultSet
+    Result := TTratamentoDeErros.ExecutarOnRepository<TFDMemTable>(
+    function: TFDMemTable
+    var I: Integer;
     begin
-      Result := Self.FConn.CreateResultSet(ASQL);
-    end
+      LDataSet := TFDMemTable.Create(nil);
+      LResultSet := Self.FConn.CreateResultSet(ASQL);
+
+      //DESATIVAR READ ONLY -> (CAMPOS VINDOS DE JOINS SÃO DEFINIDOS COMO READONLY PELO ORMBR)
+      for I := 0 to LResultSet.DataSet.FieldCount - 1 do
+      begin
+        if LResultSet.DataSet.Fields[I].ReadOnly then
+          LResultSet.DataSet.Fields[I].ReadOnly := False;
+      end;
+
+      LDataSet.CopyDataSet(LResultSet.DataSet,[coRestart,coStructure,coAppend]);
+      Result := LDataSet;
+    end,
+    opSelect
     );
   end;
 
@@ -315,8 +370,26 @@ implementation
   procedure
   begin
     Self.FConn.ExecuteScript(ASQL);
-  end);
+  end,
+  opGeneric
+  );
  end;
 
+ //TRABALHAR COM TRANSAÇÕES MANUAIS
+  procedure TRepository<T>.ExecuteInTransaction(AProcedure: TProc);
+  begin
+    try
+      Self.FConn.StartTransaction;
+      AProcedure();
+      Self.FConn.Commit;
+    except
+      //FAZER ROLLBACK E DEIXAR EXCEPTION SEGUIR FLUXO
+      on E: Exception do
+      begin
+        Self.FConn.RollBack;
+        raise E;
+      end;
+    end;
+  end;
 end.
 

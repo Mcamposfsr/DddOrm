@@ -2,7 +2,17 @@ unit UAppItensPedidos;
 
 
 interface
- uses System.Generics.Collections,UDomainItensPedidos, System.SysUtils, Data.DB, Vcl.Dialogs,UIRepository,UDomainProdutosECF;
+ uses
+ //SYSTEM
+ System.Generics.Collections,
+ System.SysUtils,
+ Data.DB,
+ Vcl.Dialogs,
+ //FERRAMENTAS
+ UDomainProdutosECF,
+ UDomainItensPedidos,
+ UIRepository;
+
 
   type IAppItensPedidos = Interface
 
@@ -355,7 +365,7 @@ implementation
     + 'I.TOTAL  FROM ITENS_PEDIDO I INNER JOIN produtos_ecf p on I.ID_PRODUTO = P.pro_codigo '
     + 'where ID_PEDIDO = ''' + AID + '''';;
 
-    Self.FRepItensPedido.OpenFirebirdLegado(LSQL);
+    Self.FRepItensPedido.AtualizarDataSetFirebirdLegado(LSQL);
   end;
 
   //CRIAR DTO -> TRABALHAR COM OS ITENS EM MEMÓRIA
