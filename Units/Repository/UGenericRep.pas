@@ -378,18 +378,24 @@ implementation
  //TRABALHAR COM TRANSAÇÕES MANUAIS
   procedure TRepository<T>.ExecuteInTransaction(AProcedure: TProc);
   begin
-    try
-      Self.FConn.StartTransaction;
-      AProcedure();
-      Self.FConn.Commit;
-    except
-      //FAZER ROLLBACK E DEIXAR EXCEPTION SEGUIR FLUXO
-      on E: Exception do
-      begin
-        Self.FConn.RollBack;
-        raise E;
-      end;
-    end;
+    TTratamentoDeErros.ExecutarOnRepository(
+    procedure
+    begin
+      try
+        Self.FConn.StartTransaction;
+        AProcedure();
+        Self.FConn.Commit;
+      except
+        //FAZER ROLLBACK E DEIXAR EXCEPTION SEGUIR FLUXO
+        on E: Exception do
+        begin
+          Self.FConn.RollBack;
+          raise;
+        end;
+      end
+    end,
+    opGeneric
+    );
   end;
 end.
 

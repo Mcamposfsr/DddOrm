@@ -51,6 +51,7 @@ type TTratamentoDeErros = class
     class procedure ExecutarOnForm(AProcedure: TProc) overload;
     class function ExecutarOnForm<T>(AFunction: TFunc<T>):T overload;
 
+
     //TRATAMENTO NO REPOSITORY
     class procedure ExecutarOnRepository(AProcedure: TProc; AOperation: TRepositoryErrorOperation) overload;
     class function ExecutarOnRepository<T>(AFunction: TFunc<T>; AOperation: TRepositoryErrorOperation):T overload;
