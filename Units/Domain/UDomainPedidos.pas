@@ -118,10 +118,10 @@ implementation
 
   procedure TPedidos.Validar;
   var
-   LErrorCadastro: EValidationError;
+   LErrorCadastro: EDomainError;
    LEstado: Boolean;
    begin
-    LErrorCadastro := EValidationError.Create;
+    LErrorCadastro := EDomainError.Create;
     LEstado := True;
 
 

@@ -126,10 +126,10 @@ implementation
    LTelefones: TStringList;
    LEmails: TStringList;
    LDocumento: String;
-   LErrorCadastro: EValidationError;
+   LErrorCadastro: EDomainError;
    LEstado: Boolean;
    begin
-    LErrorCadastro := EValidationError.Create;
+    LErrorCadastro := EDomainError.Create;
     LEstado := True;
 
     //VALIDAÇÃO NOME

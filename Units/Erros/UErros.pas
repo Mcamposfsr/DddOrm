@@ -20,7 +20,8 @@ type ECustomException = class(Exception)
     constructor Create(AError: Exception;AMSG:String = '');
 end;
 
-type EValidationError = class(Exception)
+//ABSTRAÇÃO ERROS DE DOMÍNIO
+type EDomainError = class(ECustomException)
   public
     FCampos: TStringList;
     FValores: TStringList;
@@ -39,7 +40,6 @@ type ERepositoryError = Class(ECustomException)
     Property ErrorType: TRepositoryErrorOperation Read FErrorOperation Write FErrorOperation;
     Constructor Create(AError: Exception;AMSG:String;ATypeError:TRepositoryErrorOperation);
 End;
-
 
 //ABSTRAIR ERROS DE CONEXÃO AO BANCO
 type EDMError = Class(ECustomException);
@@ -68,14 +68,14 @@ implementation
   // ######## ERROS ######## ERROS ######## ERROS ######## ERROS ######## ERROS ######## ERROS ######## ERROS ######## ERROS ######## ERROS
 
   //ERROS DE VALIDAÇÃO
-  constructor EValidationError.Create;
+  constructor EDomainError.Create;
   begin
+    inherited Create(nil,'');
     Self.FCampos := TStringList.Create;
     Self.FValores := TStringList.Create;
-    inherited Create('');
   end;
 
-  destructor EValidationError.Destroy;
+  destructor EDomainError.Destroy;
   begin
     Self.FCampos.Free;
     Self.FValores.Free;
@@ -86,6 +86,12 @@ implementation
   //ERROS CUSTOM
   constructor ECustomException.Create(AError: Exception;AMSG:String = '');
   begin
+    if AError = nil then
+    begin
+      inherited Create(AMSG);
+      exit;
+    end;
+
     //VERIFICAR QUAL MSG VAI SER PASSADA
     if AMSG = '' then
       inherited Create(AError.Message)
@@ -117,7 +123,7 @@ implementation
     except
       //TRATAMENTO
       //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EValidationError do
+      on E: EDomainError do
       begin
         ShowMessage('Falha ao validar valores.' + FFormatErrorText(E.FCampos,E.FValores));
       end;
@@ -175,19 +181,47 @@ implementation
     except
       //TRATAMENTO
       //ERROS VALIDAÇÃO FORMULÁRIOS
-      on E: EValidationError do
+      on E: EDomainError do
       begin
         ShowMessage('Falha ao validar valores.' + FFormatErrorText(E.FCampos,E.FValores));
       end;
       //TRATAMENTO ERROS CONEXÃO AO BANCO
       on E: EDMError do
       begin
-        ShowMessage('Falha ao tentar se conectar ao banco. Error:' + sLineBreak + E.Message);
+        ShowMessage('Falha ao tentar se conectar ao banco' + sLineBreak + E.Message);
       end;
-      //TRATAMENTO ERROS DO BANCO
+      //TRATAMENTO ERROS REPOSITORY
       on E: ERepositoryError do
       begin
-        ShowMessage('Falha interna no banco. Error:' + sLineBreak + E.Message);
+        //INSERT
+        if E.FErrorOperation = opInsert then
+        begin
+          ShowMessage('Falha ao criar registro: ' +  sLineBreak + E.Message);
+        end
+        //SELECT
+        else if E.FErrorOperation = opSelect then
+        begin
+          ShowMessage('Falha ao buscar registro: ' +  sLineBreak + E.Message);
+        end
+        //UPDATE
+        else if E.FErrorOperation = opUpdate then
+        begin
+          ShowMessage('Falha ao atualizar registro: ' +  sLineBreak + E.Message);
+        end
+        //DELETE
+        else if E.FErrorOperation = opDelete then
+        begin
+          //EXCLUSÃO COM FK REFERENCIADA
+          if E.Message.Contains('violation of FOREIGN KEY constraint') then
+            ShowMessage('Falha ao deletar registro: ' +  sLineBreak + 'Registro em uso por outra operação. altere seu status para inativo')
+          else
+            ShowMessage('Falha ao deletar registro: ' +  sLineBreak + E.Message);
+        end
+        else if E.FErrorOperation = opGeneric then
+        begin
+          ShowMessage('Ocorreu um erro inesperado: ' +  sLineBreak + E.Message);
+        end
+
       end;
       //ERROS INESPERADOS
       on E: Exception do
@@ -204,6 +238,11 @@ implementation
       //EXECUTAR MÉTODO
       AProcedure();
     except
+      //NÃO TRADUZIR ERROS DE DOMÍNIO
+      on E: EDomainError do
+      begin
+        raise;
+      end;
       //TRADUÇÃO DE ERROS DO FIREDAC
       on E: Exception do
       begin
@@ -218,10 +257,15 @@ implementation
       //EXECUTAR MÉTODO
       Result := AFunction();
     except
+      //NÃO TRADUZIR ERROS DE DOMÍNIO
+      on E: EDomainError do
+      begin
+        raise;
+      end;
       //TRADUÇÃO DE ERROS DO FIREDAC
       on E: Exception do
       begin
-        raise ERepositoryError.Create(E,'',AOperation);;
+        raise ERepositoryError.Create(E,'',AOperation);
       end;
     end;
   end;
